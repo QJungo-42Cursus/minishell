@@ -6,13 +6,16 @@ RM =			rm -f
 CACA =			-lreadline
 
 # Les bonnus (*, &&, ||) sont inclus dans le truc de base
-SRCS =		main.c
+SRCS =		main.c \
+			tokenizer/tokenizer.c \
+			tokenizer/get_next_token_functions.c
+
+#SRCS =		main.c
 OBJS =		$(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
-	@$(CC) $(CFLAGS) $(CACA) $(OBJS) -o $(NAME)
-	#@make -C libft
-	#@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+	@make -C libft
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
 
 all: $(NAME)
 
