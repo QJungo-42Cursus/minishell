@@ -29,13 +29,15 @@ char	*get_next_token(char *str, int *index)
 	while (ft_isspace(str[*index]) && str[*index] != '\0')
 		(*index)++;
 
+	/// Set le debut du token a l'index courant de la chaine
+	start = *index;
 	
-	/// agir en fonction du separateur/1er char
+	/// agit en fonction du separateur/1er char
 	sep = get_sep(str[*index]);
-	get_token[sep](str, index);
+	if (sep != NONE && sep != SEP_ERROR)
+		get_token[sep](str, index, &start); // TODO rename get_token to set_indexes
 
 	/// avance jusqu'au prochain sep
-	start = *index;
 	while (!ft_isspace(str[*index]) && str[*index] != '\0')
 	{
 		// TODO add le parsing des quotes
@@ -55,6 +57,7 @@ void	tokenize(char *line, int *index, t_list **tokens)
 	if (token == NULL)
 	{
 		// TODO
+		ft_lstclear(tokens, free);
 	}
 	ft_lstadd_back(tokens, ft_lstnew(token));
 	if (*index == ft_strlen(line))
@@ -64,14 +67,12 @@ void	tokenize(char *line, int *index, t_list **tokens)
 
 t_list *tokenizer(char *str)
 {
-	(void)str;
-	char	*line = "echo hello world \" \"";
 	t_list	*tokens;
 	int		index;
 
 	index = 0;
 	tokens = NULL;
-	tokenize(line, &index, &tokens);
+	tokenize(str, &index, &tokens);
 	log_tokens(tokens);
 	return (tokens);
 }

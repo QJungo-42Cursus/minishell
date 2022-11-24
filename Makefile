@@ -15,7 +15,7 @@ OBJS =		$(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
 	@make -C libft
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(CACA) $(LIBFT) -o $(NAME)
 
 all: $(NAME)
 

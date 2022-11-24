@@ -1,6 +1,37 @@
 #include "tokenizer.h"
 #include "../libft/libft.h"
+#include <stdio.h>
 
+void	log_sep(t_sep sep)
+{
+	if (sep == AMPERSAND)
+		printf("AMPERSAND");
+	else if (sep == PIPE)
+		printf("PIPE");
+	else if (sep == SEMICOLUMN)
+		printf("SEMICOLON");
+	else if (sep == LESS)
+		printf("LESS");
+	else if (sep == GREATER)
+		printf("GREAT");
+	else if (sep == QUOTE)
+		printf("QUOTE");
+	else if (sep == DQUOTE)
+		printf("DQUOTE");
+	else if (sep == BACKSLASH)
+		printf("BACKSLASH");
+	else if (sep == NONE)
+		printf("NONE");
+	else if (sep == SEP_ERROR)
+		printf("ERROR");
+	else
+		printf("UNKNOWN");
+	printf(" (%d)\n", sep);
+
+}
+
+/// Return the separator type of the first char of the string
+/// For the bash interpreter
 t_sep	get_sep(char sep)
 {
 	if (sep == '&')
@@ -19,39 +50,67 @@ t_sep	get_sep(char sep)
 		return (DQUOTE);
 	if (sep == '\'')
 		return (QUOTE);
+	// retourne un NONE si c'est un char normal
+	if (ft_isprint(sep))
+		return (NONE);
 	return (-1);
 }
 
-void	get_token_quote(char *str, int *index)
+
+/// Gere les double quotes "
+void	get_token_dquote(char *str, int *index, int *start)
+{
+	/// Si les dquotes sont fermées et vide,  on ne fait rien ??
+	(*index)++;
+	if (str[*index] == '"')
+	{
+		(*index)++;
+		(*start) = *index;
+		return ;
+	}
+	(*start) = *index;
+	while (str[*index] != '\0' && str[*index] != '"')
+	{
+		//printf("str[%d] = %c\n", *index, str[*index]);
+		if (str[*index] == '\\')
+		{
+			// TODO
+			(*index)++;
+		}
+		(*index)++;
+	}
+}
+
+void	get_token_quote(char *str, int *index, int *start)
+{
+	(*index)++;
+	if (str[*index] == '\'')
+		return ;
+	while (str[*index] != '\0' && str[*index] != '\'')
+		(*index)++;
+	(void)start; // TODO
+}
+
+/*
+void	get_token_pipe(char *str, int *index, int *start) // TODO autre term tech ?
 {
 	(void)str;
 	(void)index;
 }
 
-void	get_token_dquote(char *str, int *index)
+void	get_token_ampersant(char *str, int *index, int *start) // TODO ortho
 {
 	(void)str;
 	(void)index;
 }
 
-void	get_token_pipe(char *str, int *index) // TODO autre term tech ?
+void	get_token_semicolumn(char *str, int *index, int *start)
 {
 	(void)str;
 	(void)index;
 }
 
-void	get_token_ampersant(char *str, int *index) // TODO ortho
-{
-	(void)str;
-	(void)index;
-}
-
-void	get_token_semicolumn(char *str, int *index)
-{
-	(void)str;
-	(void)index;
-}
-
+*/
 t_get_token	*list_func()
 {
 	t_get_token	*list;
@@ -64,8 +123,8 @@ t_get_token	*list_func()
 	}
 	list[QUOTE] = get_token_quote;
 	list[DQUOTE] = get_token_dquote;
-	list[PIPE] = get_token_pipe;
-	list[AMPERSAND] = get_token_ampersant;
-	list[SEMICOLUMN] = get_token_semicolumn;
+	//list[PIPE] = get_token_pipe;
+	//list[AMPERSAND] = get_token_ampersant;
+	//list[SEMICOLUMN] = get_token_semicolumn;
 	return (list);
 }
