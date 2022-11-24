@@ -2,6 +2,8 @@
 #include "../libft/libft.h"
 #include <stdio.h>
 
+void	get_token_dquote(char *str, int *index, int *start, int *end);
+
 void	log_sep(t_sep sep)
 {
 	if (sep == AMPERSAND)
@@ -53,34 +55,98 @@ t_sep	get_sep(char sep)
 	// retourne un NONE si c'est un char normal
 	if (ft_isprint(sep))
 		return (NONE);
+	// TODO: gérer les non-printable chars ??
 	return (-1);
 }
 
+/// Gere si ce n'est entouré par rien
+void	get_token_normal(char *str, int *index, int *start, int *end)
+{
+	/// Fake start and end pour pouvoir appeler get_token_(d)quote sans perdre le vrai start
+	int		f_start;
+	int		f_end;
+
+	printf("get_token_normal\n");
+	(*start) = *index;
+	while (str[*index] != '\0' && !ft_isspace(str[*index]))
+	{
+		/// Si on tombe sur un backslash, on skip le backslash pour afficher le char suivant
+		if (str[*index] == '\\')
+			ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
+		if (str[*index] == '"')
+		{
+			printf("DQUOTE in normal\n");
+			get_token_dquote(str, index, &f_start, &f_end);
+			*end = f_end;
+		}
+		/*
+		else if (str[*index] == '\'')
+		{
+			(*index)++;
+			get_token_quote(str, index, &f_start, &f_end);
+			(*index)++;
+		}
+		*/
+		else
+			(*index)++;
+
+		(*index)++;
+	}
+
+
+
+
+	if (!ft_isspace(str[*index]) && str[*index] != '\0')
+		ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
+	while (!ft_isspace(str[*index]) && str[*index] != '\0')
+		(*index)++;
+	(*end) = (*index);
+}
 
 /// Gere les double quotes "
-void	get_token_dquote(char *str, int *index, int *start)
+void	get_token_dquote(char *str, int *index, int *start, int *end)
 {
-	/// Si les dquotes sont fermées et vide,  on ne fait rien ??
+	/// Si c'est le dernier char -> error
+	/// Vu que j'ai trim au debut, pas besoin de chercher apres
+	if (str[*index + 1] == '\0')
+	{
+		// TODO
+		printf("ERROR: DQUOTE not closed\n");
+		exit (1);
+		return ;
+	}
+
+	/// Si les dquotes sont fermées et vide, on cherche la suite
 	(*index)++;
 	if (str[*index] == '"')
 	{
-		(*index)++;
-		(*start) = *index;
+		(*start) = *index + 1;
+		while (!ft_isspace(str[*index]) && str[*index] != '\0')
+			(*index)++;
+		(*end) = *index;
+		printf("DQUOTE empty\n");
+		if (str[*index] == '\0')
+			printf("DQUOTE empty and end of line\n");
 		return ;
 	}
+
+	/// Sinon mode dquote "normal"
 	(*start) = *index;
 	while (str[*index] != '\0' && str[*index] != '"')
 	{
-		//printf("str[%d] = %c\n", *index, str[*index]);
+		/// Si on tombe sur un backslash, on skip le backslash pour afficher le char suivant
 		if (str[*index] == '\\')
-		{
-			// TODO
-			(*index)++;
-		}
+			ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
 		(*index)++;
 	}
+	if (!ft_isspace(str[*index]) && str[*index] != '\0')
+		ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
+	while (!ft_isspace(str[*index]) && str[*index] != '\0')
+		(*index)++;
+	(*end) = (*index);
 }
 
+/*
 void	get_token_quote(char *str, int *index, int *start)
 {
 	(*index)++;
@@ -91,7 +157,6 @@ void	get_token_quote(char *str, int *index, int *start)
 	(void)start; // TODO
 }
 
-/*
 void	get_token_pipe(char *str, int *index, int *start) // TODO autre term tech ?
 {
 	(void)str;
@@ -121,8 +186,10 @@ t_get_token	*list_func()
 		// TODO
 		return (NULL);
 	}
-	list[QUOTE] = get_token_quote;
 	list[DQUOTE] = get_token_dquote;
+	list[NONE] = get_token_normal;
+
+	//list[QUOTE] = get_token_quote;
 	//list[PIPE] = get_token_pipe;
 	//list[AMPERSAND] = get_token_ampersant;
 	//list[SEMICOLUMN] = get_token_semicolumn;

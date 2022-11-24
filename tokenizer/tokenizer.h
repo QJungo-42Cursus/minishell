@@ -21,7 +21,7 @@ typedef enum e_sep
 	NONE
 } t_sep;
 
-typedef void (*t_get_token)(char *str, int *index, int *start);
+typedef void (*t_get_token)(char *str, int *index, int *start, int *end); // TODO trop d'args ?
 
 
 t_get_token	*list_func();
