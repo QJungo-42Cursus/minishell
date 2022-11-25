@@ -10,20 +10,35 @@
 #include "fcntl.h"
 #include "sys/wait.h"
 
+#define PADDING "----------------------------------------"
+
+void title(char *str, char *line)
+{
+	ft_color(BLUE, BOLD);
+	printf("%s %s\n", PADDING, str);
+	ft_color(RESET, RESET);
+	printf("%s\n", line);
+}
+void foot(t_list *tokens)
+{
+	ft_printf("result : ");
+	log_tokens(tokens);
+	ft_color(PURPLE, BOLD);
+	printf("\n%s END\n\n", PADDING);
+	ft_color(RESET, RESET);
+}
 
 void in(t_bool error, char *line)
 {
-	t_list		*tokens;
-
 	if (error)
 	{
-		printf("Error mode -------------\n");
+		char *tmp = ft_strdup(line);
 		if (fork() == 0) // Fork pour pouvoir crash !
 		{
-			printf("line: %s\n len: %d\n\n", line, ft_strlen(line));
-			tokens = tokenizer(line);
+			// TODO pour l'instant, ca me fait un malloc error
+			title("Error mode", tmp);
+			foot(tokenizer(tmp));
 			free(line);
-			printf("\n");
 			return ;
 		}
 		else
@@ -31,16 +46,10 @@ void in(t_bool error, char *line)
 			wait(NULL);
 			return ;
 		}
-		printf("-------------------- fin error\n\n");
 	}
-	printf("Mode success -------------\n");
-
-	printf("line: %s\n len: %d\n\n", line, ft_strlen(line));
-	tokens = tokenizer(line); (void)tokens;
-	printf("\n");
-
+	title("Normal mode", line);
+	foot(tokenizer(line));
 	free(line);
-	printf("-------------------- fin success\n\n");
 }
 
 /* TEST TOKENIZER */
@@ -59,6 +68,5 @@ void test()
 int main()
 {
 	//line = readline("prompt> ");
-
 	test();
 }

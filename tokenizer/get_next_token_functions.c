@@ -10,33 +10,6 @@
 void	get_token_dquote(char *str, int *index, int *start, int *end);
 void	get_token_quote(char *str, int *index, int *start, int *end);
 
-void	log_sep(t_sep sep)
-{
-	if (sep == AMPERSAND)
-		printf("AMPERSAND");
-	else if (sep == PIPE)
-		printf("PIPE");
-	else if (sep == SEMICOLUMN)
-		printf("SEMICOLON");
-	else if (sep == LESS)
-		printf("LESS");
-	else if (sep == GREATER)
-		printf("GREAT");
-	else if (sep == QUOTE)
-		printf("QUOTE");
-	else if (sep == DQUOTE)
-		printf("DQUOTE");
-	else if (sep == BACKSLASH)
-		printf("BACKSLASH");
-	else if (sep == NONE)
-		printf("NONE");
-	else if (sep == SEP_ERROR)
-		printf("ERROR");
-	else
-		printf("UNKNOWN");
-	printf(" (%d)\n", sep);
-
-}
 
 /// Return the separator type of the first char of the string
 /// For the bash interpreter
@@ -107,7 +80,7 @@ void	get_token_dquote(char *str, int *index, int *start, int *end)
 	if (str[*index + 1] == '\0')
 	{
 		// TODO
-		printf("ERROR: DQUOTE not closed\n");
+		// printf("ERROR: DQUOTE not closed\n");
 		exit (1);
 		return ;
 	}
@@ -120,9 +93,11 @@ void	get_token_dquote(char *str, int *index, int *start, int *end)
 		while (!ft_isspace(str[*index]) && str[*index] != '\0')
 			(*index)++;
 		(*end) = *index;
+		/*
 		printf("DQUOTE empty\n");
 		if (str[*index] == '\0')
 			printf("DQUOTE empty and end of line\n");
+			*/
 		return ;
 	}
 

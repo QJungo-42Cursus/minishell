@@ -4,15 +4,6 @@
 #include <stdlib.h>
 #include <errno.h>
 
-void	log_tokens(t_list *tokens)
-{
-	while (tokens)
-	{
-		ft_printf("|%s| ", (char *)tokens->content);
-		//ft_printf("\"%s\" ", (char *)tokens->content);
-		tokens = tokens->next;
-	}
-}
 
 /// Renvoie un substr du prochain token qu'il se charge de trouver
 /// En cas d'erreur, renvoie NULL ET set errno
@@ -118,6 +109,5 @@ t_list *tokenizer(char *str)
 	index = 0;
 	tokens = NULL;
 	tokenize(trimed_str, &index, &tokens);
-	log_tokens(tokens);
 	return (tokens);
 }

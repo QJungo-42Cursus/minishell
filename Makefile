@@ -8,7 +8,8 @@ CACA =			-lreadline
 # Les bonnus (*, &&, ||) sont inclus dans le truc de base
 SRCS =		main.c \
 			tokenizer/tokenizer.c \
-			tokenizer/get_next_token_functions.c
+			tokenizer/get_next_token_functions.c \
+			tokenizer/debug_helpers.c 
 
 #SRCS =		main.c
 OBJS =		$(SRCS:.c=.o)

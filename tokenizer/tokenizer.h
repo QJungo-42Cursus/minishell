@@ -28,5 +28,8 @@ t_get_token	*list_func();
 t_sep		get_sep(char sep);
 t_list		*tokenizer(char *str);
 
-void	log_sep(t_sep sep);
+//	debug helpers
+void		log_tokens(t_list *tokens);
+void		log_sep(t_sep sep);
+
 #endif /* TOKENIZER_H */
