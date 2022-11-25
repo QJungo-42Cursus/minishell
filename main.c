@@ -55,7 +55,11 @@ void in(t_bool error, char *line)
 /* TEST TOKENIZER */
 void test()
 {
-	in(TRUE, ft_strdup("echo \" salut\\\" \"               \"     ")); // ERROR DQUOTE not closed
+	in(FALSE, ft_strdup("echo salut>salut"));
+	in(FALSE, ft_strdup("echo salut >"));
+	in(FALSE, ft_strdup("echo salut >> || << && ;"));
+	return ;
+	//in(TRUE, ft_strdup("echo \" salut\\\" \"               \"     ")); // ERROR DQUOTE not closed
 	in(FALSE, ft_strdup("echo \" salut\\\" \" ")); // OK
 	in(FALSE, ft_strdup("echo \" salut\\\" \" \"\"     ")); // DQUOTE empty and nothiing after
 	in(FALSE, ft_strdup("echo salut\" s\"")); // DQUOTE after word, should concat auto
