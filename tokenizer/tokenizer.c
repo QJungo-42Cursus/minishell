@@ -63,17 +63,8 @@ char	*get_next_token(char *str, int *index)
 		get_token[sep](str, index, &start, &end); // TODO rename get_token to set_indexes
 		free(get_token); // TODO ne pas l'allouer a chaque fois ?? 
 	}
-
-
-
-	if (str[start] == '\0')
-	{
-		printf("Two empty DQUOTE at the end of the string\n");
-		// TODO comment differencient les erreur d'allocation de ce cas particulier ? -> errno
-		// (le cas c'est s'il y a deux dquote a la suite a la toute fin. e.g. ' test "" ')
-		// (il va chercher a aller regarder plus loin, du coup il va segfault, ou imprimer des trucs random)
+	if (start == -1)
 		return (NULL);
-	}
 	if (end != start)
 		token = ft_substr(str, start, end - start);
 	return (token);

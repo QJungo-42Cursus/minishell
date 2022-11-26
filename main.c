@@ -55,10 +55,15 @@ void in(t_bool error, char *line)
 /* TEST TOKENIZER */
 void test()
 {
+	in(FALSE, ft_strdup("echo \"\"salut"));
+	in(FALSE, ft_strdup("echo salut && echo bye\""));
+	in(FALSE, ft_strdup("echo salut <<&&>> echo bye"));
+	in(FALSE, ft_strdup("echo salut < > &> &2> 22 <<&&>> echo bye"));
+	in(FALSE, ft_strdup("echo \"salut < > &> &2> 22 <<&&>> echo bye"));
+	in(FALSE, ft_strdup("echo salut > salut 2> >"));
 	in(FALSE, ft_strdup("echo salut>salut"));
 	in(FALSE, ft_strdup("echo salut >"));
 	in(FALSE, ft_strdup("echo salut >> || << && ;"));
-	return ;
 	//in(TRUE, ft_strdup("echo \" salut\\\" \"               \"     ")); // ERROR DQUOTE not closed
 	in(FALSE, ft_strdup("echo \" salut\\\" \" ")); // OK
 	in(FALSE, ft_strdup("echo \" salut\\\" \" \"\"     ")); // DQUOTE empty and nothiing after
@@ -71,6 +76,6 @@ void test()
 
 int main()
 {
-	//line = readline("prompt> ");
+	//char *line = readline("prompt> "); (void)line;
 	test();
 }

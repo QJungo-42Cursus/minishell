@@ -24,8 +24,9 @@ typedef enum e_sep
 typedef void (*t_get_token)(char *str, int *index, int *start, int *end); // TODO trop d'args ? faire une struct ?
 
 typedef struct s_token {
-	char *str;
-	t_sep sep;
+	char	*str;
+	t_sep	sep;
+	// TODO ajouter d'autre details, genre si les quotes sont fermes ou non
 }	t_token;
 
 void	get_token_dquote(char *str, int *index, int *start, int *end);
