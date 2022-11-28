@@ -3,36 +3,35 @@ CC =			gcc
 CFLAGS =		-Wall -Wextra -Werror
 LIBFT =			-L./libft -lft
 RM =			rm -f
-CACA =			-lreadline
+INCLUDES =		-I$(HOME)/.brew/opt/readline/include
+OUT_LIBS =		-L$(HOME)/.brew/opt/readline/lib \
+				-lreadline
+SRCS =			main.c			# Les bonnus (*, &&, ||) sont inclus dans le truc de base
+OBJS =			$(SRCS:.c=.o)
 
-# Les bonnus (*, &&, ||) sont inclus dans le truc de base
-SRCS =		main.c
-OBJS =		$(SRCS:.c=.o)
-
-$(NAME): $(OBJS)
-	@$(CC) $(CFLAGS) $(CACA) $(OBJS) -o $(NAME)
-	#@make -C libft
-	#@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
-
+.c.o:
+		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $(<:.c=.o)
 all: $(NAME)
+$(NAME): $(OBJS)
+	@make -C libft
+	@$(CC) $(CFLAGS) $(OBJS) $(OUT_LIBS) $(LIBFT) -o $(NAME)
 
+clean:
+	@$(RM) $(OBJS)
+	#@make clean -C libft
+
+fclean: clean
+	@$(RM) $(NAME)
+	#@make fclean -C libft
+
+re: fclean all
+
+### TESTS ###
 u_libft:
-	rm -rf libft
+	#rm -rf libft
 	cp -r ../libft .
 	rm -rf libft/.git
 
-
-clean:
-	@make clean -C libft
-	@$(RM) $(S_OBJS) $(M_OBJS)
-
-fclean: clean
-	@make fclean -C libft
-	@$(RM) $(NAME)
-
-re: u_libft fclean all
-
-### TESTS ###
 t: all
 	./minishell
 
