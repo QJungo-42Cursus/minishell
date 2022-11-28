@@ -43,15 +43,18 @@ char	*get_next_token(char *str, int *index)
 	}
 	else
 	{
+		//log_sep(sep);
 		get_token = list_func();
 		if (get_token == NULL)
 		{
+			printf("allocation de la liste de pointeur sur fonction fail !!!\n");
 			// TODO
 			// set errno ? / check errno ?
 			return (NULL);
 		}
 		get_token[sep](str, index, &start, &end); // TODO rename get_token to set_indexes
-		free(get_token); // TODO ne pas l'allouer a chaque fois ?? 
+		//free(get_token); // TODO ne pas l'allouer a chaque fois ?? 
+		// TODO il segfault si je le free...
 	}
 	if (start == -1 || end == start)
 		return (NULL);
@@ -79,7 +82,7 @@ void	tokenize(char *line, int *index, t_list **tokens)
 	if (token != NULL)
 	{
 		ft_lstadd_back(tokens, ft_lstnew(token));
-		printf("added back\n");
+		//printf("added back\n");
 	}
 	else if (errno != 0)
 	{
@@ -97,20 +100,14 @@ t_list *tokenizer(char *str)
 {
 	t_list	*tokens;
 	int		index;
-	char	*trimed_str;
 
 	if (str == NULL)
 	{
 		// TODO (deja protege non ?)
 	}
-	trimed_str = ft_strtrim(str, " \r\t\v\f\n"); // TODO le \n c'est va marcher??
-	if (trimed_str == NULL)
-	{
-		// TODO
-	}
-	free(str);
 	index = 0;
 	tokens = NULL;
-	tokenize(trimed_str, &index, &tokens);
+	tokenize(str, &index, &tokens);
+	//free(str);
 	return (tokens);
 }

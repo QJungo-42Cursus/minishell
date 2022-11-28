@@ -9,8 +9,8 @@ void	get_token_dquote(char *str, int *index, int *start, int *end)
 	/// Vu que j'ai trim au debut, pas besoin de chercher apres
 	if (str[*index + 1] == '\0')
 	{
-		*start = 0;
-		*end = 0;
+		*start = -1;
+		*end = -1;
 		printf("TODO: DQUOTE not closed\n");
 		return ;
 	}

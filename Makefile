@@ -30,10 +30,6 @@ SRCS =		main.c \
 #SRCS =		main.c
 OBJS =		$(SRCS:.c=.o)
 
-$(NAME): $(OBJS)
-	@make -C libft
-	@$(CC) $(CFLAGS) $(OBJS) $(CACA) $(LIBFT) -o $(NAME)
-
 all: $(NAME)
 $(NAME): $(OBJS)
 	@make -C libft
