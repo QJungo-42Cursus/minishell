@@ -13,7 +13,8 @@ SRCS =		main.c \
 			tokenizer/get_token_normal.c \
 			tokenizer/get_token_quote.c \
 			tokenizer/get_token_dquote.c \
-			tokenizer/get_token_redirect.c
+			tokenizer/get_token_redirect.c \
+			builtins/echo.c
 
 #SRCS =		main.c
 OBJS =		$(SRCS:.c=.o)
@@ -32,7 +33,7 @@ u_libft:
 
 clean:
 	@make clean -C libft
-	@$(RM) $(S_OBJS) $(M_OBJS)
+	@$(RM) $(OBJS)
 
 fclean: clean
 	@make fclean -C libft

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h> // TOOD a enlever
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -16,17 +17,23 @@ void title(char *str, char *line)
 {
 	ft_color(BLUE, BOLD);
 	printf("%s %s\n", PADDING, str);
+	fflush ( stdout );
 	ft_color(RESET, RESET);
 	printf("%s\n", line);
+	fflush ( stdout );
 }
 
 void foot(t_list *tokens)
 {
 	ft_printf("result : ");
+	fflush ( stdout );
 	log_tokens(tokens);
+	fflush ( stdout );
 	ft_color(PURPLE, BOLD);
 	printf("\n%s END\n\n", PADDING);
+	fflush ( stdout );
 	ft_color(RESET, RESET);
+	fflush ( stdout );
 }
 
 void in(t_bool error, char *line)
@@ -56,18 +63,17 @@ void in(t_bool error, char *line)
 /* TEST TOKENIZER */
 void test()
 {
-	in(FALSE, ft_strdup("echo salut>salut\"\">>>>")); // Devrait separer le 2eme salut et les ""
-													  // TODO aie aie aie...
+	in(FALSE, ft_strdup("echo salut && echo bye\""));
+	in(FALSE, ft_strdup("echo \"\"salut"));
+	in(FALSE, ft_strdup("echo salut <<&&>> echo bye"));
+	in(FALSE, ft_strdup("echo salut < > &> &2> 22 <<&&>> echo bye"));
 	return ;
-	in(FALSE, ft_strdup("echo test > f1 > f2 > f3"));
-	in(FALSE, ft_strdup("salut \"\""));
-	in(FALSE, ft_strdup("cat \" salut\\\" \" \"\"     ")); // DQUOTE empty and nothiing after
-	in(FALSE, ft_strdup("echo salut \" \" salut"));
-	in(FALSE, ft_strdup("echo salut>\"\" salut"));
-	in(FALSE, ft_strdup("echo salut<salut"));
+	in(FALSE, ft_strdup("echo \"salut < > &> &2> 22 <<&&>> echo bye"));
+	in(FALSE, ft_strdup("echo salut > salut 2> >"));
+	in(FALSE, ft_strdup("echo salut>salut"));
 	in(FALSE, ft_strdup("echo salut >"));
 	in(FALSE, ft_strdup("echo salut >> || << && ;"));
-	in(FALSE, ft_strdup("echo ./salut\" .sh\">salut"));
+
 	//in(TRUE, ft_strdup("echo \" salut\\\" \"               \"     ")); // ERROR DQUOTE not closed
 	in(FALSE, ft_strdup("echo \" salut\\\" \" ")); // OK
 	in(FALSE, ft_strdup("echo salut\" s\"")); // DQUOTE after word, should concat auto
@@ -79,6 +85,6 @@ void test()
 
 int main()
 {
-	//line = readline("prompt> ");
+	//char *line = readline("prompt> "); (void)line;
 	test();
 }
