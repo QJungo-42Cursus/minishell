@@ -18,8 +18,8 @@ void title(char *str, char *line)
 	ft_color(BLUE, BOLD);
 	printf("%s %s\n", PADDING, str);
 	fflush ( stdout );
-	ft_color(RESET, RESET);
 	printf("%s\n", line);
+	ft_color(RESET, RESET);
 	fflush ( stdout );
 }
 
@@ -27,9 +27,9 @@ void foot(t_list *tokens)
 {
 	ft_printf("result : ");
 	fflush ( stdout );
-	log_tokens(tokens);
-	fflush ( stdout );
 	ft_color(PURPLE, BOLD);
+	fflush ( stdout );
+	log_tokens(tokens);
 	printf("\n%s END\n\n", PADDING);
 	fflush ( stdout );
 	ft_color(RESET, RESET);
@@ -66,6 +66,14 @@ void test()
 	in(FALSE, ft_strdup("echo salut && echo bye\""));
 	in(FALSE, ft_strdup("echo \"\"salut"));
 	in(FALSE, ft_strdup("echo salut <<&&>> echo bye"));
+	in(FALSE, ft_strdup("echo"));
+	in(FALSE, ft_strdup("echo"));
+	in(FALSE, ft_strdup("echo"));
+	in(FALSE, ft_strdup("echo"));
+	in(FALSE, ft_strdup("echo"));
+	// la premiere ligne fonctionne, mais la deuxieme plante segfault... comme si l'une empechait l'autre d'exister
+	in(FALSE, ft_strdup("echo salut < > &> &2> 22 <<&&>> echo bye"));
+	in(FALSE, ft_strdup("echo salut < > &> &2> 22 <<&&>> echo bye"));
 	in(FALSE, ft_strdup("echo salut < > &> &2> 22 <<&&>> echo bye"));
 	return ;
 	in(FALSE, ft_strdup("echo \"salut < > &> &2> 22 <<&&>> echo bye"));

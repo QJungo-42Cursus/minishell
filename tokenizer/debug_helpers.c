@@ -4,7 +4,7 @@
 
 void	log_tokens(t_list *tokens)
 {
-	printf("log_tokens called for a list with %d el\n", ft_lstsize(tokens));
+	//printf("log_tokens called for a list with %d el\n", ft_lstsize(tokens));
 	while (tokens)
 	{
 		printf("|%s| ", (char *)tokens->content);

@@ -66,8 +66,10 @@ void	tokenize(char *line, int *index, t_list **tokens)
 	token = get_next_token(line, index);
 	if (errno != 0)
 	{
-		printf(" errno a ete set a %d !!! \n", errno);
+		printf(" errno a ete set a %d ", errno);
+		fflush ( stdout );
 		perror(":");
+		fflush ( stdout );
 		// TODO
 		// set errno
 		// je ne vois pas d'ou ca pourrais venir, a par des caracteres non imprimables chelou de mechant.
