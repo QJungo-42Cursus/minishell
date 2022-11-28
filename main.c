@@ -19,6 +19,7 @@ void title(char *str, char *line)
 	ft_color(RESET, RESET);
 	printf("%s\n", line);
 }
+
 void foot(t_list *tokens)
 {
 	ft_printf("result : ");
@@ -55,13 +56,20 @@ void in(t_bool error, char *line)
 /* TEST TOKENIZER */
 void test()
 {
-	in(FALSE, ft_strdup("echo salut>salut"));
+	in(FALSE, ft_strdup("echo salut>salut\"\">>>>")); // Devrait separer le 2eme salut et les ""
+													  // TODO aie aie aie...
+	return ;
+	in(FALSE, ft_strdup("echo test > f1 > f2 > f3"));
+	in(FALSE, ft_strdup("salut \"\""));
+	in(FALSE, ft_strdup("cat \" salut\\\" \" \"\"     ")); // DQUOTE empty and nothiing after
+	in(FALSE, ft_strdup("echo salut \" \" salut"));
+	in(FALSE, ft_strdup("echo salut>\"\" salut"));
+	in(FALSE, ft_strdup("echo salut<salut"));
 	in(FALSE, ft_strdup("echo salut >"));
 	in(FALSE, ft_strdup("echo salut >> || << && ;"));
-	return ;
+	in(FALSE, ft_strdup("echo ./salut\" .sh\">salut"));
 	//in(TRUE, ft_strdup("echo \" salut\\\" \"               \"     ")); // ERROR DQUOTE not closed
 	in(FALSE, ft_strdup("echo \" salut\\\" \" ")); // OK
-	in(FALSE, ft_strdup("echo \" salut\\\" \" \"\"     ")); // DQUOTE empty and nothiing after
 	in(FALSE, ft_strdup("echo salut\" s\"")); // DQUOTE after word, should concat auto
 	in(FALSE, ft_strdup("echo ' salut ' ")); // OK
 	in(FALSE, ft_strdup("echo ' salut\\'  '' ")); // QUOTE empty and nothiing after

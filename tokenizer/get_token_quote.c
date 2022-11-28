@@ -4,6 +4,7 @@
 /// Gere les simples quotes '
 void	get_token_quote(char *str, int *index, int *start, int *end)
 {
+	printf("quote %s \n", &str[*index]);
 	/// Si c'est le dernier char -> error
 	/// Vu que j'ai trim au debut, pas besoin de chercher apres
 	if (str[*index + 1] == '\0')

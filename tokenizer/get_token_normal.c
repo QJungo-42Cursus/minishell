@@ -1,9 +1,11 @@
 #include "../libft/libft.h"
 #include "tokenizer.h"
+#include "stdio.h"
 
 /// Gere si ce n'est entouré par rien
 void	get_token_normal(char *str, int *index, int *start, int *end)
 {
+	printf("mode normal %s\n", &str[*index]);
 	/// Fake start pour pouvoir appeler get_token_(d)quote sans perdre le vrai start
 	int		f_start;
 
@@ -20,12 +22,13 @@ void	get_token_normal(char *str, int *index, int *start, int *end)
 				get_token_dquote(str, index, &f_start, end);
 			else
 				get_token_quote(str, index, &f_start, end);
+			printf("coucou\n");
 			return ;
 		}
 		/// parse all the redirections (< > >> <<) and pipe (|) here, that are next to the token without spaces
 		if (is_in_charset(str[*index], "<>|"))
 		{
-			(*end) = *index;
+			(*end) = (*index);
 			return ;
 		}
 		(*index)++;

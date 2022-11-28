@@ -40,17 +40,6 @@ char	*get_next_token(char *str, int *index)
 		// je ne vois pas d'ou ca pourrais venir, a par des caracteres non imprimables chelou de mechant.
 		return (NULL);
 	}
-	/*
-	else if (sep == NONE) // TODO -> le meme comportement que le DQUOTE
-	{
-		/// avance jusqu'au prochain sep 
-		while (!ft_isspace(str[*index]) && str[*index] != '\0')
-			// TODO add le parsing des quotes
-			(*index)++;
-
-		end = *index;
-	}
-	*/
 	else
 	{
 		get_token = list_func();
@@ -66,6 +55,7 @@ char	*get_next_token(char *str, int *index)
 
 
 
+	token = NULL;(void) token;
 	if (str[start] == '\0')
 	{
 		printf("Two empty DQUOTE at the end of the string\n");
@@ -75,8 +65,9 @@ char	*get_next_token(char *str, int *index)
 		return (NULL);
 	}
 	if (end != start)
-		token = ft_substr(str, start, end - start);
-	return (token);
+		return(ft_substr(str, start, end - start));
+	else
+		return (NULL);
 }
 
 void	tokenize(char *line, int *index, t_list **tokens)

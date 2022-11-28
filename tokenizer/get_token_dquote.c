@@ -5,13 +5,17 @@
 /// Gere les double quotes "
 void	get_token_dquote(char *str, int *index, int *start, int *end)
 {
+	printf("dquote %s \n", &str[*index]);
+
 	/// Si c'est le dernier char -> error
 	/// Vu que j'ai trim au debut, pas besoin de chercher apres
 	if (str[*index + 1] == '\0')
 	{
+		*start = 0;
+		*end = 0;
 		// TODO
-		// printf("ERROR: DQUOTE not closed\n");
-		exit (1);
+		printf("ERROR: DQUOTE not closed\n");
+		//exit (1);
 		return ;
 	}
 
@@ -19,6 +23,16 @@ void	get_token_dquote(char *str, int *index, int *start, int *end)
 	(*index)++;
 	if (str[*index] == '"')
 	{
+
+		// test: juste ou passe au prochain token
+		*start = 0;
+		*end = 0;
+		(*index)++;
+		return ;
+
+
+
+		// mode ou on cherche comme avant :
 		(*start) = *index + 1;
 		while (!ft_isspace(str[*index]) && str[*index] != '\0')
 			(*index)++;
