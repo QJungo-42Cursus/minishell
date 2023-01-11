@@ -3,7 +3,7 @@
 #include "../libft/libft.h"
 
 /// Gere les double quotes "
-void	get_token_dquote(char *str, int *index, int *start, int *end)
+void	get_token_dquote(const char *str, int *index, int *start, int *end)
 {
 	/// Si c'est le dernier char -> error
 	/// Vu que j'ai trim au debut, pas besoin de chercher apres
@@ -32,7 +32,7 @@ void	get_token_dquote(char *str, int *index, int *start, int *end)
 		/// Si on tombe sur un backslash, on skip le backslash pour afficher le char suivant
 		/// Si c'etait un dquote, il va automatiquement le skip, apres le ft_strlcpy et le index++
 		if (str[*index] == '\\')
-			ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
+			ft_strlcpy((char *)str + *index, str + *index + 1, ft_strlen(str + *index));
 		if (str[*index] == '\0')
 		{
 			// TODO s'il tombe sur le \0 avant le dqoute fermant, lire la prochaine ligne (comportement bash)
@@ -44,7 +44,7 @@ void	get_token_dquote(char *str, int *index, int *start, int *end)
 
 	/// S'il reste du texte apres le quote, on le lit jusqu'a un isspace
 	if (!ft_isspace(str[*index]) && str[*index] != '\0')
-		ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
+		ft_strlcpy((char *)str + *index, str + *index + 1, ft_strlen(str + *index));
 	while (!ft_isspace(str[*index]) && str[*index] != '\0')
 		(*index)++;
 

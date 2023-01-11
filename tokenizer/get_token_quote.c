@@ -2,7 +2,7 @@
 #include "../libft/libft.h"
 
 /// Gere les simples quotes '
-void	get_token_quote(char *str, int *index, int *start, int *end)
+void	get_token_quote(const char *str, int *index, int *start, int *end)
 {
 	//printf("quote %s \n", &str[*index]);
 	/// Si c'est le dernier char -> error
@@ -41,7 +41,7 @@ void	get_token_quote(char *str, int *index, int *start, int *end)
 
 	/// S'il reste du texte apres le quote, on le lit jusqu'a un isspace
 	if (!ft_isspace(str[*index]) && str[*index] != '\0')
-		ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
+		ft_strlcpy((char *)str + *index, str + *index + 1, ft_strlen(str + *index));
 	while (!ft_isspace(str[*index]) && str[*index] != '\0')
 		(*index)++;
 	(*end) = (*index);

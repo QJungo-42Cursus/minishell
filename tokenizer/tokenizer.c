@@ -9,7 +9,7 @@
 /// En cas d'erreur, renvoie NULL ET set errno
 /// Il peut arriver qu'il renvoie NULL sans erreur (ex: ' echo salut ""')
 ///    -> Dans ce cas, il faut juste passer au token suivant
-char	*get_next_token(char *str, int *index)
+char	*get_next_token(const char *str, int *index)
 {
 	//char		*token;
 	int			start;
@@ -62,7 +62,7 @@ char	*get_next_token(char *str, int *index)
 		return(ft_substr(str, start, end - start));
 }
 
-void	tokenize(char *line, int *index, t_list **tokens)
+void	tokenize(const char *line, int *index, t_list **tokens)
 {
 	char	*token;
 
@@ -96,7 +96,7 @@ void	tokenize(char *line, int *index, t_list **tokens)
 	tokenize(line, index, tokens);
 }
 
-t_list *tokenizer(char *str)
+t_list *tokenizer(const char *str)
 {
 	t_list	*tokens;
 	int		index;

@@ -3,7 +3,7 @@
 #include "stdio.h"
 
 /// Gere si ce n'est entouré par rien
-void	get_token_normal(char *str, int *index, int *start, int *end)
+void	get_token_normal(const char *str, int *index, int *start, int *end)
 {
 	//printf("mode normal %s\n", &str[*index]);
 	/// Fake start pour pouvoir appeler get_token_(d)quote sans perdre le vrai start
@@ -15,7 +15,7 @@ void	get_token_normal(char *str, int *index, int *start, int *end)
 	{
 		/// Si on tombe sur un backslash, on skip le backslash pour afficher le char suivant
 		if (str[*index] == '\\')
-			ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
+			ft_strlcpy((char *)str + *index, str + *index + 1, ft_strlen(str + *index));
 		if (str[*index] == '"' || str[*index] == '\'')
 		{
 			/// On va d'abors recuperer le type de separator
@@ -24,7 +24,7 @@ void	get_token_normal(char *str, int *index, int *start, int *end)
 			sep = get_sep(str[*index]);
 			if (!(sep == DQUOTE || sep == QUOTE))// TODO ce cas ne devrait pas arriver
 				exit (66);
-			ft_strlcpy(str + *index, str + *index + 1, ft_strlen(str + *index));
+			ft_strlcpy((char *)str + *index, str + *index + 1, ft_strlen(str + *index));
 			if (sep == DQUOTE)
 				get_token_dquote(str, index, &f_start, end);
 			else if (sep == QUOTE)

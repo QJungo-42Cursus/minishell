@@ -4,19 +4,14 @@ CFLAGS =		-Wall -Wextra -Werror
 LIBFT =			-L./libft -lft
 RM =			rm -f
 
-### MAAAC OS
-INCLUDES =		-I$(HOME)/.brew/opt/readline/include
-OUT_LIBS =		-L$(HOME)/.brew/opt/readline/lib \
-				-lreadline
-SRCS =			main.c			# Les bonnus (*, &&, ||) sont inclus dans le truc de base
-OBJS =			$(SRCS:.c=.o)
-.c.o:
-		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $(<:.c=.o)
+### MAC OS
+#INCLUDES =		-I$(HOME)/.brew/opt/readline/include
+#OUT_LIBS =		-L$(HOME)/.brew/opt/readline/lib \
+#				-lreadline
+#.c.o:
+#		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $(<:.c=.o)
 #####
 
-CACA =			-lreadline
-
-# Les bonnus (*, &&, ||) sont inclus dans le truc de base
 SRCS =		main.c \
 			tokenizer/tokenizer.c \
 			tokenizer/get_next_token_functions.c \
@@ -27,36 +22,45 @@ SRCS =		main.c \
 			tokenizer/get_token_redirect.c \
 			builtins/echo.c
 
-#SRCS =		main.c
 OBJS =		$(SRCS:.c=.o)
 
 all: $(NAME)
 $(NAME): $(OBJS)
-	@make -C libft
-	@$(CC) $(CFLAGS) $(OBJS) $(OUT_LIBS) $(LIBFT) -o $(NAME)
+	make -C libft
+	$(CC) $(CFLAGS) $(OBJS) $(OUT_LIBS) $(LIBFT) -o $(NAME)
 
 clean:
-	@make clean -C libft
-	@$(RM) $(OBJS)
+	$(RM) $(OBJS)
+	make clean -C libft
 
 fclean: clean
-	@$(RM) $(NAME)
-	#@make fclean -C libft
+	$(RM) $(NAME)
+	make fclean -C libft
 
 re: fclean all
 
 ### TESTS ###
+
+SRCS_TEST = tests/main.cpp \
+			tests/tokenizer.cpp
+#OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
+GTEST =		/usr/local/lib/libgtest.a
+NAME_TEST = test
+LIBFT_A = ./libft/libft.a
+
+# Attention, l'ordre de declaration des lib est important !
+test:
+	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	./$(NAME_TEST)
+
 u_libft:
 	#rm -rf libft
 	cp -r ../libft .
 	rm -rf libft/.git
 
-t: all
-	./minishell
-
-db:
+lldb:
 	@make -C libft
 	@$(CC) $(CFLAGS) $(SRCS) -g $(LIBFT) -o $(NAME)
-	lldb ./minishel 
+	lldb ./$(NAME)
 
-.PHONY: all clean fclean re test libft
+.PHONY: all clean fclean re test u_libft

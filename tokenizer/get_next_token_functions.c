@@ -32,7 +32,8 @@ t_sep	get_sep(char sep)
 	if (ft_isprint(sep))
 		return (NONE);
 	// TODO: gérer les non-printable chars ??
-	return (-1);
+	//return (-1);
+	return (SEP_ERROR);
 }
 
 t_get_token	*list_func()
