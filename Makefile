@@ -41,7 +41,8 @@ re: fclean all
 
 #### TESTS ####
 SRCS_TEST = tests/main.cpp \
-			tests/tokenizer.cpp
+			tests/tokenizer.cpp \
+			tests/tokenizerWithQuote.cpp
 #OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
 GTEST =		/usr/local/lib/libgtest.a
 NAME_TEST = test
@@ -51,6 +52,12 @@ LIBFT_A = ./libft/libft.a
 test:
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST)
+	$(RM) $(NAME_TEST)
+
+tquote:
+	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	./$(NAME_TEST) "--gtest_filter=*TokenizeWithQuote.*"
+	$(RM) $(NAME_TEST)
 
 u_libft:
 	#rm -rf libft

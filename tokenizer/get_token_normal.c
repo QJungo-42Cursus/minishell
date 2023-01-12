@@ -5,41 +5,34 @@
 /// Gere si ce n'est entouré par rien
 void	get_token_normal(const char *str, int cursor_index, t_position *token_pos)
 {
-	//printf("mode normal %s\n", &str[cursor_index]);
-	/// Fake start pour pouvoir appeler get_token_(d)quote sans perdre le vrai start
-	//int		f_start; 
-	t_sep	sep;
+	t_sep		separator;
+	t_position	quote_pos; // cpy pour pas modifier le start
 
-	(token_pos->start) = cursor_index;
+	token_pos->start = cursor_index;
 	while (str[cursor_index] != '\0' && !ft_isspace(str[cursor_index]))
 	{
 		/// Si on tombe sur un backslash, on skip le backslash pour afficher le char suivant
-		if (str[cursor_index] == '\\')
-			ft_strlcpy((char *)str + cursor_index, str + cursor_index + 1, ft_strlen(str + cursor_index));
-		if (str[cursor_index] == '"' || str[cursor_index] == '\'')
+		separator = get_sep(str[cursor_index]);
+		if (separator == QUOTE || separator == DQUOTE)
 		{
-			/// On va d'abors recuperer le type de separator
-			/// Ensuite on va l'ecraser avec le strcpy
-			/// puis on va appeler la fonction qui gere le type de separator
-			sep = get_sep(str[cursor_index]);
-			if (!(sep == DQUOTE || sep == QUOTE))// TODO ce cas ne devrait pas arriver
-				exit (66);
-			ft_strlcpy((char *)str + cursor_index, str + cursor_index + 1, ft_strlen(str + cursor_index));
-			//if (sep == DQUOTE) // FIXME
-			//	get_token_dquote(str, index, &f_start, end);
-			//else if (sep == QUOTE)
-			//	get_token_quote(str, index, &f_start, end);
+			quote_pos.start = token_pos->start;
+			if (separator == QUOTE)
+				get_token_quote(str, cursor_index, &quote_pos);
+			//else if (separator == DQUOTE)
+				//get_token_dquote(str, cursor_index, &quote_pos);
+			token_pos->end = quote_pos.end;
 			return ;
 		}
+
 		/// parse all the redirections (< > >> <<) and pipe (|) here, that are next to the token without spaces
-		if (is_in_charset(str[cursor_index], "<>|"))
+		if (is_in_charset(str[cursor_index], "<>|&"))
 		{
-			(token_pos->end) = (cursor_index);
+			token_pos->end = cursor_index;
 			return ;
 		}
-		(cursor_index)++;
+		cursor_index++;
 	}
-	(token_pos->end) = (cursor_index);
+	token_pos->end = cursor_index;
 
 	/*
 	 * Inutile pour le normal ? TODO

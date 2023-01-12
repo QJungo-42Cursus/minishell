@@ -3,7 +3,7 @@
 #include "tokenizer.h"
 #include "../tests/debug_helper.h"
 
-int	is_last_char(const char *cmd, int cursor_index)
+static int	is_last_char(const char *cmd, int cursor_index)
 {
 	if (cmd[cursor_index + 1] == '\0')
 		return (TRUE);
@@ -13,11 +13,13 @@ int	is_last_char(const char *cmd, int cursor_index)
 // TODO better name
 // return true if it split the token after a quote/dquote
 // (ex: ' echo ""salut ' renvoie FALSE, alors que ' echo "salut" ' renvoie TRUE)
-int does_cut_string(const char c)
+static int does_cut_string_litteral(const char c)
 {
 	if (ft_isspace(c))
 		return (TRUE);
 	if (is_in_charset(c, "$<>|&"))
+		return (TRUE);
+	if (c == '\0')
 		return (TRUE);
 	return (FALSE);
 
@@ -32,26 +34,23 @@ void	get_token_quote(const char *cmd, int cursor_index, t_position *token_pos)
 	const char	sep = '\'';
 
 	token_pos->start = cursor_index;
+	token_pos->end = cursor_index + 1;
 
-	//  TODO Vu que j'ai trim au debut, pas besoin de chercher apres ?
+	/// The quote is not closed (handle later)
 	if (is_last_char(cmd, cursor_index))
-	{
-		// TODO
-		LOG("TODO: QUOTE not closed at end\n");
-		token_pos->end = cursor_index; // +1 ?
 		return ;
-	}
 
 	cursor_index++;
 
 	// TODO inutile ? (gerer auto ?)
 	/// Si les quotes sont fermées et vide, et que le char suivant est un espace
 	/// on renvoie un token vide
-	if (cmd[cursor_index] == sep && does_cut_string(cmd[cursor_index + 1]))
+	if (cmd[cursor_index] == sep && does_cut_string_litteral(cmd[cursor_index + 1]))
 	{
 		token_pos->end = cursor_index + 1;
 		return ;
 	}
+
 	/// Si les quotes sont fermées et vide, et que le char suivant n'est pas un espace
 	/// on continue
 	// cursor_index += cmd[cursor_index] == sep; // facon style mais pas clair de faire plus 1
@@ -65,21 +64,26 @@ void	get_token_quote(const char *cmd, int cursor_index, t_position *token_pos)
 	{
 		if (cmd[cursor_index] == '\0')
 		{
-			// TODO
-			LOG("TODO: QUOTE not closed\n");
 			token_pos->end = cursor_index;
 			return ;
 		}
-		(cursor_index)++;
+		cursor_index++;
 	}
 
-	/// S'il reste du texte apres le quote, on le lit jusqu'a un isspace
-	//if (!ft_isspace(cmd[cursor_index]) && cmd[cursor_index] != '\0')
-	//	ft_strlcpy((char *)cmd + cursor_index, cmd + cursor_index + 1, ft_strlen(cmd + cursor_index));
+	cursor_index++;
 
-	//while (!ft_isspace(cmd[cursor_index]) && cmd[cursor_index] != '\0')
-	//	(cursor_index)++;
-	token_pos->end = (cursor_index);
+	printf("to the end of the quote |%s|\n", &cmd[cursor_index]);
+
+	while (!ft_isspace(cmd[cursor_index]))
+	{
+		if (cmd[cursor_index] == '\0')
+		{
+			token_pos->end = cursor_index;
+			return ;
+		}
+		cursor_index++;
+	}
+	token_pos->end = cursor_index;
 }
 
 
