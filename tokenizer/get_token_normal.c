@@ -5,21 +5,15 @@
 /// Gere si ce n'est entouré par rien
 void	get_token_normal(const char *str, int cursor_index, t_position *token_pos)
 {
-	t_sep		separator;
 	t_position	quote_pos; // cpy pour pas modifier le start
 
 	token_pos->start = cursor_index;
 	while (str[cursor_index] != '\0' && !ft_isspace(str[cursor_index]))
 	{
-		/// Si on tombe sur un backslash, on skip le backslash pour afficher le char suivant
-		separator = get_sep(str[cursor_index]);
-		if (separator == QUOTE || separator == DQUOTE)
+		if (str[cursor_index] == '\'' || str[cursor_index] == '"')
 		{
 			quote_pos.start = token_pos->start;
-			if (separator == QUOTE)
-				get_token_quote(str, cursor_index, &quote_pos);
-			//else if (separator == DQUOTE)
-				//get_token_dquote(str, cursor_index, &quote_pos);
+			get_token_quote(str, cursor_index, &quote_pos);
 			token_pos->end = quote_pos.end;
 			return ;
 		}

@@ -31,8 +31,9 @@ static int does_cut_string_litteral(const char c)
 /// Gere les simples quotes '
 void	get_token_quote(const char *cmd, int cursor_index, t_position *token_pos)
 {
-	const char	sep = '\'';
+	char	sep;
 
+	sep = cmd[cursor_index];
 	token_pos->start = cursor_index;
 	token_pos->end = cursor_index + 1;
 
@@ -53,87 +54,14 @@ void	get_token_quote(const char *cmd, int cursor_index, t_position *token_pos)
 
 	/// Si les quotes sont fermées et vide, et que le char suivant n'est pas un espace
 	/// on continue
-	// cursor_index += cmd[cursor_index] == sep; // facon style mais pas clair de faire plus 1
 	if (cmd[cursor_index] == sep)
-	{
 		cursor_index++;
-	}
 
-	/// Sinon mode dquote "normal"
-	while (cmd[cursor_index] != sep)
-	{
-		if (cmd[cursor_index] == '\0')
-		{
-			token_pos->end = cursor_index;
-			return ;
-		}
+	/// On cherche la fin de la quote
+	while (cmd[cursor_index] != sep && cmd[cursor_index] != '\0')
 		cursor_index++;
-	}
-
-	cursor_index++;
-
-	printf("to the end of the quote |%s|\n", &cmd[cursor_index]);
-
-	while (!ft_isspace(cmd[cursor_index]))
-	{
-		if (cmd[cursor_index] == '\0')
-		{
-			token_pos->end = cursor_index;
-			return ;
-		}
-		cursor_index++;
-	}
-	token_pos->end = cursor_index;
-}
-
-
-
-
-/// Gere les double quotes "
-void	get_token_dquote(const char *cmd, int cursor_index, t_position *token_pos)
-{
-	/// Si c'est le dernier char -> error
-	/// Vu que j'ai trim au debut, pas besoin de chercher apres
-	if (cmd[cursor_index + 1] == '\0')
-	{
-		token_pos->start = -1;
-		token_pos->end = -1;
-		printf("TODO: DQUOTE not closed\n");
-		return ;
-	}
-
-	/// Si les dquotes sont fermées et vide on renvoie un token vide
-	cursor_index++;
-	if (cmd[cursor_index] == '"')
-	{
-		token_pos->end = -1;
-		token_pos->start = -1; // TODO c'est pas fait expres, mais quand je le met a 0, ca marche pas, le -1 marche
-		cursor_index++;
-		return ;
-	}
-
-	/// Sinon mode dquote "normal"
-	(token_pos->start) = cursor_index;
-	while (cmd[cursor_index] != '"')
-	{
-		/// Si on tombe sur un backslash, on skip le backslash pour afficher le char suivant
-		/// Si c'etait un dquote, il va automatiquement le skip, apres le ft_strlcpy et le index++
-		if (cmd[cursor_index] == '\\')
-			ft_strlcpy((char *)cmd + cursor_index, cmd + cursor_index + 1, ft_strlen(cmd + cursor_index));
-		if (cmd[cursor_index] == '\0')
-		{
-			// TODO s'il tombe sur le \0 avant le dqoute fermant, lire la prochaine ligne (comportement bash)
-			printf("TODO: DQUOTE not closed\n");
-			break ;
-		}
-		cursor_index++;
-	}
-
-	/// S'il reste du texte apres le quote, on le lit jusqu'a un isspace
-	if (!ft_isspace(cmd[cursor_index]) && cmd[cursor_index] != '\0')
-		ft_strlcpy((char *)cmd + cursor_index, cmd + cursor_index + 1, ft_strlen(cmd + cursor_index));
+	/// On prend tout ce qu'il y a apres jusqu'a un espace // TODO autre sep ?
 	while (!ft_isspace(cmd[cursor_index]) && cmd[cursor_index] != '\0')
 		cursor_index++;
-
-	(token_pos->end) = cursor_index;
+	token_pos->end = cursor_index;
 }

@@ -55,97 +55,68 @@ TEST(TokenizeWithQuote, wordStickBefore_NotClosedQuoteNothingAfter) { //
   tokenizerTest("word'", {"word'"});
 }
 
+TEST(TokenizeWithQuote, wordStickAfter_NotClosedQuoteNothingAfter) { //
+  tokenizerTest("'word", {"'word"});
+}
+
+TEST(TokenizeWithQuote, concatenationTwoWords) {
+  tokenizerTest("'hello'between'world'", {"'hello'between'world'"});
+}
+
+TEST(TokenizeWithQuote, concatenationTwoWords_whithSpaceAround) {
+  tokenizerTest("    'hello'between'world'      ", {"'hello'between'world'"});
+}
+
+TEST(TokenizeWithQuote, concatenationTwoWords_whithSpaceAround_andNormalWord) {
+  tokenizerTest("echo    'hello'between'world'      ",
+                {"echo", "'hello'between'world'"});
+}
+
 TEST(TokenizeWithQuote, backslashAndQuote) {
   tokenizerTest("'hello\\'world'", {"'hello\\'world'"});
 }
 
+TEST(TokenizeWithQuote, others) { // TODO rename test ?
+  tokenizerTest(" 'hello'between$'dollar' ", {"'hello'between$'dollar'"});
+  tokenizerTest(" 'hello'between$", {"'hello'between$"});
+  tokenizerTest(" 'hello'between$dollar ", {"'hello'between$dollar"});
+}
+
 /************************* TokenizeWithDoubleQuote ****************************/
 
-// TODO bien verifier comment bash gere les backslash
-
-/*
 TEST(TokenizeWithDoubleQuote, emptyNothingAfter) {
-  FAIL() << "segfault";
-  const char *sentence = "word \"  \"";
-  t_list *tokens = tokenizer(sentence);
-  EXPECT_STREQ((char *)tokens->content, "word");
-  // TODO sur de ca ?
-  EXPECT_STREQ((char *)tokens->next->content, "\"  \"");
-  ft_lstclear(&tokens, free);
+  tokenizerTest("word \"  \"", {"word", "\"  \""});
 }
 
 TEST(TokenizeWithDoubleQuote, notClosed) {
-  FAIL() << "segfault";
-  const char *sentence = "word \"  ";
-  t_list *tokens = tokenizer(sentence);
-  EXPECT_STREQ((char *)tokens->content, "word");
-  // TODO gerer ca comme une erreure ? Pas selon la consigne
-  EXPECT_STREQ((char *)tokens->next->content, "\"  ");
-  ft_lstclear(&tokens, free);
+  tokenizerTest("word \"  ", {"word", "\"  "});
 }
 
 TEST(TokenizeWithDoubleQuote, backslashAndQuote) {
-  FAIL() << "segfault";
-  t_list *tokens = tokenizer("\"hello\\\"world\"");
-  EXPECT_STREQ((char *)tokens->content, "echo");
-  EXPECT_STREQ((char *)tokens->next->content, "hello\\\"world");
-  ft_lstclear(&tokens, free);
+  tokenizerTest("\"hello\\\"world\"", {"\"hello\\\"world\""});
 }
 
 TEST(TokenizeWithDoubleQuote, singleWord) {
-  FAIL() << "segfault";
-  const char *sentence = "\"word\"";
-  t_list *tokens = tokenizer(sentence);
-  EXPECT_STREQ((char *)tokens->content, "\"word\"");
-  ft_lstclear(&tokens, free);
+  tokenizerTest("\"word\"", {"\"word\""});
 }
 
 TEST(TokenizeWithDoubleQuote, singleWordSpaceAround) {
-  FAIL() << "segfault";
-  const char *sentence = "  \"word\"   ";
-  t_list *tokens = tokenizer(sentence);
-  EXPECT_STREQ((char *)tokens->content, "\"word\"");
-  ft_lstclear(&tokens, free);
+  tokenizerTest("  \"word\"   ", {"\"word\""});
 }
 
 TEST(TokenizeWithDoubleQuote, singleWordSpaceAroundAndInside) {
-  FAIL() << "segfault";
-  const char *sentence = "  \"  word  \"   ";
-  t_list *tokens = tokenizer(sentence);
-  // TODO ?
-  EXPECT_STREQ((char *)tokens->content, "\"word\"");
-  ft_lstclear(&tokens, free);
+  tokenizerTest("  \"  word  \"   ", {"\"  word  \""});
 }
 
 TEST(TokenizeWithDoubleQuote, wordConcatLeft) {
-  FAIL() << "segfault";
-  const char *sentence = "word\"  \"";
-  t_list *tokens = tokenizer(sentence);
-  // TODO ?
-  EXPECT_STREQ((char *)tokens->content, "word");
-  EXPECT_STREQ((char *)tokens->next->content, "\"  \"");
-  ft_lstclear(&tokens, free);
+  tokenizerTest("word\"  \"", {"word\"  \""});
 }
 
 TEST(TokenizeWithDoubleQuote, wordConcatRight) {
-  FAIL() << "segfault";
-  const char *sentence = "\"  \"word";
-  t_list *tokens = tokenizer(sentence);
-  // TODO ?
-  EXPECT_STREQ((char *)tokens->content, "\"  \"");
-  EXPECT_STREQ((char *)tokens->next->content, "word");
-  ft_lstclear(&tokens, free);
+  tokenizerTest("\"  \"word", {"\"  \"word"});
 }
-*/
 
-/*
-TEST(Tokenize, what) {
-  FAIL() << "segfault";
-  const char *sentence = "echo \" salut\\\" \"               \"     ";
-  t_list *tokens = tokenizer(sentence);
-  EXPECT_STREQ((char *)tokens->content, "echo");
-  EXPECT_STREQ((char *)tokens->next->content, " salut\\\" ");
-  EXPECT_STREQ((char *)tokens->next->next->content, "     ");
-  ft_lstclear(&tokens, free);
+TEST(TokenizeWithDoubleQuote, what) {
+  tokenizerTest("echo \" salut\\\" \"               \"     ",
+                {"echo", "\" salut\\\"", "\"               \""});
 }
-*/

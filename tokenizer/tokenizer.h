@@ -12,12 +12,12 @@ typedef enum e_sep
 	AMPERSAND,
 	GREATER,
 	LESS,
+	NONE,
 
 	SEMICOLUMN,
 	BACKSLASH, // parser direct la nouvelle ligne sans separer ???
 
 	SEP_ERROR,
-	NONE
 } t_sep;
 
 typedef struct s_position
@@ -41,7 +41,7 @@ void	get_token_normal	(const char *str, int cursor_index, t_position *token_pos)
 
 t_set_token_position	*list_func(void);
 t_sep		get_sep(const char sep);
-t_list		*tokenizer(const char *str);
+t_list		*tokenizer(char *str); // TODO const ?
 
 
 

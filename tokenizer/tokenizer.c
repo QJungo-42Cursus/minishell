@@ -26,7 +26,7 @@ static int	init_tokenizer(t_list **tokens, char **token, int *cursor_index, t_se
 	return (SUCCESS);
 }
 
-t_list *tokenizer(const char *const cmd) 
+t_list *tokenizer(char *cmd) 
 /// Renvoie une liste chainee de token (char *) ou NULL en cas d'erreur
 /// Prend un string (cmd) non NULL et non modifiable en arg
 /// => cmd to tokens
@@ -38,8 +38,10 @@ t_list *tokenizer(const char *const cmd)
 	t_set_token_position	*set_token_position;
 	t_position				token_position;
 
+
 	if (init_tokenizer(&tokens, &token, &cursor_index, &set_token_position) == ERROR)
 		return (NULL);  // TODO errno
+
 	while (cursor_index != ft_strlen(cmd))
 	{
 		set_cursor_after_space(cmd, &cursor_index);
@@ -60,7 +62,7 @@ t_list *tokenizer(const char *const cmd)
 			perror(":"); fflush ( stdout );
 			return (NULL); // + free 
 		}
-		token = ft_substr(cmd, token_position.start, token_position.end - token_position.start);
+		token = ft_substr(cmd, token_position.start, token_position.end - token_position.start); // FIXME provoque un segfault si token_position.end == 0
 		cursor_index = token_position.end;
 		if (token != NULL)
 		{
