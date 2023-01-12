@@ -1,5 +1,15 @@
 #define TEST // Will hide the true main function
 
+extern "C" {
+// all needed C files
+#include "../tokenizer/get_next_token_functions.c"
+#include "../tokenizer/get_token_dquote.c"
+#include "../tokenizer/get_token_normal.c"
+#include "../tokenizer/get_token_quote.c"
+#include "../tokenizer/set_next_token_position.c"
+#include "../tokenizer/tokenizer.c"
+}
+
 #include "gtest/gtest.h"
 #include <iostream>
 

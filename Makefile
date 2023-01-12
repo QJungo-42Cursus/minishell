@@ -3,27 +3,27 @@ CC =			gcc
 CFLAGS =		-Wall -Wextra -Werror
 LIBFT =			-L./libft -lft
 RM =			rm -f
+SRCS =			main.c \
+				tokenizer/tokenizer.c \
+				tokenizer/get_next_token_functions.c \
+				tokenizer/get_token_normal.c \
+				tokenizer/get_token_quote.c \
+				tokenizer/get_token_dquote.c \
+				tokenizer/set_next_token_position.c \
+				builtins/echo.c
+OBJS =			$(SRCS:.c=.o)
 
-### MAC OS
-#INCLUDES =		-I$(HOME)/.brew/opt/readline/include
-#OUT_LIBS =		-L$(HOME)/.brew/opt/readline/lib \
-#				-lreadline
-#.c.o:
-#		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $(<:.c=.o)
-#####
+#### INCLUDES (READLINE) ####
+OUT_LIBS = -lreadline
 
-SRCS =		main.c \
-			tokenizer/tokenizer.c \
-			tokenizer/get_next_token_functions.c \
-			tokenizer/debug_helpers.c \
-			tokenizer/get_token_normal.c \
-			tokenizer/get_token_quote.c \
-			tokenizer/get_token_dquote.c \
-			tokenizer/get_token_redirect.c \
-			builtins/echo.c
+ifeq ($(shell uname), Darwin) # MAC need the path to it (including the headers)
+OUT_LIBS += -L$(HOME)/.brew/opt/readline/lib
+INCLUDES = -I$(HOME)/.brew/opt/readline/include
+.c.o:
+		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $(<:.c=.o)
+endif
 
-OBJS =		$(SRCS:.c=.o)
-
+#### MAIN RULES ####
 all: $(NAME)
 $(NAME): $(OBJS)
 	make -C libft
@@ -39,8 +39,7 @@ fclean: clean
 
 re: fclean all
 
-### TESTS ###
-
+#### TESTS ####
 SRCS_TEST = tests/main.cpp \
 			tests/tokenizer.cpp
 #OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
@@ -63,4 +62,5 @@ lldb:
 	@$(CC) $(CFLAGS) $(SRCS) -g $(LIBFT) -o $(NAME)
 	lldb ./$(NAME)
 
+#### Phony ####
 .PHONY: all clean fclean re test u_libft

@@ -1,27 +1,32 @@
 #ifndef TOKENIZER_H
-
-# include "../libft/libft.h"
-
 # define TOKENIZER_H
 
-# define SEP_NB 7
+# include "../libft/libft.h"
+# define SEP_NB 6 // 8 avec le BACKSLASH + SEMICOLUMN
+
 typedef enum e_sep
 {
 	QUOTE,
 	DQUOTE,
 	PIPE,
 	AMPERSAND,
-	SEMICOLUMN,
 	GREATER,
 	LESS,
 
+	SEMICOLUMN,
 	BACKSLASH, // parser direct la nouvelle ligne sans separer ???
 
 	SEP_ERROR,
 	NONE
 } t_sep;
 
-typedef void (*t_get_token)(const char *str, int *index, int *start, int *end); // TODO trop d'args ? faire une struct ?
+typedef struct s_position
+{
+	int start;	// inclusif
+	int end;	// exclusif
+}	t_position;
+
+typedef void (*t_set_token_position)(const char *str, int cursor_index, t_position *token_pos);
 
 typedef struct s_token {
 	char	*str;
@@ -29,21 +34,18 @@ typedef struct s_token {
 	// TODO ajouter d'autre details, genre si les quotes sont fermes ou non
 }	t_token;
 
-void	get_token_dquote(const char *str, int *index, int *start, int *end);
-void	get_token_quote(const char *str, int *index, int *start, int *end);
-void	get_token_normal(const char *str, int *index, int *start, int *end);
-void	get_token_pipe(const char *str, int *index, int *start, int *end); 
-void	get_token_ampersant(const char *str, int *index, int *start, int *end);
-void	get_token_semicolumn(const char *str, int *index, int *start, int *end);
-void	get_token_greater(const char *str, int *index, int *start, int *end);
-void	get_token_less(const char *str, int *index, int *start, int *end);
+// TODO rename to "set_token_pos_x"
+void	get_token_dquote	(const char *str, int cursor_index, t_position *token_pos);
+void	get_token_quote		(const char *str, int cursor_index, t_position *token_pos);
+void	get_token_normal	(const char *str, int cursor_index, t_position *token_pos);
 
-t_get_token	*list_func();
+t_set_token_position	*list_func(void);
 t_sep		get_sep(const char sep);
 t_list		*tokenizer(const char *str);
 
-//	debug helpers
-void		log_tokens(t_list *tokens);
-void		log_sep(t_sep sep);
+
+
+
+int	set_next_token_position(const char *cmd, int cursor_index, t_set_token_position *set_token_position, t_position *token_position);
 
 #endif /* TOKENIZER_H */

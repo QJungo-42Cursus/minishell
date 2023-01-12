@@ -3,111 +3,85 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include "../tests/debug_helper.h"
 
-
-/// Renvoie un substr du prochain token qu'il se charge de trouver + avance le curseur (l'index)
-/// En cas d'erreur, renvoie NULL ET set errno
-/// Il peut arriver qu'il renvoie NULL sans erreur (ex: ' echo salut ""')
-///    -> Dans ce cas, il faut juste passer au token suivant
-char	*get_next_token(const char *str, int *index)
+static void	set_cursor_after_space(const char *const cmd, int *const cursor_index)
 {
-	//char		*token;
-	int			start;
-	int			end;
-	t_sep		sep;
-	t_get_token	*get_token;
+	while (ft_isspace(cmd[*cursor_index]) && cmd[*cursor_index] != '\0')
+		(*cursor_index)++;
+}
 
-	/// Check if the string is empty
-	if (str[*index] == '\0' || str == NULL || index == NULL)
+static int	init_tokenizer(t_list **tokens, char **token, int *cursor_index, t_set_token_position **set_token_position)
+{
+	*set_token_position = list_func();
+	if (*set_token_position == NULL)
 	{
-		// TODO: set errno
-		return (NULL);
+		// TODO set errno ? / check errno ?
+		CRASH("allocation de la liste de pointeur sur fonction fail !!!\n");
+		return (ERROR);
 	}
+	*tokens = NULL;
+	*token = NULL;
+	*cursor_index = 0;
+	return (SUCCESS);
+}
 
-	/// cut the space before the tokens
-	while (ft_isspace(str[*index]) && str[*index] != '\0')
-		(*index)++;
+t_list *tokenizer(const char *const cmd) 
+/// Renvoie une liste chainee de token (char *) ou NULL en cas d'erreur
+/// Prend un string (cmd) non NULL et non modifiable en arg
+/// => cmd to tokens
+{
+	// TODO normer a la fin
+	t_list					*tokens;
+	char					*token;
+	int						cursor_index;
+	t_set_token_position	*set_token_position;
+	t_position				token_position;
 
-	/// Set le debut du token a l'index courant de la chaine
-	start = *index;
-	
-	/// agit en fonction du 1er char, qui fera office de separateur, s'il rentre dans l'enum t_sep
-	sep = get_sep(str[*index]);
-	if (sep == SEP_ERROR)
+	if (init_tokenizer(&tokens, &token, &cursor_index, &set_token_position) == ERROR)
+		return (NULL);  // TODO errno
+	while (cursor_index != ft_strlen(cmd))
 	{
-		// TODO
-		// set errno
-		// je ne vois pas d'ou ca pourrais venir, a par des caracteres non imprimables chelou de mechant.
-		printf("SEP_ERROR\n");
-		return (NULL);
-	}
-	else
-	{
-		//log_sep(sep);
-		get_token = list_func();
-		if (get_token == NULL)
+		set_cursor_after_space(cmd, &cursor_index);
+		if (cmd[cursor_index] == '\0')
 		{
-			printf("allocation de la liste de pointeur sur fonction fail !!!\n");
-			// TODO
-			// set errno ? / check errno ?
-			return (NULL);
+			// TODO: set errno -> comment ca peut arriver ????
+			// si c'est normal -> juste le mettre dans while() et ajouter set_cursor_after_space() a la fin
+			break;
 		}
-		get_token[sep](str, index, &start, &end); // TODO rename get_token to set_indexes
-		//free(get_token); // TODO ne pas l'allouer a chaque fois ?? 
-		// TODO il segfault si je le free...
-	}
-	if (start == -1 || end == start)
-		return (NULL);
-	else
-		return(ft_substr(str, start, end - start));
-}
 
-void	tokenize(const char *line, int *index, t_list **tokens)
-{
-	char	*token;
-
-	token = get_next_token(line, index);
-	if (errno != 0)
-	{
-		printf(" errno a ete set a %d ", errno);
-		fflush ( stdout );
-		perror(":");
-		fflush ( stdout );
-		// TODO
-		// set errno
-		// je ne vois pas d'ou ca pourrais venir, a par des caracteres non imprimables chelou de mechant.
-		//ft_lstclear(tokens, free);
-		//return ;
+		if(set_next_token_position(cmd, cursor_index, set_token_position, &token_position) == ERROR || errno != 0)
+		{
+			// TODO
+			// set errno
+			// je ne vois pas d'ou ca pourrais venir, a par des caracteres non imprimables chelou de mechant.
+			//ft_lstclear(tokens, free);
+			printf(" errno a ete set a %d ", errno); fflush ( stdout );
+			perror(":"); fflush ( stdout );
+			return (NULL); // + free 
+		}
+		token = ft_substr(cmd, token_position.start, token_position.end - token_position.start);
+		cursor_index = token_position.end;
+		if (token != NULL)
+		{
+			ft_lstadd_back(&tokens, ft_lstnew(token));
+			//LOG("added back\n");
+		}
+		else if (errno != 0)
+		{
+			// TODO, si on a renvoye NULL et set le errno, erreur quoi
+			LOG("NULL renvoye par get_next_token avec errno\n");
+			break;
+		}
+		else
+		{
+			// TODO ca arrive quand ?
+			LOG("NULL renvoye par get_next_token sans errno\n");
+			break;
+		}
+		//set_cursor_after_space(cmd, &cursor_index);
 	}
-	if (token != NULL)
-	{
-		ft_lstadd_back(tokens, ft_lstnew(token));
-		//printf("added back\n");
-	}
-	else if (errno != 0)
-	{
-		printf("NULL renvoye par get_next_token avec errno\n");
-		// TODO, si on a renvoye NULL et set le errno, erreur quoi
-	}
-	else
-		printf("NULL renvoye par get_next_token sans errno\n");
-	if (*index == ft_strlen(line))
-		return ;
-	tokenize(line, index, tokens);
-}
-
-t_list *tokenizer(const char *str)
-{
-	t_list	*tokens;
-	int		index;
-
-	if (str == NULL)
-	{
-		// TODO (deja protege non ?)
-	}
-	index = 0;
-	tokens = NULL;
-	tokenize(str, &index, &tokens);
-	//free(str);
+	free(set_token_position);
+	printf("'%s'\n", cmd); LOG_TOKENS(tokens); //
 	return (tokens);
 }
