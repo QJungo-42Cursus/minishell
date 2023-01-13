@@ -1,5 +1,3 @@
-#ifndef TEST
-
 #include "libft/libft.h"       // ...
 #include <stdio.h>             // ...
 #include <stdlib.h>            // ...
@@ -18,7 +16,7 @@ int main(int argc, char **argv, char **envp) {
   (void)argc;
   (void)argv;
   (void)envp;
-  char *line;
+  char *cmd_input;
   char *prompt_msg;
 
   char current_dir[2048];
@@ -27,36 +25,34 @@ int main(int argc, char **argv, char **envp) {
   prompt_msg = ft_sprintf("%s %s %s", "hostname", current_dir, " > ");
 
   while (1) {
-    line = readline(prompt_msg);
+    cmd_input = readline(prompt_msg);
 
 
-    if (line == NULL) {
+    if (cmd_input == NULL) {
       // Ca arrive quand on lache un Ctrl-D
       rl_clear_history();
       printf("EOF rl_clear_history\n");
       continue;
     }
-    if (ft_strlen(line) == 0) {
+    if (ft_strlen(cmd_input) == 0) {
       // Ca arrive quand on enter sans rien...
       // printf("ligne vide\n");
       rl_replace_line("ligne videe...", 10);
       rl_redisplay();
       continue;
     }
-    if (ft_strncmp(line, "exit", 4) == 0) {
+    if (ft_strncmp(cmd_input, "exit", 4) == 0) {
       rl_clear_history();
       printf("exit rl_clear_history\n");
       break;
     }
-	t_list *tokens = tokenizer(line); (void)tokens;
+	t_list *tokens = tokenizer(cmd_input); (void)tokens;
 
-    add_history(line);
+    add_history(cmd_input);
     int c = rl_on_new_line();
     printf("rl_on_new_line : %d\n", c);
 
-    free(line);
+    free(cmd_input);
   }
-  printf("line: %s", line);
+  printf("cmd_input: %s", cmd_input);
 }
-
-#endif

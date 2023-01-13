@@ -29,6 +29,7 @@ TEST(TokenizeWithQuote, someSpaceNothingAfter) {
 
 TEST(TokenizeWithQuote, notClosedWithSpaceAfter) { //
   tokenizerTest("word '  ", {"word", "'  "});
+  // TODO est-ce que on crash tout de suite ?
 }
 
 TEST(TokenizeWithQuote, notClosedWithDollarAfter) { //

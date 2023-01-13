@@ -18,7 +18,7 @@ int	set_next_token_position(const char *cmd, int cursor_index, t_set_token_posit
 		return (ERROR);
 	}
 	//LOG_SEP(separator);
-	set_token_position[separator](cmd, cursor_index, token_position); // TODO rename -> 
+	set_token_position[separator](cmd, cursor_index, token_position);
 	// TODO il peut renvoyer une erreur quand il n'y a juste rien. pas ouf..
 	if (token_position->start == -1 || token_position->end == token_position->start)// TODO ? || token_position->end == 0)
 		return (ERROR);

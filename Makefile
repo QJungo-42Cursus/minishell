@@ -8,7 +8,6 @@ SRCS =			main.c \
 				tokenizer/get_next_token_functions.c \
 				tokenizer/get_token_normal.c \
 				tokenizer/get_token_quote.c \
-				tokenizer/get_token_dquote.c \
 				tokenizer/set_next_token_position.c \
 				builtins/echo.c
 OBJS =			$(SRCS:.c=.o)

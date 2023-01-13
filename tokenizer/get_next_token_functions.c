@@ -2,12 +2,6 @@
 #include "../libft/libft.h"
 #include <stdio.h>
 
-/*
- * TODO
- * ajouter un flag pour savoir si on est dans une quote ou une dquote
- * -> comme ca on peut savoir si l'AST va prendre en compte les $
- */
-
 /// Return the separator type of the first char of the string
 /// For the bash interpreter
 t_sep	get_sep(char sep)
@@ -41,6 +35,9 @@ void	generic_get_token(const char *cmd, int cursor_index, t_position *token_pos)
 {
 	char	c;
 
+	// FIXME -> gestion d'exeption
+	// ex: "2>" -> vont dans le meme token
+	// ex: "&2>" -> vont dans le meme token -> ca depend de si on doit gerer le async ou pas
 	c = cmd[cursor_index];
 	token_pos->start = cursor_index;
 	while (cmd[cursor_index] != '\0' && cmd[cursor_index] == c)
@@ -48,13 +45,12 @@ void	generic_get_token(const char *cmd, int cursor_index, t_position *token_pos)
 	token_pos->end = cursor_index;
 }
 
-#include "../tests/debug_helper.h"
 t_set_token_position	*list_func(void)
 {
 	// TODO !! Add ` and $ to the list
 	t_set_token_position	*list;
 
-	list = malloc(sizeof(t_set_token_position) * SEP_NB);
+	list = (t_set_token_position *)malloc(sizeof(t_set_token_position) * SEP_NB);
 	if (list == NULL)
 	{
 		// TODO

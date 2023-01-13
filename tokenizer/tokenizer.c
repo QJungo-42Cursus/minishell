@@ -84,6 +84,6 @@ t_list *tokenizer(char *cmd)
 		//set_cursor_after_space(cmd, &cursor_index);
 	}
 	free(set_token_position);
-	printf("|%s|\n", cmd); LOG_TOKENS(tokens); //
+	//printf("|%s|\n", cmd); LOG_TOKENS(tokens); //
 	return (tokens);
 }
