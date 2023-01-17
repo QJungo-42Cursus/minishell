@@ -6,10 +6,11 @@
 #include <readline/history.h>  // readline history
 #include <readline/readline.h> // readline lib
 #include "fcntl.h"
-#include "libft/libft.h"
 #include "sys/wait.h"
+// nous
 #include "tokenizer/tokenizer.h"
 #include "env/env.h"
+#include "builtins/builtins.h"
 #include "tests/debug_helper.h"
 #include "minishell.h"
 
@@ -73,6 +74,7 @@ static int	init_minishell(t_minishell *minishell, char **envp)
 	return (SUCCESS);
 }
 
+// TODO SEGFAULT
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell minishell;
@@ -81,14 +83,12 @@ int	main(int argc, char **argv, char **envp)
 	
 	if (init_minishell(&minishell, envp) == ERROR)
 		return (EXIT_FAILURE);
-	main_loop();
+	//main_loop();
 	
-	/*
 	// print all value of minishell
 	printf("minishell.currend_working_directory: %s\n", minishell.currend_working_directory);
-	for (int i = 0; minishell.env_copy[i] != NULL; i++)
-		printf("minishell.env_copy[%d]: %s\n", i, minishell.env_copy[i]);
+	env();
+	export_(&minishell, argv);
 	for (int i = 0; minishell.env_paths[i] != NULL; i++)
 		printf("minishell.env_paths[%d]: %s\n", i, minishell.env_paths[i]);
-	*/
 }

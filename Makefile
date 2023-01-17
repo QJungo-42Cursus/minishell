@@ -12,7 +12,9 @@ SRCS =			main.c \
 				env/cpy_envp.c \
 				env/get_paths_in_env.c \
 				env/env_var_index.c \
-				builtins/echo.c
+				builtins/echo.c \
+				builtins/export.c \
+				builtins/env.c
 OBJS =			$(SRCS:.c=.o)
 
 #### INCLUDES (READLINE) ####

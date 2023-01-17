@@ -27,11 +27,6 @@ int	add_env_var(t_minishell *mini, char *var)
 	return (SUCCESS);
 }
 
-static int	if_exist_remplace(char *var)
-{
-	return (SUCCESS);
-}
-
 static int	check_var_name(char *var)
 {
 	if(ft_strchr(var, '=') == NULL)
@@ -39,7 +34,7 @@ static int	check_var_name(char *var)
 	return (SUCCESS);
 }
 
-int	export(t_minishell *minishell, char **args)
+int	export_(t_minishell *minishell, char **args)
 {
 	char	*var;
 	int		var_index;
@@ -56,12 +51,15 @@ int	export(t_minishell *minishell, char **args)
 	if (var_index == -1)
 	{
 		if (add_env_var(minishell, var) == ERROR)
+		{
+			free(var);
 			return (ERROR);
+		}
 	}
 	else
 	{
-		if (rewrite_var_env(minishell, var, index) == -1)
-			return (ERROR);
+		free(minishell->env_copy[var_index]);
+		minishell->env_copy[var_index] = var;
 	}
 	return (SUCCESS);
 }
