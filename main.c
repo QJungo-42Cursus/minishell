@@ -46,7 +46,8 @@ int main(int argc, char **argv, char **envp) {
       printf("exit rl_clear_history\n");
       break;
     }
-	t_list *tokens = tokenizer(cmd_input); (void)tokens;
+
+	t_list *tokens = tokenizer(cmd_input); (void)tokens; LOG_TOKENS(tokens);
 
     add_history(cmd_input);
     int c = rl_on_new_line();

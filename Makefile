@@ -58,6 +58,11 @@ tquote:
 	./$(NAME_TEST) "--gtest_filter=*TokenizeWithQuote.*"
 	$(RM) $(NAME_TEST)
 
+tpipe:
+	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	./$(NAME_TEST) "--gtest_filter=*Pipeline.*"
+	$(RM) $(NAME_TEST)
+
 u_libft:
 	#rm -rf libft
 	cp -r ../libft .
