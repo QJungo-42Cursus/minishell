@@ -15,7 +15,6 @@ static char	*find_path_line_in_env(char **envp)
 
 char	**get_paths_in_env(char **envp)
 {
-	char	**res;
 	char	*path_line;
 
 	path_line = find_path_line_in_env(envp);

@@ -26,18 +26,17 @@ typedef struct s_ast_node {
 
 /******************************* AST SPECIFIC NODES ***************************/
 
-typedef struct s_ast_node_fix { // suffix and prefix (ltr)
-	t_ast_node					*node;
-	struct s_ast_node_xfix		*next;
-}	t_ast_node_xfix;
-
-
 typedef struct s_ast_node_command {
 	t_ast_node					*node;
 	t_ast_node					*suffix;
 	t_ast_node 					*prefix;
 	struct s_ast_node_command	*next;
 }	t_ast_node_command;
+
+typedef struct s_ast_node_fix { // suffix and prefix (ltr)
+	t_ast_node					*node;
+	struct s_ast_node_xfix		*next;
+}	t_ast_node_xfix;
 
 typedef enum e_logical_type {
 	AND,

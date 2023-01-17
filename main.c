@@ -5,21 +5,15 @@
 #include <signal.h>
 #include <readline/history.h>  // readline history
 #include <readline/readline.h> // readline lib
-
 #include "fcntl.h"
 #include "libft/libft.h"
 #include "sys/wait.h"
 #include "tokenizer/tokenizer.h"
-
+#include "env/env.h"
 #include "tests/debug_helper.h"
+#include "minishell.h"
 
-typedef struct s_term {
-	char	*usr;
-	char	*prompt;
-	char	*cwd;
-	char	**paths;
-}	t_term;
-
+/*
 int	check_input(char *input)
 {
 	if (input == NULL)
@@ -37,28 +31,64 @@ int	check_input(char *input)
 		return (1);
 	}
 }
+*/
 
-int	main(int argc, char **argv, char **envp)
+int main_loop()
 {
 	char	*cmd_input;
 	char	*prompt_msg;
 
-	(void) argc;
-	(void) argv;
-	(void) envp;
 	prompt_msg = ft_strdup("minishell $>");
 	while (1)
 	{
 		cmd_input = readline(prompt_msg);
+		/*
 		if (check_input(cmd_input))
 		{
 			printf("'%s' can't be handle, since we are not doing much (for now).\n", cmd_input);
 			free(cmd_input);
 		}
-		else
+		*/
 		{
 			free(cmd_input);
+			free(prompt_msg);
 			return (0);
 		}
 	}
+}
+	
+static int	init_minishell(t_minishell *minishell, char **envp)
+{
+	if (getcwd(minishell->currend_working_directory, 4097) == NULL)
+		return (ERROR);
+	minishell->env_copy = cpy_envp(envp);
+	if (minishell->env_copy == NULL)
+		return (ERROR);
+	minishell->env_paths = get_paths_in_env(envp);
+	if (minishell->env_paths == NULL)
+	{
+		split_free(minishell->env_paths);// TODO rename
+		return (ERROR);
+	}
+	return (SUCCESS);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_minishell minishell;
+	(void) argc; (void) argv;
+	// TODO balek des args ?
+	
+	if (init_minishell(&minishell, envp) == ERROR)
+		return (EXIT_FAILURE);
+	main_loop();
+	
+	/*
+	// print all value of minishell
+	printf("minishell.currend_working_directory: %s\n", minishell.currend_working_directory);
+	for (int i = 0; minishell.env_copy[i] != NULL; i++)
+		printf("minishell.env_copy[%d]: %s\n", i, minishell.env_copy[i]);
+	for (int i = 0; minishell.env_paths[i] != NULL; i++)
+		printf("minishell.env_paths[%d]: %s\n", i, minishell.env_paths[i]);
+	*/
 }
