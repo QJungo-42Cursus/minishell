@@ -254,21 +254,25 @@ void	example4()
 	char *all_args[3][3] = {
 		{"/bin/ls", "-la",  NULL},
 		{"/bin/cat", "-e", NULL},
-		{"/bin/grep", "e", NULL}
+		{"/bin/bc", "e", NULL}
 		//{"/bin/grep", "e", NULL}
 	};
 	int i = 0;
 
+
+
+
 	int pid = fork();
+	int pids[PIPE_COUNT] = {0,0,0};
 	if (pid == 0) /* CHILD */ // where all the execve are lauched
 	{
 		while (i < PIPE_COUNT)
 		{
-			int pid = fork();
+			pids[i] = fork();
 			// On note que si on inverse et qu'on se met dans l'enfant,
 			// vu que les deux sont bien sepate par la condition,
 			// on obtient le meme resultat
-			if (pid != 0) /* INNER PARENT */ 
+			if (pids[i] == 0) /* CHILD */ 
 			{
 				if (i == 0) /* si c'est la premiere command */
 				{
@@ -306,28 +310,48 @@ void	example4()
 			{
 				i++;
 			}
+		} /* end while */
+		
+		int exit_code;
+		wait(&exit_code);
+		for(int i = 0; i < PIPE_COUNT; i++)
+		{
+			printf("pids[%d]: %d\n", i, pids[i]);
+			//waitpid(pids[i], &exit_code, 0);
 		}
+		//exit_code = 444;
+		write(exit_code_pipe[WRITE], &exit_code, sizeof(int));
 	}
 	else
 	{
 		printf("on est dans le parent (le vrai, le main)\n");
+		int exit_code;
+		waitpid(pid, &exit_code, 0);
+		read(exit_code_pipe[READ], &exit_code, sizeof(int));
+		printf("exit code = %d\n", WEXITSTATUS(exit_code));
+
+	}
+}
 
 
-		char buf[3];
-		//int count = read(exit_code_pipe[READ], buf, 3);
-		//buf[count] = '\0';
-		//printf("exit code: '%s'\n", buf);
-		int status;
-		wait(&status);
-		if (WIFEXITED(status)) 
-		{
-			printf("Child exit status: %d\n", WEXITSTATUS(status));
-		}
-		else
-		{
-			printf("Child exited abnormally\n");
-		}
-		//printf("result: %d\n", result);
+
+
+void	example5()
+{
+	// passing a int into a pipe
+	int pipefd[2];
+	pipe(pipefd);
+	int pid = fork();
+	if (pid == 0) /* CHILD */
+	{
+		int i = 478;
+		write(pipefd[WRITE], &i, sizeof(int));
+	}
+	else /* PARENT */
+	{
+		int result;
+		read(pipefd[READ], &result, sizeof(int));
+		printf("result: %d\n", result);
 	}
 }
 
@@ -337,6 +361,7 @@ int main()
 	//example2();
 	//example3();
 	example4();
+	//example5();
 }
 
 // STDIN_FILENO = 0
