@@ -1,5 +1,6 @@
 #include "../libft/libft.h"
 #include "../minishell.h"
+#include "../env/env.h"
 
 int	add_env_var(t_minishell *mini, char *var)
 {
@@ -26,27 +27,41 @@ int	add_env_var(t_minishell *mini, char *var)
 	return (SUCCESS);
 }
 
-
 static int	if_exist_remplace(char *var)
+{
+	return (SUCCESS);
+}
 
 static int	check_var_name(char *var)
 {
 	if(ft_strchr(var, '=') == NULL)
 		return (ERROR);
-
+	return (SUCCESS);
 }
 
 int	export(t_minishell *minishell, char **args)
 {
 	char	*var;
+	int		var_index;
 
 	if (check_var_name(args[1]) == ERROR)
+	{
+		//TODO Message error
 		return (ERROR);
-
+	}
 	var = ft_strdup(args[1]);
 	if (var == NULL)
 		return (ERROR);
-	if (add_env_var(minishell, var) == ERROR)
-		return (ERROR);
+	var_index = env_var_index(minishell, var);
+	if (var_index == -1)
+	{
+		if (add_env_var(minishell, var) == ERROR)
+			return (ERROR);
+	}
+	else
+	{
+		if (rewrite_var_env(minishell, var, index) == -1)
+			return (ERROR);
+	}
 	return (SUCCESS);
 }

@@ -11,6 +11,7 @@ SRCS =			main.c \
 				tokenizer/set_next_token_position.c \
 				env/cpy_envp.c \
 				env/get_paths_in_env.c \
+				env/env_var_index.c \
 				builtins/echo.c
 OBJS =			$(SRCS:.c=.o)
 
