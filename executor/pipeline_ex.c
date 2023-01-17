@@ -248,89 +248,57 @@ void	init_pipes(int *pipes, int n)
 void	example4()
 {
 	int contiguos_pipefds[PIPE_COUNT * 2];
-	int exit_code_pipe[2];
-	pipe(exit_code_pipe);
 	init_pipes(contiguos_pipefds, PIPE_COUNT);
 	char *all_args[3][3] = {
 		{"/bin/ls", "-la",  NULL},
-		{"/bin/cat", "-e", NULL},
-		{"/bin/bc", "e", NULL}
-		//{"/bin/grep", "e", NULL}
+		//{"/bin/cat", "-e", NULL},
+		{"/bin/bc", "e", NULL},
+		{"/bin/echo", "salut", NULL},
 	};
 	int i = 0;
-
-
-
-
-	int pid = fork();
 	int pids[PIPE_COUNT] = {0,0,0};
-	if (pid == 0) /* CHILD */ // where all the execve are lauched
+	while (i < PIPE_COUNT)
 	{
-		while (i < PIPE_COUNT)
+		pids[i] = fork();
+		if (pids[i] == 0) /* CHILD */ 
 		{
-			pids[i] = fork();
-			// On note que si on inverse et qu'on se met dans l'enfant,
-			// vu que les deux sont bien sepate par la condition,
-			// on obtient le meme resultat
-			if (pids[i] == 0) /* CHILD */ 
+			if (i == 0) /* si c'est la premiere command */
 			{
-				if (i == 0) /* si c'est la premiere command */
-				{
-					//dup2(exit_code_pipe[WRITE], FD_CLOEXEC);
-					dup2(contiguos_pipefds[pipe_index(i, WRITE)], STDOUT_FILENO);
-					close_all_pipes(contiguos_pipefds);
-					execve(all_args[i][0], all_args[i], NULL);
+				dup2(contiguos_pipefds[pipe_index(i, WRITE)], STDOUT_FILENO);
+				close_all_pipes(contiguos_pipefds);
+				execve(all_args[i][0], all_args[i], NULL);
 
-					printf("execve failed\n");
-					exit(2);
-				}
-				else if (i == PIPE_COUNT - 1) /* si c'est la fin */
-				{
-					//dup2(exit_code_pipe[WRITE], FD_CLOEXEC);
-					dup2(contiguos_pipefds[pipe_index(i - 1, READ)], STDIN_FILENO);
-					close_all_pipes(contiguos_pipefds);
-					execve(all_args[i][0], all_args[i], NULL);
-
-					printf("execve failed\n");
-					exit(2);
-				}
-				else /* si c'est au milieu */
-				{
-					//dup2(exit_code_pipe[WRITE], FD_CLOEXEC);
-					dup2(contiguos_pipefds[pipe_index(i - 1, READ)], STDIN_FILENO);
-					dup2(contiguos_pipefds[pipe_index(i, WRITE)], STDOUT_FILENO);
-					close_all_pipes(contiguos_pipefds);
-					execve(all_args[i][0], all_args[i], NULL);
-
-					printf("execve failed\n");
-					exit(2);
-				}
+				printf("execve failed\n");
+				exit(2);
 			}
-			else /* CHILD */
+			else if (i == PIPE_COUNT - 1) /* si c'est la fin */
 			{
-				i++;
+				dup2(contiguos_pipefds[pipe_index(i - 1, READ)], STDIN_FILENO);
+				close_all_pipes(contiguos_pipefds);
+				execve(all_args[i][0], all_args[i], NULL);
+
+				printf("execve failed\n");
+				exit(2);
 			}
-		} /* end while */
-		
-		int exit_code;
-		wait(&exit_code);
-		for(int i = 0; i < PIPE_COUNT; i++)
-		{
-			printf("pids[%d]: %d\n", i, pids[i]);
-			//waitpid(pids[i], &exit_code, 0);
+			else /* si c'est au milieu */
+			{
+				dup2(contiguos_pipefds[pipe_index(i - 1, READ)], STDIN_FILENO);
+				dup2(contiguos_pipefds[pipe_index(i, WRITE)], STDOUT_FILENO);
+				close_all_pipes(contiguos_pipefds);
+				execve(all_args[i][0], all_args[i], NULL);
+
+				printf("execve failed\n");
+				exit(2);
+			}
 		}
-		//exit_code = 444;
-		write(exit_code_pipe[WRITE], &exit_code, sizeof(int));
-	}
-	else
-	{
-		printf("on est dans le parent (le vrai, le main)\n");
-		int exit_code;
-		waitpid(pid, &exit_code, 0);
-		read(exit_code_pipe[READ], &exit_code, sizeof(int));
-		printf("exit code = %d\n", WEXITSTATUS(exit_code));
-
-	}
+		else /* CHILD */
+		{
+			i++;
+		}
+	} /* end while */
+	int exit_code;
+	wait(&exit_code);
+	printf("exit code = %d\n", WEXITSTATUS(exit_code));
 }
 
 

@@ -6,6 +6,7 @@
 typedef enum e_ast_node_type {
 	COMMAND,
 	PIPELINE,
+	LOGICAL,
 }	t_ast_node_type;
 
 
@@ -38,4 +39,70 @@ typedef struct s_ast_node_command {
 	struct s_ast_node_command	*next;
 }	t_ast_node_command;
 
+typedef enum e_logical_type {
+	AND,
+	OR,
+}	t_logical_type;
+
+typedef struct s_ast_node_logical {
+	t_ast_node					*node;
+	t_logical_type				type;
+	void						*left;
+	void						*right;
+}	t_ast_node_logical;
+
 #endif /* AST_NODES_H */
+/*
+{
+	"type": "Script",
+		"commands": [
+		{
+			"type": "LogicalExpression",
+			"op": "or",
+			"left": {
+				"type": "Subshell",
+				"list": {
+					"type": "CompoundList",
+					"commands": [
+					{
+						"type": "LogicalExpression",
+						"op": "and",
+						"left": {
+							"type": "Command",
+							"name": {
+								"text": "echo",
+								"type": "Word"
+							},
+							"suffix": [
+							{
+								"text": "hello",
+								"type": "Word"
+							},
+							{
+								"text": "world",
+								"type": "Word"
+							}
+							]
+						},
+						"right": {
+							"type": "Command",
+							"name": {
+								"text": "s",
+								"type": "Word"
+							}
+						}
+					}
+					]
+				}
+			},
+			"right": {
+				"type": "Command",
+				"name": {
+					"text": "echo",
+					"type": "Word"
+				}
+			}
+		}
+	]
+}
+*/
