@@ -12,47 +12,52 @@
 
 #include "tests/debug_helper.h"
 
-int main(int argc, char **argv, char **envp) {
-  (void)argc;
-  (void)argv;
-  (void)envp;
-  char *cmd_input;
-  char *prompt_msg;
+typedef struct s_term {
+	char	*usr;
+	char	*prompt;
+	char	*cwd;
+	char	**paths;
+}	t_term;
 
-  char current_dir[2048];
-  getcwd(current_dir, 2048);
-  printf("dir : %s \n", current_dir);
-  prompt_msg = ft_sprintf("%s %s %s", "hostname", current_dir, " > ");
+int	check_input(char *input)
+{
+	if (input == NULL)
+		return (1);
+	else if (ft_strlen(input) == 0)
+		return (1);
+	else if (ft_strncmp(input, "exit", 5) == 0)
+	{
+		rl_clear_history();
+		return (0);
+	}
+	else
+	{
+		add_history(input);
+		return (1);
+	}
+}
 
-  while (1) {
-    cmd_input = readline(prompt_msg);
+int	main(int argc, char **argv, char **envp)
+{
+	char	*cmd_input;
+	char	*prompt_msg;
 
-
-    if (cmd_input == NULL) {
-      // Ca arrive quand on lache un Ctrl-D
-      rl_clear_history();
-      printf("EOF rl_clear_history\n");
-      continue;
-    }
-    if (ft_strlen(cmd_input) == 0) {
-      // Ca arrive quand on enter sans rien...
-      // printf("ligne vide\n");
-      rl_replace_line("ligne videe...", 10);
-      rl_redisplay();
-      continue;
-    }
-    if (ft_strncmp(cmd_input, "exit", 4) == 0) {
-      rl_clear_history();
-      printf("exit rl_clear_history\n");
-      break;
-    }
-	t_list *tokens = tokenizer(cmd_input); (void)tokens;
-
-    add_history(cmd_input);
-    int c = rl_on_new_line();
-    printf("rl_on_new_line : %d\n", c);
-
-    free(cmd_input);
-  }
-  printf("cmd_input: %s", cmd_input);
+	(void) argc;
+	(void) argv;
+	(void) envp;
+	prompt_msg = ft_strdup("minishell $>");
+	while (1)
+	{
+		cmd_input = readline(prompt_msg);
+		if (check_input(cmd_input))
+		{
+			printf("'%s' can't be handle, since we are not doing much (for now).\n", cmd_input);
+			free(cmd_input);
+		}
+		else
+		{
+			free(cmd_input);
+			return (0);
+		}
+	}
 }
