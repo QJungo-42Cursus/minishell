@@ -61,5 +61,13 @@ int	export_(t_minishell *minishell, char **args)
 		free(minishell->env_copy[var_index]);
 		minishell->env_copy[var_index] = var;
 	}
+
+	if (ft_strncmp(var, "PATH=", 5) == 0)
+	{
+		split_free(minishell->env_paths);
+		minishell->env_paths = get_paths_in_env(minishell->env_copy);
+		if (minishell->env_paths == NULL)
+			return (ERROR); // TODO aie error handling
+	}
 	return (SUCCESS);
 }

@@ -7,7 +7,7 @@ int	env_var_index(t_minishell *mini, char *var)
 	int	len;
 
 	i = 0;
-	len = ft_strlen(var);
+	len = strlen_until(var, "=");
 	while (mini->env_copy[i] != NULL)
 	{
 		if (ft_strncmp(mini->env_copy[i], var, len) == 0)
