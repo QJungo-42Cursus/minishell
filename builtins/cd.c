@@ -1,5 +1,6 @@
 #include "../libft/libft.h"
 #include "../minishell.h"
+#include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
 
@@ -19,22 +20,8 @@ static int	check_argv(char **argv)
 	return (SUCCESS);
 }
 
-
-
-static int	change_path(t_minishell *minishell, char *new_path)
-{
-
-}
-
-
-static int	is_valid(char *new_path)
-{
-
-}
-
 int		cd(t_minishell *minishell, char **argv)
 {
-	// 0. check too many / too few arguments
 	int		exit_code;
 	char	*path;
 	exit_code = check_argv(argv);
@@ -47,18 +34,20 @@ int		cd(t_minishell *minishell, char **argv)
 		return (SUCCESS);
 	}
 
-	t_bool	is_absolute;
-	is_absolute = argv[1][0] == '/';
+	if (chdir(argv[1]) != 0)
+	{
+		perror("chdir:");
+		return (errno);
+	}
+	if (get_env_var_index(minishell->env_copy, "OLD_PWD=") != -1)
+	{
 
+		path = ft_strjoin("OLD_PWD=", minishell->current_working_directory);
+	}
+	getcwd(minishell->current_working_directory, 4097);
+	if (get_env_var_index(minishell->env_copy, "PWD="))
+	{}
 
-
-	change_path(minishell, "~"); // TODO est-ce que ca marche ~
-		chdir("~");
-
-	/*
-		chdir(argv[1]);
-	change_env(
-	*/
 	
 	
 
