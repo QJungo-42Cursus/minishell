@@ -1,6 +1,7 @@
 #include "../minishell.h"
 #include "../libft/libft.h"
 
+// TODO const et pas pointeur
 int	env_var_index(t_minishell *mini, char *var)
 {
 	int	i;

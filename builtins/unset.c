@@ -17,6 +17,7 @@ static int	remove_env_var(t_minishell *mini, int index_var)
 
 int	unset(t_minishell *minishell, char **args)
 {
+	// TODO path
 	char	*var;
 	int		var_index;
 
