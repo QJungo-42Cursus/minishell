@@ -24,7 +24,7 @@ int	unset(t_minishell *minishell, char **args)
 	var = ft_strjoin(args[1], "=");
 	if (var == NULL)
 		return (ERROR);
-	var_index = env_var_index(minishell, var);
+	var_index = get_env_var_index((const char **)minishell->env_copy, var);
 	if (var_index != -1)
 		remove_env_var(minishell, var_index);
 	if (ft_strncmp(var, "PATH=", 5))

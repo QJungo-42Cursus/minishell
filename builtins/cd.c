@@ -1,5 +1,6 @@
 #include "../libft/libft.h"
 #include "../env/env.h"
+#include "../builtins/builtins.h"
 #include "../minishell.h"
 #include <unistd.h>
 #include <errno.h>
@@ -18,55 +19,78 @@ static int	check_argv(char **argv)
 		perror("cd:");
 		return (-1);
 	}
+	return (argc);
+}
+
+static int	go_home(t_minishell *minishell)
+{
+	(void)minishell;
+
+
+	// TODO  $HOME
+	return (SUCCESS);
+}
+
+static int	export_pwd(t_minishell *minishell, const char *to_join)
+{
+	char	*joined_export_argv;
+	char	**splited_export_argv;
+	int		exit_code;
+
+	joined_export_argv = ft_strjoin(to_join, minishell->current_working_directory);
+	if (joined_export_argv == NULL)
+		return (ERROR);
+	splited_export_argv = ft_split(joined_export_argv, ' ');
+	if (splited_export_argv == NULL)
+	{
+		free(joined_export_argv);
+		return (ERROR);
+	}
+	exit_code = export_(minishell, splited_export_argv);
+	free(joined_export_argv);
+	split_free(splited_export_argv);
+	return (exit_code);
+}
+
+static int	change_directory_in_env(t_minishell *minishell)
+{
+
+	if (get_env_var_index((const char **)minishell->env_copy, "OLD_PWD=") != -1)
+	{
+		if (export_pwd(minishell, "export OLD_PWD="))
+			return (ERROR);
+	}
+	getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1);
+	if (get_env_var_index((const char **)minishell->env_copy, "PWD=") != -1)
+	{
+		if (export_pwd(minishell, "export PWD="))
+			return (ERROR);
+	}
 	return (SUCCESS);
 }
 
 int		cd(t_minishell *minishell, char **argv)
 {
 	int		argc;
-	char	*path;
+
 	argc = check_argv(argv);
 	if (argc == -1)
 		return (errno);
-
 	if (argc == 1)
 	{
-		// TODO  $HOME
+		if (go_home(minishell) == -1)
+			return (errno);
 		return (SUCCESS);
 	}
-
-	if (argv[1][0] == '~') // on ne doit pas gerer les symlink
-	{
-		// TODO
-		return (SUCCESS);
-	}
-
 	if (chdir(argv[1]) != 0)
 	{
-		perror("chdir:");
+		perror("chdir:"); // TODO chdir ? cd ?
 		return (errno);
 	}
-	if (get_env_var_index(minishell->env_copy, "OLD_PWD=") != -1)
+	if (change_directory_in_env(minishell) == ERROR)
 	{
-		// TODO rename
-		char * new_paths_arg = ft_strjoin("export OLD_PWD=", minishell->current_working_directory);
-		char ** new_paths = ft_split(new_paths_arg, ' ');
-		if (export_(minishell, new_paths))
-		{
-			// TODO
-		}
+		// TODO best error handling ?
+		return (ERROR);
 	}
-	getcwd(minishell->current_working_directory, 4097);
-	if (get_env_var_index(minishell->env_copy, "PWD=") != -1)
-	{
-		// TODO rename
-		char * new_paths_arg = ft_strjoin("export PWD=", minishell->current_working_directory);
-		char ** new_paths = ft_split(new_paths_arg, ' ');
-		if (export_(minishell, new_paths))
-		{
-			// TODO
-		}
-	}
-	// bonus 4. actualize the prompt
 	return (SUCCESS);
 }

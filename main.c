@@ -60,7 +60,7 @@ int main_loop()
 	
 static int	init_minishell(t_minishell *minishell, char **envp)
 {
-	if (getcwd(minishell->currend_working_directory, 4097) == NULL)
+	if (getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1) == NULL)
 		return (ERROR);
 	minishell->env_copy = cpy_envp(envp);
 	if (minishell->env_copy == NULL)
@@ -84,19 +84,13 @@ int	main(int argc, char **argv, char **envp)
 		return (EXIT_FAILURE);
 	//main_loop();
 	
-	printf("Coucou\n");
-	//export_(&minishell, argv);
-	//env(minishell);
 	//char **test = ft_split("export CACA=0", ' ');
-	char **untest = ft_split("unset DISPLAY", ' ');
+	char **cd_test = ft_split("cd /", ' ');
+	//char **untest = ft_split("unset LS_COLORS", ' ');
 	//export_(&minishell, test);
-	//env(minishell);
+	//unset(&minishell, untest);
 	env(minishell);
-	unset(&minishell, untest);
+	cd(&minishell, cd_test);
 	env(minishell);
-	/*
-	env(minishell);
-	for(int i = 0; minishell.env_paths[i]; i++)
-		printf("minishell.env_paths[%d] = %s\n", i, minishell.env_paths[i]);
-	*/
+
 }

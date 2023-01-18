@@ -47,7 +47,7 @@ int	export_(t_minishell *minishell, char **argv)
 	var = ft_strdup(argv[1]);
 	if (var == NULL)
 		return (ERROR);
-	var_index = env_var_index(minishell, var);
+	var_index = get_env_var_index((const char **)minishell->env_copy, var);
 	if (var_index == -1)
 	{
 		if (add_env_var(minishell, var) == ERROR)
