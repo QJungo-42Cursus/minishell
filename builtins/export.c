@@ -34,17 +34,17 @@ static int	check_var_name(char *var)
 	return (SUCCESS);
 }
 
-int	export_(t_minishell *minishell, char **args)
+int	export_(t_minishell *minishell, char **argv)
 {
 	char	*var;
 	int		var_index;
 
-	if (check_var_name(args[1]) == ERROR)
+	if (check_var_name(argv[1]) == ERROR)
 	{
 		//TODO Message error
 		return (ERROR);
 	}
-	var = ft_strdup(args[1]);
+	var = ft_strdup(argv[1]);
 	if (var == NULL)
 		return (ERROR);
 	var_index = env_var_index(minishell, var);
