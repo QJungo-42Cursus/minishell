@@ -12,6 +12,6 @@ int		pwd(void);
 int		env(t_minishell minishell);
 int		exit_(void);
 int		export_(t_minishell *minishell, char **args);
-int		unset(char *name);
+int		unset(t_minishell *minishell, char **args);
 
 #endif /* BUILTINS_H */

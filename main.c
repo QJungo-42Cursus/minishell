@@ -86,14 +86,18 @@ int	main(int argc, char **argv, char **envp)
 	//main_loop();
 	
 	printf("Coucou\n");
-	export_(&minishell, argv);
+	//export_(&minishell, argv);
+	//env(minishell);
+	//char **test = ft_split("export CACA=0", ' ');
+	char **untest = ft_split("unset DISPLAY", ' ');
+	//export_(&minishell, test);
+	//env(minishell);
 	env(minishell);
-	char **test = ft_split("export PATH=0", ' ');
-	printf("test[0] = %s\n", test[0]);
-	printf("test[0] = %s\n", test[1]);
-	printf("test[0] = %s\n", test[2]);
-	export_(&minishell, test);
+	unset(&minishell, untest);
+	env(minishell);
+	/*
 	env(minishell);
 	for(int i = 0; minishell.env_paths[i]; i++)
 		printf("minishell.env_paths[%d] = %s\n", i, minishell.env_paths[i]);
+	*/
 }
