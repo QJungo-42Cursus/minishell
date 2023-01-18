@@ -78,17 +78,23 @@ static int	init_minishell(t_minishell *minishell, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell minishell;
+	char **test; 
 	(void) argc; (void) argv;
 	// TODO balek des args ?
 	
 	if (init_minishell(&minishell, envp) == ERROR)
 		return (EXIT_FAILURE);
+	test = ft_split("export caca=0", ' ');
+	if (!test)
+		return (ERROR);
 	//main_loop();
 	
 	// print all value of minishell
-	printf("minishell.currend_working_directory: %s\n", minishell.currend_working_directory);
-	env();
+//	printf("minishell.currend_working_directory: %s\n", minishell.currend_working_directory);
+	printf("Coucou\n");
 	export_(&minishell, argv);
+	export_(&minishell, test);
+	env(minishell);
 	for (int i = 0; minishell.env_paths[i] != NULL; i++)
 		printf("minishell.env_paths[%d]: %s\n", i, minishell.env_paths[i]);
 }

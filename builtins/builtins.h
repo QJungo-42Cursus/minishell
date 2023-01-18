@@ -9,7 +9,7 @@ int		echo(char **argv, char **envp);
 
 int		cd(char *path);
 int		pwd(void);
-int		env(void);
+int		env(t_minishell minishell);
 int		exit_(void);
 int		export_(t_minishell *minishell, char **args);
 int		unset(char *name);
