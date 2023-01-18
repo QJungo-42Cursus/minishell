@@ -74,16 +74,8 @@ static int	init_minishell(t_minishell *minishell, char **envp)
 	return (SUCCESS);
 }
 
-// TODO SEGFAULT
 int	main(int argc, char **argv, char **envp)
 {
-	char buf[2000];
-	getcwd(buf, 2000);
-	printf("%s\n", buf);
-	chdir("env");
-	getcwd(buf, 2000);
-	printf("%s\n", buf);
-	return 0;
 	t_minishell minishell;
 	(void) argc; (void) argv;
 	// TODO balek des args ?

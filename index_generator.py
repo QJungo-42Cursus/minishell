@@ -15,7 +15,9 @@ def get_makefile_srcs() -> list[str]:
             if line.startswith("OBJS"):
                 break
             else:
-                srcs.append(line.replace('\t', '').replace('\n', '').replace(' ', '').replace('\\', '').replace('SRCS=', ''))
+                new_line = line.replace('\t', '').replace('\n', '').replace(' ', '').replace('\\', '').replace('SRCS=', '')
+                if new_line != '':
+                    srcs.append(new_line)
     return srcs
 
 """ This will return a list of strings of the functions in the file. """
@@ -25,20 +27,14 @@ def get_fonctions_from_file(file_path: str) -> list[str]:
     file.close()
     fonctions = []
     for line in file_lines:
-        if line.startswith("void"):
-            fonctions.append(line.replace("void", "").replace("(", "").replace(")", "").replace(" ", "").replace("\n", ""))
+        if not line.startswith("\t") and not line.startswith("{") and not line.startswith("}") and not line.startswith("#") and not line.startswith(" "):
+            print(line)
     return fonctions
 
 def main():
     srcs = get_makefile_srcs()
-    for obj in srcs:
-        get_makefile_srcs(obj)
-        print(obj)
-
-
-
-
-
+    for src in srcs:
+        get_fonctions_from_file(src)
 
 if __name__ == '__main__':
     main()

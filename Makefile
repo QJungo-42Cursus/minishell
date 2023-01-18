@@ -17,7 +17,7 @@ SRCS =			main.c \
 				builtins/env.c \
 				builtins/unset.c
 
-#builtins/cd.c \
+#builtins/cd.c
 
 OBJS =			$(SRCS:.c=.o)
 
