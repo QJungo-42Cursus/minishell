@@ -49,7 +49,9 @@ re: fclean all
 #### TESTS ####
 SRCS_TEST = tests/main.cpp \
 			tests/tokenizer.cpp \
-			tests/tokenizerWithQuote.cpp
+			tests/tokenizerWithQuote.cpp \
+			tests/expansion.cpp
+
 #OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
 GTEST =		/usr/local/lib/libgtest.a
 NAME_TEST = test
@@ -64,6 +66,11 @@ test:
 tquote:
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*TokenizeWithQuote.*"
+	$(RM) $(NAME_TEST)
+
+texp:
+	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	./$(NAME_TEST) "--gtest_filter=*Expansion*"
 	$(RM) $(NAME_TEST)
 
 tpipe:

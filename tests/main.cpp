@@ -1,11 +1,13 @@
 extern "C" {
+/* Tokenizer */
 #include "../tokenizer/get_next_token_functions.c"
 #include "../tokenizer/get_token_normal.c"
 #include "../tokenizer/get_token_quote.c"
 #include "../tokenizer/set_next_token_position.c"
 #include "../tokenizer/tokenizer.c"
 
-#include "../executor/pipeline.c"
+
+#include "../expansion/expansion.c"
 }
 
 #include "gtest/gtest.h"
