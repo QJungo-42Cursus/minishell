@@ -26,6 +26,11 @@ int	unset(t_minishell *minishell, char **args)
 	var_index = env_var_index(minishell, var);
 	if (var_index != -1)
 		remove_env_var(minishell, var_index);
+	if (ft_strncmp(var, "PATH=", 5))
+	{
+		split_free(minishell->env_paths);
+		minishell->env_paths = NULL;
+	}
 	free(var);
 	return (SUCCESS);
 }
