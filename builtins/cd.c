@@ -1,24 +1,20 @@
 #include "../libft/libft.h"
 #include "../minishell.h"
+#include <errno.h>
 #include <stdio.h>
 
 static int	check_argv(char **argv)
 {
 	int		argc;
 
+	argc = 0;
 	while (argv[argc] != NULL)
 		argc++;
-	if (argc == 1)
-	{
-		// TODO cd ~ / cd home
-		// Je crois qu'on est pas oblige de le faire ?
-		return (SUCCESS);
-	}
 	if (argc > 2)
 	{
-		// TODO perror / errno
-		printf("cd: too many arguments\n");
-		return (ERROR);
+		errno = E2BIG;
+		perror("cd:");
+		return (-1);
 	}
 	return (SUCCESS);
 }
@@ -26,7 +22,17 @@ static int	check_argv(char **argv)
 int		cd(t_minishell *minishell, char **argv)
 {
 	// 0. check too many / too few arguments
-	check_argv(argv);
+	int		exit_code;
+	char	*path;
+	exit_code = check_argv(argv);
+	if (exit_code == -1)
+		return (errno);
+	else if (exit_code == 1)
+		chdir("~");
+	else
+		chdir(argv[1]);
+	change_env(
+	
 	
 
 	// 1. check with access if the path exists (relative or absolute)
