@@ -16,6 +16,9 @@ SRCS =			main.c \
 				builtins/export.c \
 				builtins/env.c \
 				builtins/unset.c
+
+#builtins/cd.c \
+
 OBJS =			$(SRCS:.c=.o)
 
 #### INCLUDES (READLINE) ####

@@ -19,6 +19,19 @@ static int	check_argv(char **argv)
 	return (SUCCESS);
 }
 
+
+
+static int	change_path(t_minishell *minishell, char *new_path)
+{
+
+}
+
+
+static int	is_valid(char *new_path)
+{
+
+}
+
 int		cd(t_minishell *minishell, char **argv)
 {
 	// 0. check too many / too few arguments
@@ -27,11 +40,25 @@ int		cd(t_minishell *minishell, char **argv)
 	exit_code = check_argv(argv);
 	if (exit_code == -1)
 		return (errno);
-	else if (exit_code == 1)
+
+	if (exit_code == 1)
+	{
+		change_path(minishell, "~"); // TODO est-ce que ca marche ~
+		return (SUCCESS);
+	}
+
+	t_bool	is_absolute;
+	is_absolute = argv[1][0] == '/';
+
+
+
+	change_path(minishell, "~"); // TODO est-ce que ca marche ~
 		chdir("~");
-	else
+
+	/*
 		chdir(argv[1]);
 	change_env(
+	*/
 	
 	
 
