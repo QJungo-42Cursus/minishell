@@ -57,7 +57,7 @@ int main_loop()
 		}
 	}
 }
-	
+
 static int	init_minishell(t_minishell *minishell, char **envp)
 {
 	if (getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1) == NULL)
