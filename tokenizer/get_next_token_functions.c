@@ -47,16 +47,11 @@ void	generic_get_token(const char *cmd, int cursor_index, t_position *token_pos)
 
 t_set_token_position	*list_func(void)
 {
-	// TODO !! Add ` and $ to the list
 	t_set_token_position	*list;
 
 	list = (t_set_token_position *)malloc(sizeof(t_set_token_position) * SEP_NB);
 	if (list == NULL)
-	{
-		// TODO
 		return (NULL);
-	}
-	// specific
 	list[DQUOTE] = get_token_quote;// get_token_quote; // TODO c'est 2x le meme, facto ?
 	list[QUOTE] = get_token_quote;
 	list[NONE] = get_token_normal;
