@@ -139,9 +139,8 @@ char	*expand(char *token, char **env_copy) // norm ?
 {
 	char	*expanded;
 
-	//expanded = ft_strdup(token);
 	expanded = get_expanded_dollars(token, (const char **)env_copy);
-	//printf("expanded: |%s|\n", expanded);
+	// TODO si la variable n'existe pas, on enlever le $VAR
 	if (expanded == NULL)
 	{
 		// TODO

@@ -155,6 +155,14 @@ TEST(TokenizeSpecial, dollardAndQuestionMark) {
   tokenizerTest("echo $? $?", {"echo", "$?", "$?"});
 }
 
+TEST(TokenizeSpecial, dollarAlone) {
+  tokenizerTest("echo $|cat", {"echo", "$", "|", "cat"});
+}
+
+TEST(TokenizeSpecial, dollarAlone2) {
+  tokenizerTest("echo $\"|cat\"", {"echo", "$\"|cat\""});
+}
+
 TEST(TokenizeSpecial, assignation) {
   tokenizerTest("a=1", {"a=1"});
   tokenizerTest("a=1 b=2", {"a=1", "b=2"});
