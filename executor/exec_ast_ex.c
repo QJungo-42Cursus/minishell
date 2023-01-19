@@ -10,10 +10,9 @@ typedef enum e_cmd_type {
 	PIPE,			/* cmd | cmd */
 	PIPELINE,		/* cmd | cmd | cmd | ... */
 	COMMAND,		/* cmd */
-	//LOGIC_AND,		/* cmd && cmd */
+	//LOGIC_AND,	/* cmd && cmd */
 	//LOGIC_OR,		/* cmd || cmd */
 } t_cmd_type;
-
 
 typedef struct s_cmd {
 	t_cmd_type	type;
@@ -39,6 +38,7 @@ typedef struct s_cmd {
 		*/
 	};
 } t_cmd;
+
 
 int pipe_index(int i, int read);
 void	close_all_pipes(int *fds, int pipe_count);
@@ -99,9 +99,9 @@ int	execute(t_cmd *cmd)
 			int pid = fork();
 			if (pid == 0)
 			{
-				if (i != 0) /* si c'est la premiere command */
+				if (i != 0) /* si c'est pas la premiere command */
 					dup2(cmd->pipeline.pipes[pipe_index(i - 1, STDIN_FILENO)], STDIN_FILENO);
-				if (i != cmd->pipeline.pipe_count - 1) /* si c'est la fin */
+				if (i != cmd->pipeline.pipe_count - 1) /* si c'est pas la fin */
 					dup2(cmd->pipeline.pipes[pipe_index(i, STDOUT_FILENO)], STDOUT_FILENO);
 				close_all_pipes(cmd->pipeline.pipes, cmd->pipeline.pipe_count);
 				execute(cmd_it);
@@ -113,7 +113,7 @@ int	execute(t_cmd *cmd)
 	}
 	else if (cmd->type == COMMAND)
 	{
-		if (fork1() == 0)
+		if (fork1() == 0) // TODO fork en trop pour les pipeline ???
 		{
 			execvp(cmd->cmd.argv[0], cmd->cmd.argv);
 			perror("execvp");
@@ -237,7 +237,3 @@ t_cmd	*init_example2()
 	cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.next = NULL;
 	return (cmd);
 }
-
-
-
-

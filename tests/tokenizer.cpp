@@ -170,6 +170,12 @@ TEST(TokenizeSpecial, assignation) {
   tokenizerTest(" a = 1", {"a", "=", "1"});
 }
 
+TEST(TokenizeSpecial, script) {
+	tokenizerTest("./script.sh", {"./script.sh"});
+	tokenizerTest("./script.sh arg1 arg2", {"./script.sh", "arg1", "arg2"});
+	tokenizerTest("../../script.sh arg1 arg2", {"../../script.sh", "arg1", "arg2"});
+}
+
 /*
 TEST(TokenizeSpecial, arithmeticExpansion) {
   // TODO ca doit faire ca ?? -> NON
