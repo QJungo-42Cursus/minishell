@@ -256,11 +256,13 @@ void	example4()
 		{"/bin/echo", "salut", NULL},
 	};
 	int i = 0;
-	int pids[PIPE_COUNT] = {0,0,0};
+	//int pids[PIPE_COUNT] = {0,0,0};
+	int pid;
 	while (i < PIPE_COUNT)
 	{
-		pids[i] = fork();
-		if (pids[i] == 0) /* CHILD */ 
+		pid = fork();
+		//pids[i] = fork();
+		if (pid == 0) /* CHILD */ 
 		{
 			if (i == 0) /* si c'est la premiere command */
 			{
@@ -322,6 +324,7 @@ void	example5()
 		printf("result: %d\n", result);
 	}
 }
+
 
 int main()
 {

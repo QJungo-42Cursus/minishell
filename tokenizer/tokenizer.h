@@ -9,15 +9,10 @@ typedef enum e_sep
 	QUOTE,
 	DQUOTE,
 	PIPE,
-	AMPERSAND,
+	AMPERSAND,// &
 	GREATER,
 	LESS,
 	NONE,
-
-	SEMICOLUMN,
-	BACKSLASH, // parser direct la nouvelle ligne sans separer ???
-
-	SEP_ERROR,
 } t_sep;
 
 typedef struct s_position

@@ -7,6 +7,8 @@ extern "C" {
 #include "../tokenizer/tokenizer.c"
 
 
+#include "../env/get_env_var_value.c"
+#include "../env/get_env_var_index.c"
 #include "../expansion/expansion.c"
 }
 

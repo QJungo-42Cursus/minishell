@@ -12,6 +12,7 @@ SRCS =			main.c \
 				env/cpy_envp.c \
 				env/get_paths_in_env.c \
 				env/get_env_var_index.c \
+				env/get_env_var_value.c \
 				builtins/echo.c \
 				builtins/export.c \
 				builtins/env.c \

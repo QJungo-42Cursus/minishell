@@ -7,6 +7,19 @@ char *expand(const char *token, const char *const *const env_copy);
 char *get_expanded_dollar(char *token, char **env_copy);
 int get_var_position(int begin_from, char *token, int *start_index,
                      int *end_index);
+char *expand_dollar(const char *token, const char **env_copy, int start_index,
+                    int end_index);
+}
+
+void test_expand_dollar(const char *token, int start, int end,
+                        std::string expected, std::vector<std::string> env) {
+  const char **env_copy = new const char *[env.size() + 1];
+  for (size_t i = 0; i < env.size(); i++)
+    env_copy[i] = env[i].c_str();
+  env_copy[env.size()] = NULL;
+  char *actual = expand_dollar(token, env_copy, start, end);
+  EXPECT_STREQ(expected.c_str(), actual);
+  free(actual);
 }
 
 void test_expand(const char *token, std::vector<std::string> env,
@@ -52,12 +65,6 @@ TEST(ExpansionGetVarPosition, FromIndex) {
   test_get_var_position("$HOME$HOME", 0, 0, 4, true);
   test_get_var_position("$HOME$HOME", 4, 5, 9, true);
 }
-/*
-
-TEST(DollarExpansion, Simple) {
-  std::vector<std::string> env = {"FOO=bar"};
-  test_expand("$FOO", env, "bar");
-}
 
 TEST(Expansion, shouldUnquoteDquote) { test_expand("\"hello\"", {}, "hello"); }
 
@@ -86,9 +93,12 @@ TEST(Expansion, shouldUnquoteQuoteAndWorldBefore) {
 TEST(Expansion, shouldUnquoteQuoteAndWorldBeforeAndAfter) {
   test_expand("hello'world'world", {}, "helloworldworld");
 }
-*/
 
-/*
+TEST(DollarExpansion, Simple) {
+  test_expand_dollar("$HOME", 0, 4, "/Users/alex", {"HOME=/Users/alex"});
+  test_expand_dollar(" $FOO", 1, 5, " bar", {"FOO=bar"});
+}
+
 TEST(Expansion, shouldExpandHome) { //
   test_expand("$HOME", {"HOME=/home/user"}, "/home/user");
 }
@@ -109,4 +119,30 @@ TEST(Expansion, shouldExpandHomeInDoubleQuotesWithTextAppendAfter) {
 TEST(Expansion, shouldNotExpandHomeInSingleQuotes) {
   test_expand("'$HOME'", {"HOME=/home/user"}, "$HOME");
 }
-*/
+
+TEST(Expansion, doubleHome) {
+  test_expand("$HOME$HOME", {"HOME=/home/user"}, "/home/user/home/user");
+}
+
+TEST(Expansion, doubleHomeAndText) {
+  test_expand("maison:$HOME$HOME", {"HOME=/home/user"},
+			  "maison:/home/user/home/user");
+}
+
+TEST(Expansion, doubleHomeAndText2) {
+  test_expand("$HOME$HOME:maison", {"HOME=/home/user"},
+			  "/home/user/home/user:maison");
+}
+
+TEST(Expansion, doubleHomeAndSpace) {
+  test_expand("$HOME $HOME", {"HOME=/home/user"}, "/home/user /home/user");
+}
+
+TEST(Expansion, doubleHomeAndSpace2) {
+  test_expand("$HOME$HOME $HOME", {"HOME=/home/user"},
+			  "/home/user/home/user /home/user");
+}
+
+TEST(Expansion, shouldRemoveUnexistingVariable) {
+  test_expand("$HOME", {}, "");
+}

@@ -23,12 +23,7 @@ t_sep	get_sep(char sep)
 			return ((t_sep)i);
 		i++;
 	}
-	// retourne un NONE si c'est un char normal
-	if (ft_isprint(sep))
-		return (NONE);
-	// TODO: gérer les non-printable chars ??
-	//return (-1);
-	return (SEP_ERROR);
+	return (NONE);
 }
 
 void	generic_get_token(const char *cmd, int cursor_index, t_position *token_pos)
