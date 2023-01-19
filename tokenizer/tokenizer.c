@@ -56,25 +56,15 @@ t_list *tokenizer(char *cmd)
 			perror(":"); fflush ( stdout );
 			return (NULL); // + free 
 		}
+		// TODO -> check si c'est dquote / quote vide (ex '' / "") et skip
 		token = ft_substr(cmd, token_position.start, token_position.end - token_position.start); // FIXME provoque un segfault si token_position.end == 0
+		if (token == NULL)
+		{
+			// TODO free list ..
+			free(set_token_position);
+		}
+		ft_lstadd_back(&tokens, ft_lstnew(token));
 		cursor_index = token_position.end;
-		if (token != NULL)
-		{
-			ft_lstadd_back(&tokens, ft_lstnew(token));
-			//LOG("added back\n");
-		}
-		else if (errno != 0)
-		{
-			// TODO, si on a renvoye NULL et set le errno, erreur quoi
-			LOG("NULL renvoye par get_next_token avec errno\n");
-			break;
-		}
-		else
-		{
-			// TODO ca arrive quand ?
-			LOG("NULL renvoye par get_next_token sans errno\n");
-			break;
-		}
 		//set_cursor_after_space(cmd, &cursor_index);
 	}
 	free(set_token_position);
