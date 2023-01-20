@@ -13,12 +13,12 @@ SRCS =			main.c \
 				env/get_paths_in_env.c \
 				env/get_env_var_index.c \
 				env/get_env_var_value.c \
+				env/find_command_path.c \
 				builtins/echo.c \
 				builtins/export.c \
 				builtins/env.c \
 				builtins/unset.c \
 				builtins/cd.c
-
 OBJS =			$(SRCS:.c=.o)
 
 #### INCLUDES (READLINE) ####
@@ -38,7 +38,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(OUT_LIBS) $(LIBFT) -o $(NAME)
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) test
 	make clean -C libft
 
 fclean: clean
@@ -51,7 +51,8 @@ re: fclean all
 SRCS_TEST = tests/main.cpp \
 			tests/tokenizer.cpp \
 			tests/tokenizerWithQuote.cpp \
-			tests/expansion.cpp
+			tests/expansion.cpp \
+			tests/executor.cpp
 
 #OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
 GTEST =		/usr/local/lib/libgtest.a
@@ -77,6 +78,11 @@ texp:
 tpipe:
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Pipeline.*"
+	$(RM) $(NAME_TEST)
+
+texec:
+	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	./$(NAME_TEST) "--gtest_filter=*Executor*"
 	$(RM) $(NAME_TEST)
 
 u_libft:

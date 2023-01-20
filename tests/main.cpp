@@ -6,10 +6,13 @@ extern "C" {
 #include "../tokenizer/set_next_token_position.c"
 #include "../tokenizer/tokenizer.c"
 
-
 #include "../env/get_env_var_value.c"
 #include "../env/get_env_var_index.c"
+
 #include "../expansion/expansion.c"
+
+#include "../executor/executor.c"
+#include "../executor/executor_utils.c"
 }
 
 #include "gtest/gtest.h"

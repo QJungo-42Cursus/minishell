@@ -29,10 +29,8 @@ static char	*find_cmd_path_in_env(char *cmd_name, char **env_paths)
 /// return le path complet | A free !
 char	*find_cmd_path(char *cmd_name, char **env_paths)
 {
-	int		i;
 	char	*full_path;
 
-	i = 0;
 	full_path = find_cmd_path_in_env(cmd_name, env_paths);
 	if (full_path != NULL)
 		return (full_path);
