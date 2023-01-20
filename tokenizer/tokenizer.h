@@ -36,7 +36,7 @@ void	get_token_normal	(const char *str, int cursor_index, t_position *token_pos)
 
 t_set_token_position	*list_func(void);
 t_sep		get_sep(const char sep);
-t_list		*tokenizer(char *str); // TODO const ?
+t_list		*tokenizer(const char *cmd);
 
 
 

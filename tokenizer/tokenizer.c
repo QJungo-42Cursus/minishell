@@ -25,7 +25,7 @@ static int	init_tokenizer(t_list **tokens, char **token, int *cursor_index, t_se
 	return (SUCCESS);
 }
 
-t_list *tokenizer(char *cmd) 
+t_list *tokenizer(const char *cmd) 
 /// Renvoie une liste chainee de token (char *) ou NULL en cas d'erreur
 /// TODO Voir chaine vide. 
 /// Prend un string (cmd) non NULL et non modifiable en arg

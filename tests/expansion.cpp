@@ -3,12 +3,9 @@
 #include <vector>
 
 extern "C" {
-char *expand(const char *token, const char *const *const env_copy);
-char *get_expanded_dollar(char *token, char **env_copy);
-int get_var_position(int begin_from, char *token, int *start_index,
-                     int *end_index);
-char *expand_dollar(const char *token, const char **env_copy, int start_index,
-                    int end_index);
+#include "../env/get_env_var_value.c"
+#include "../env/get_env_var_index.c"
+#include "../expansion/expansion.c"
 }
 
 void test_expand_dollar(const char *token, int start, int end,

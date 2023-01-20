@@ -81,7 +81,7 @@ tpipe:
 	$(RM) $(NAME_TEST)
 
 texec:
-	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	c++ tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Executor*"
 	$(RM) $(NAME_TEST)
 

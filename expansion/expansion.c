@@ -135,7 +135,7 @@ char	*get_expanded_dollars(const char *token, const char **env_copy)
 
 
 // ne prend pas la propriété de token
-char	*expand(char *token, char **env_copy) // norm ?
+char	*expand(const char *token, const char **env_copy) // norm ?
 {
 	char	*expanded;
 
@@ -144,7 +144,7 @@ char	*expand(char *token, char **env_copy) // norm ?
 	if (expanded == NULL)
 	{
 		// TODO
-		expanded = ft_strdup(token);
+		expanded = ft_strdup((char *)token);
 		if (expanded == NULL)
 			return (NULL);
 	}

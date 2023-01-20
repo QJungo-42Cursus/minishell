@@ -1,20 +1,3 @@
-extern "C" {
-/* Tokenizer */
-#include "../tokenizer/get_next_token_functions.c"
-#include "../tokenizer/get_token_normal.c"
-#include "../tokenizer/get_token_quote.c"
-#include "../tokenizer/set_next_token_position.c"
-#include "../tokenizer/tokenizer.c"
-
-#include "../env/get_env_var_value.c"
-#include "../env/get_env_var_index.c"
-
-#include "../expansion/expansion.c"
-
-#include "../executor/executor.c"
-#include "../executor/executor_utils.c"
-}
-
 #include "gtest/gtest.h"
 #include <iostream>
 

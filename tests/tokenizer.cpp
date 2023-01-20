@@ -4,7 +4,11 @@
 
 extern "C" {
 #include "../libft/libft.h"
-t_list *tokenizer(const char *str);
+#include "../tokenizer/get_next_token_functions.c"
+#include "../tokenizer/get_token_normal.c"
+#include "../tokenizer/get_token_quote.c"
+#include "../tokenizer/set_next_token_position.c"
+#include "../tokenizer/tokenizer.c"
 }
 
 void tokenizerTest(const char *sentence, std::vector<std::string> expected) {
@@ -171,9 +175,10 @@ TEST(TokenizeSpecial, assignation) {
 }
 
 TEST(TokenizeSpecial, script) {
-	tokenizerTest("./script.sh", {"./script.sh"});
-	tokenizerTest("./script.sh arg1 arg2", {"./script.sh", "arg1", "arg2"});
-	tokenizerTest("../../script.sh arg1 arg2", {"../../script.sh", "arg1", "arg2"});
+  tokenizerTest("./script.sh", {"./script.sh"});
+  tokenizerTest("./script.sh arg1 arg2", {"./script.sh", "arg1", "arg2"});
+  tokenizerTest("../../script.sh arg1 arg2",
+                {"../../script.sh", "arg1", "arg2"});
 }
 
 /*
