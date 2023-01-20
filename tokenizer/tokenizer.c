@@ -31,7 +31,6 @@ t_list *tokenizer(const char *cmd)
 /// Prend un string (cmd) non NULL et non modifiable en arg
 /// => cmd to tokens
 {
-	// TODO normer a la fin
 	t_list					*tokens;
 	char					*token;
 	int						cursor_index;
@@ -65,9 +64,7 @@ t_list *tokenizer(const char *cmd)
 		}
 		ft_lstadd_back(&tokens, ft_lstnew(token));
 		cursor_index = token_position.end;
-		//set_cursor_after_space(cmd, &cursor_index);
 	}
 	free(set_token_position);
-	//printf("|%s|\n", cmd); LOG_TOKENS(tokens); //
 	return (tokens);
 }

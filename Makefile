@@ -61,22 +61,27 @@ LIBFT_A = ./libft/libft.a
 
 # Attention, l'ordre de declaration des lib est important !
 test:
+	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST)
 
 tquote:
+	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*TokenizeWithQuote.*"
 
 texp:
+	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Expansion*"
 
 tpipe:
+	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Pipeline.*"
 
 texec:
+	@make -C libft
 	c++ tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Executor*"
 
