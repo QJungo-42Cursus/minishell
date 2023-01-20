@@ -14,4 +14,10 @@ typedef struct s_minishell {
 	// last ast ?
 }	t_minishell;
 
+typedef struct s_position
+{
+	int start;	// inclusif
+	int end;	// exclusif
+}	t_position;
+
 #endif /* MINISHELL_H */

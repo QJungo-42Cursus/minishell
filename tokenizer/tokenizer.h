@@ -2,24 +2,20 @@
 # define TOKENIZER_H
 
 # include "../libft/libft.h"
-# define SEP_NB 6 // 8 avec le BACKSLASH + SEMICOLUMN
+# include "../minishell.h"
+# define SEP_NB 6
 
 typedef enum e_sep
 {
 	QUOTE,
 	DQUOTE,
 	PIPE,
-	AMPERSAND,// &
+	AMPERSAND,
 	GREATER,
 	LESS,
 	NONE,
 } t_sep;
 
-typedef struct s_position
-{
-	int start;	// inclusif
-	int end;	// exclusif
-}	t_position;
 
 typedef void (*t_set_token_position)(const char *str, int cursor_index, t_position *token_pos);
 

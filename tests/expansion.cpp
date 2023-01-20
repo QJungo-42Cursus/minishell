@@ -6,6 +6,10 @@ extern "C" {
 #include "../env/get_env_var_value.c"
 #include "../env/get_env_var_index.c"
 #include "../expansion/expansion.c"
+#include "../expansion/expend_dollar.c"
+#include "../expansion/get_var_position.c"
+#include "../expansion/unquote.c"
+#include "../minishell.h"
 }
 
 void test_expand_dollar(const char *token, int start, int end,
@@ -14,7 +18,8 @@ void test_expand_dollar(const char *token, int start, int end,
   for (size_t i = 0; i < env.size(); i++)
     env_copy[i] = env[i].c_str();
   env_copy[env.size()] = NULL;
-  char *actual = expand_dollar(token, env_copy, start, end);
+  t_position token_pos = {start, end};
+  char *actual = expand_dollar(token, env_copy, token_pos);
   EXPECT_STREQ(expected.c_str(), actual);
   free(actual);
 }
@@ -142,4 +147,13 @@ TEST(Expansion, doubleHomeAndSpace2) {
 
 TEST(Expansion, shouldRemoveUnexistingVariable) {
   test_expand("$HOME", {}, "");
+  test_expand("salut $HOME\"ca\" va ?", {"HOME="}, "salut ca va ?");
 }
+
+TEST(Expansion, shouldRemoveEmpytVariable) {
+  test_expand("$HOME", {"HOME="}, "");
+  //test_expand("$HOME", {"HOME"}, ""); // TODO segfault
+}
+
+
+

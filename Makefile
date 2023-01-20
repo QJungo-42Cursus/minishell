@@ -63,27 +63,22 @@ LIBFT_A = ./libft/libft.a
 test:
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST)
-	$(RM) $(NAME_TEST)
 
 tquote:
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*TokenizeWithQuote.*"
-	$(RM) $(NAME_TEST)
 
 texp:
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Expansion*"
-	$(RM) $(NAME_TEST)
 
 tpipe:
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Pipeline.*"
-	$(RM) $(NAME_TEST)
 
 texec:
 	c++ tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Executor*"
-	$(RM) $(NAME_TEST)
 
 u_libft:
 	#rm -rf libft
