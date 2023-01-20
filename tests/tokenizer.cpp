@@ -4,9 +4,6 @@
 
 extern "C" {
 #include "../libft/libft.h"
-#include "../tokenizer/get_next_token_functions.c"
-#include "../tokenizer/get_token_normal.c"
-#include "../tokenizer/get_token_quote.c"
 #include "../tokenizer/set_next_token_position.c"
 #include "../tokenizer/tokenizer.c"
 }
@@ -16,6 +13,9 @@ void tokenizerTest(const char *sentence, std::vector<std::string> expected) {
   t_list *current = tokens;
   for (size_t i = 0; i < expected.size(); i++) {
     EXPECT_EQ(std::string((char *)current->content), expected[i]);
+    // std::cout << "expected: " << expected[i] << std::endl;
+    // std::cout << "actual: " << (char *)current->content << std::endl;
+    // std::cout << "----------------" << std::endl;
     current = current->next;
   }
   EXPECT_EQ(current, nullptr);
@@ -144,15 +144,6 @@ TEST(TokenizeRandom, manyBackslashInQuotes) {
 
 TEST(TokenizeSpecial, errorRedirection) {
   tokenizerTest("ls >>", {"ls", ">>"});
-  // TODO si on lit la consigne, meme pas besoin de gerer ca
-  // tokenizerTest("ls -l 2>", {"ls", "-l", "2>"});
-  // tokenizerTest("ls &2>", {"ls", "&2>"});
-  // tokenizerTest("ls &>", {"ls", "&>"});
-
-  // 2>>
-  // 2>&1
-  // 2>&-
-  // 2>&1
 }
 
 TEST(TokenizeSpecial, dollardAndQuestionMark) {
@@ -181,18 +172,21 @@ TEST(TokenizeSpecial, script) {
                 {"../../script.sh", "arg1", "arg2"});
 }
 
-/*
-TEST(TokenizeSpecial, arithmeticExpansion) {
-  // TODO ca doit faire ca ?? -> NON
-  tokenizerTest("echo $( 2 )", {"echo", "$( 2 )"});
-  tokenizerTest("echo $((( )))", {"echo", "$((( )))"}); // Devrait crash
-  tokenizerTest("echo $((( 0 )))", {"echo", "$((( 0 )))"});
-  tokenizerTest("echo $(( ))", {"echo", "$(( ))"}); // Devrait echo 0
+/***************************** TokenizeMean ***********************************/
+
+TEST(TokenizeMean, nothing) { tokenizerTest("", {}); }
+
+TEST(TokenizeMean, spaceAlone) { tokenizerTest(" ", {}); }
+
+TEST(TokenizeMean, manySpacesAlone) { tokenizerTest("     ", {}); }
+
+TEST(TokenizeMean, manySpacesAndWord) { tokenizerTest("     word", {"word"}); }
+
+TEST(TokenizeMean, emptyQuoted) {
+  tokenizerTest("\"  \"     word", {"\"  \"", "word"});
 }
 
-TEST(TokenizeSpecial, math) {
-  tokenizerTest("echo $((1+1))", {"echo", "$((1+1))"});
-  tokenizerTest("2+2", {"2+2"});
-  tokenizerTest("2 +2", {"2", "+2"});
+TEST(TokenizeMean, doubleBitch) {
+  tokenizerTest("\"", {"\""});
+  tokenizerTest("\"\"", {"\"\""});
 }
-*/

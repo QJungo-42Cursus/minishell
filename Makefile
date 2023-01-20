@@ -5,9 +5,6 @@ LIBFT =			-L./libft -lft
 RM =			rm -f
 SRCS =			main.c \
 				tokenizer/tokenizer.c \
-				tokenizer/get_next_token_functions.c \
-				tokenizer/get_token_normal.c \
-				tokenizer/get_token_quote.c \
 				tokenizer/set_next_token_position.c \
 				env/cpy_envp.c \
 				env/get_paths_in_env.c \
@@ -64,6 +61,11 @@ test:
 	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST)
+
+ttok:
+	@make -C libft
+	c++ tests/main.cpp tests/tokenizer.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	./$(NAME_TEST) "--gtest_filter=*Tokenize*"
 
 tquote:
 	@make -C libft
