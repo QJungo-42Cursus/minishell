@@ -63,6 +63,20 @@ TEST(Executor, SimplePipeline) {
   test_exec(cmd, "hi friends !$\n", "", 0);
 }
 
+
+TEST(Executor, TrickyPipeline) {
+  t_cmd *cmd = new_cmd(PIPELINE);
+  cmd->pipeline.pipe_count = 2;
+  cmd->pipeline.pids = new int[2];
+  cmd->pipeline.pipes = new int[4];
+  cmd->pipeline.first_cmd = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.argv = setup_argv({"/bin/cat"});
+  cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.next->cmd.argv = setup_argv({"/bin/ls"});
+  cmd->pipeline.first_cmd->cmd.next->cmd.next = NULL;
+  test_exec(cmd, "hi friends !$\n", "", 0);
+}
+
 // TODO add failing PIPELINE
 TEST(Executor, ThreeCommandsPipeline) {
   t_cmd *cmd = new_cmd(PIPELINE);
