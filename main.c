@@ -34,6 +34,8 @@ static int	check_input(char *input)
 
 static int	init_minishell(t_minishell *minishell, char **envp)
 {
+	minishell->cmd_input = NULL;
+	minishell->prompt_msg = NULL;
 	if (getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1) == NULL)
 		return (ERROR);
 	minishell->env_copy = cpy_envp(envp);
@@ -61,26 +63,27 @@ static int	main_minishell(t_minishell *minishell, char *valid_input)
 
 static int	main_loop(t_minishell *minishell)
 {
-	char	*cmd_input;
 	int		cmd_code;
-	char	*prompt_msg;
 
-	prompt_msg = ft_strdup("minishell $>");
+	minishell->prompt_msg = ft_strdup("minishell $>");
 	while (1)
 	{
-		cmd_input = readline(prompt_msg);
-		cmd_code = check_input(cmd_input);
+		minishell->cmd_input = readline(minishell->prompt_msg);
+		cmd_code = check_input(minishell->cmd_input);
 		if (cmd_code != 'e')
 		{
 			if (cmd_code != '0')
-				if (main_minishell(minishell, cmd_input) == ERROR)
-
-			free(cmd_input);
+			{
+				printf("%s\n", minishell->cmd_input);
+				if (main_minishell(minishell, minishell->cmd_input) == ERROR)
+					printf("LOL\n");
+			}
+			free(minishell->cmd_input);
 		}
 		else
 		{
-			free(cmd_input);
-			free(prompt_msg);
+			free(minishell->cmd_input);
+			free(minishell->prompt_msg);
 			return (0);
 		}
 	}
