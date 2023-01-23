@@ -5,9 +5,6 @@ LIBFT =			-L./libft -lft
 RM =			rm -f
 SRCS =			main.c \
 				tokenizer/tokenizer.c \
-				tokenizer/get_next_token_functions.c \
-				tokenizer/get_token_normal.c \
-				tokenizer/get_token_quote.c \
 				tokenizer/set_next_token_position.c \
 				env/cpy_envp.c \
 				env/get_paths_in_env.c \
@@ -61,29 +58,34 @@ LIBFT_A = ./libft/libft.a
 
 # Attention, l'ordre de declaration des lib est important !
 test:
+	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST)
-	$(RM) $(NAME_TEST)
+
+ttok:
+	@make -C libft
+	c++ tests/main.cpp tests/tokenizer.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	./$(NAME_TEST) "--gtest_filter=*Tokenize*"
 
 tquote:
+	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*TokenizeWithQuote.*"
-	$(RM) $(NAME_TEST)
 
 texp:
+	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Expansion*"
-	$(RM) $(NAME_TEST)
 
 tpipe:
+	@make -C libft
 	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Pipeline.*"
-	$(RM) $(NAME_TEST)
 
 texec:
+	@make -C libft
 	c++ tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Executor*"
-	$(RM) $(NAME_TEST)
 
 u_libft:
 	#rm -rf libft

@@ -10,8 +10,16 @@ typedef struct s_minishell {
 
 	char	**env_paths; // deja parsee
 	char	**env_copy; // malloc / pour export et unset
+	char	*cmd_input;
+	char	*prompt_msg;
 
 	// last ast ?
 }	t_minishell;
+
+typedef struct s_position
+{
+	int start;	// inclusif
+	int end;	// exclusif
+}	t_position;
 
 #endif /* MINISHELL_H */
