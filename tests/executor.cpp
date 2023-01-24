@@ -96,11 +96,9 @@ TEST(Executor, SimpleFailingPipeline) {
   cmd->pipeline.first_cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
   cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
   cmd->pipeline.first_cmd->cmd.next->cmd.argv =
-      setup_argv({"/bin/cat", "-e"});
-      //setup_argv({"/bin/bc", "not_here_file"});
+      setup_argv({"/bin/bc", "not_here_file"});
   cmd->pipeline.first_cmd->cmd.next->cmd.next = NULL;
-  //test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
-  test_exec(cmd, "hi friends !$", "", 0);
+  test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
 }
 
 TEST(Executor, ThreeCommandsPipeline) {
