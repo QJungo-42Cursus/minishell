@@ -3,8 +3,8 @@
 #include <vector>
 
 extern "C" {
-#include "../env/get_env_var_value.c"
 #include "../env/get_env_var_index.c"
+#include "../env/get_env_var_value.c"
 #include "../expansion/expansion.c"
 #include "../expansion/expend_dollar.c"
 #include "../expansion/get_var_position.c"
@@ -105,6 +105,14 @@ TEST(Expansion, shouldExpandHome) { //
   test_expand("$HOME", {"HOME=/home/user"}, "/home/user");
 }
 
+TEST(Expansion, shouldExpandSeparatedArgs) {
+  // TODO !!!
+  // test_expand("$HOME", {"HOME=a b c"}, "a", "b", "c");
+
+  //  cat < $HOME
+  // bash: $HOME: ambiguous redirect
+}
+
 TEST(Expansion, shouldExpandHomeInDoubleQuotes) {
   test_expand("\"$HOME\"", {"HOME=/home/user"}, "/home/user");
 }
@@ -128,12 +136,12 @@ TEST(Expansion, doubleHome) {
 
 TEST(Expansion, doubleHomeAndText) {
   test_expand("maison:$HOME$HOME", {"HOME=/home/user"},
-			  "maison:/home/user/home/user");
+              "maison:/home/user/home/user");
 }
 
 TEST(Expansion, doubleHomeAndText2) {
   test_expand("$HOME$HOME:maison", {"HOME=/home/user"},
-			  "/home/user/home/user:maison");
+              "/home/user/home/user:maison");
 }
 
 TEST(Expansion, doubleHomeAndSpace) {
@@ -142,7 +150,7 @@ TEST(Expansion, doubleHomeAndSpace) {
 
 TEST(Expansion, doubleHomeAndSpace2) {
   test_expand("$HOME$HOME $HOME", {"HOME=/home/user"},
-			  "/home/user/home/user /home/user");
+              "/home/user/home/user /home/user");
 }
 
 TEST(Expansion, shouldRemoveUnexistingVariable) {
@@ -152,8 +160,5 @@ TEST(Expansion, shouldRemoveUnexistingVariable) {
 
 TEST(Expansion, shouldRemoveEmpytVariable) {
   test_expand("$HOME", {"HOME="}, "");
-  //test_expand("$HOME", {"HOME"}, ""); // TODO segfault
+  // test_expand("$HOME", {"HOME"}, ""); // TODO segfault
 }
-
-
-

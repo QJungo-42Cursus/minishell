@@ -1,3 +1,4 @@
+#include "parserAndExecutor.h"
 #include "gtest/gtest.h"
 #include <fstream>
 #include <iostream>
@@ -26,25 +27,11 @@ void test_exec(t_cmd *cmd, std::string stdout_expected,
   EXPECT_EQ(exit_status, exit_status_expected);
 }
 
-char **setup_argv(std::vector<std::string> argv) {
-  char **res = (char **)malloc(sizeof(char *) * (argv.size() + 1));
-  for (int i = 0; i < argv.size(); i++)
-    res[i] = strdup(argv[i].c_str());
-  res[argv.size()] = NULL;
-  return res;
-}
-
 void test_redir_out(std::string filename, std::string expected) {
   std::ifstream file(filename);
   std::string content((std::istreambuf_iterator<char>(file)),
                       (std::istreambuf_iterator<char>()));
   ASSERT_EQ(content, expected);
-}
-
-t_cmd *new_cmd(t_cmd_type type) {
-  t_cmd *cmd = (t_cmd *)malloc(sizeof(t_cmd));
-  cmd->type = type;
-  return cmd;
 }
 
 TEST(Executor, SimpleCommand) {

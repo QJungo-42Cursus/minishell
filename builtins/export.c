@@ -34,6 +34,7 @@ static int	check_var_name(char *var)
 	return (SUCCESS);
 }
 
+// TODO si VAR="a b c" -> VAR=a b c (qui seront 3 arguments séparés)
 int	export_(t_minishell *minishell, char **argv)
 {
 	char	*var;

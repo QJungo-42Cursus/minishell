@@ -15,7 +15,10 @@ SRCS =			main.c \
 				builtins/export.c \
 				builtins/env.c \
 				builtins/unset.c \
-				builtins/cd.c
+				builtins/cd.c \
+				parser/parser_utils.c \
+				parser/parse_command.c \
+				parser/parser.c
 OBJS =			$(SRCS:.c=.o)
 
 #### INCLUDES (READLINE) ####
@@ -49,7 +52,8 @@ SRCS_TEST = tests/main.cpp \
 			tests/tokenizer.cpp \
 			tests/tokenizerWithQuote.cpp \
 			tests/expansion.cpp \
-			tests/executor.cpp
+			tests/executor.cpp \
+			tests/parser.cpp
 
 #OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
 GTEST =		/usr/local/lib/libgtest.a
@@ -77,5 +81,10 @@ texec:
 	c++ tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Executor*"
 
+tpars:
+	@make -C libft
+	c++ tests/main.cpp tests/parser.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
+	./$(NAME_TEST) "--gtest_filter=*Parser*"
+
 #### Phony ####
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re $(NAME_TEST)

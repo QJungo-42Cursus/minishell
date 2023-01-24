@@ -1,6 +1,6 @@
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
-# include "../ast/parser.h"
+# include "../parser/parser.h"
 
 // utils
 int			fork1();

@@ -1,20 +1,18 @@
+#include "parserAndExecutor.h"
 #include "gtest/gtest.h"
 #include <fstream>
 #include <iostream>
 #include <vector>
 
-
-enum e_token_type {
-  OPEN_PARENTHESES = 7,
-  CLOSE_PARENTHESES = 8,
-};
-
-
 extern "C" {
-#include "../ast/parser.h"
 #include "../libft/libft.h"
-#include <stdlib.h>
+#include "../parser/parser.c"
+#include "../parser/parse_command.c"
+#include "../parser/parser.h"
+#include "../parser/parser_utils.c"
 #include <stdio.h>
+#include <stdlib.h>
+}
 
 void print_token_type(int token_type) {
   if (token_type == OPEN_PARENTHESES)
@@ -37,197 +35,275 @@ void print_token_type(int token_type) {
     std::cout << "WORD" << std::endl;
 }
 
-int get_token_type(char *token) {
-  if (ft_strncmp(token, "(", 2) == 0)
-    return OPEN_PARENTHESES;
-  else if (ft_strncmp(token, ")", 2) == 0)
-    return CLOSE_PARENTHESES;
-  else if (ft_strncmp(token, "&&", 3) == 0)
-    return LOGIC_AND;
-  else if (ft_strncmp(token, "||", 3) == 0)
-    return LOGIC_OR;
-  else if (ft_strncmp(token, "|", 2) == 0)
-    return PIPELINE;
-  else if (ft_strncmp(token, ">>", 3) == 0)
-    return REDIR_APPEND;
-  else if (ft_strncmp(token, "<", 2) == 0)
-    return REDIR_IN;
-  else if (ft_strncmp(token, ">", 2) == 0)
-    return REDIR_OUT;
-  else
-    return COMMAND;
-}
-
-t_bool	are_we_in_parentheses(t_list *tokens)
-{
-	t_list		*cursor;
-	int			parentheses;
-
-	cursor = tokens;
-	parentheses = 0;
-	while (cursor != NULL)
-	{
-		if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
-			parentheses++;
-		else if (get_token_type((char *)cursor->content) == CLOSE_PARENTHESES)
-			parentheses--;
-		if (parentheses == 0 && cursor->next == NULL)
-			return (TRUE);
-		cursor = cursor->next;
-	}
-	return (FALSE);
-}
-
-t_list	*skip_parentheses(t_list *cursor)
-{
-	int			parentheses;
-
-	parentheses = 0;
-	if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
-	{
-		parentheses++;
-		while (parentheses > 0)
-		{
-			cursor = cursor->next;
-			if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
-				parentheses++;
-			else if (get_token_type((char *)cursor->content) == CLOSE_PARENTHESES)
-				parentheses--;
-		}
-	}
-	return (cursor);
-}
-
-/* TODO une idee pour pouvoir tout free a la fin : faire une list de t_list, 
- *		bien garder la taille, et free tout les elements qui ne sont pas NULL
- *		- en cas d'erreur : tout free
- *		- reussite : ne free que les t_list et pas les strings 
- */
-void	set_command(t_list *tokens, t_cmd *cmd)
-{
-	t_list		*cursor;
-	t_list		*start_left;
-	t_list		*start_right;
-	int			tok_type;
-
-	if (are_we_in_parentheses(tokens))
-	{
-		/* une sorte de "trim", ca enleve le debut et la fin de la t_list */
-		cursor = tokens;
-		while (cursor->next->next != NULL)
-			cursor = cursor->next;
-		free(cursor->next->content);
-		free(cursor->next);
-		cursor->next = NULL;
-		cursor = tokens->next;
-		free(tokens->content);
-		free(tokens);
-		tokens = cursor;
-	}
-
-	start_left = cursor;
-
-	/* premiere passe qui cherche les LOGIC */
-	while (cursor->next != NULL)
-	{
-		cursor = skip_parentheses(cursor);
-
-		tok_type = get_token_type((char *)cursor->next->content);
-		if (tok_type == LOGIC_OR || tok_type == LOGIC_AND)
-		{
-			start_right = cursor->next->next;
-			free(cursor->next->content);
-			cursor->next = NULL;
-
-			cmd->type = (t_cmd_type)tok_type;
-			cmd->logic.left = (t_cmd *)malloc(sizeof(t_cmd));
-			cmd->logic.right = (t_cmd *)malloc(sizeof(t_cmd));
-			set_command(start_left, cmd->logic.left);
-			set_command(start_right, cmd->logic.right);
-			return ;
-		}
-		cursor = cursor->next;
-	} // si on arrive a la fin de la boucle, c'est qu'il n'y a plus de &&,||
-
-	/* deuxieme passe pour les redirections */
-	cursor = tokens;
-	while (cursor->next != NULL)
-	{
-		cursor = skip_parentheses(cursor);
-
-		tok_type = get_token_type((char *)cursor->next->content);
-		if (tok_type == REDIR_IN || tok_type == REDIR_OUT) // TODO dabors le out ? (ca devrait etre egal...)
-		{
-			cmd->type = (t_cmd_type)tok_type;
-			cmd->redir.filename = (char *)cursor->next->next->content;
-			/* saute le `> file`, donc 2 tokens */
-			cursor->next = cursor->next->next->next;
-			set_command(tokens, cmd->redir.cmd);
-			return ;
-		}
-		cursor = cursor->next;
-	} // si on arrive a la fin de la boucle, c'est qu'il n'y a plus de <, >
-	
-	/* 3eme passe, pipelines and simple cmd */
-	cursor = tokens;
-	// 1. check if pipeline or simple cmd
-	t_bool	is_pipeline = FALSE;
-	while (cursor != NULL)
-	{
-		if (get_token_type((char *)cursor->content) == PIPELINE)
-		{
-			is_pipeline = TRUE;
-			break;
-		}
-		cursor = cursor->next;
-	}
-	// 2. ...
-	if (is_pipeline)
-	{
-		cmd->type = PIPELINE;
-		t_list	*start_argv = tokens;
-		/* get argc len */
-		int	argc = 0;
-		cursor = tokens;
-		while (cursor != NULL && get_token_type((char *)cursor->content) != PIPELINE)
-		{
-			cursor = cursor->next;
-			argc++;
-		}
-	}
-}
-
-t_cmd *parser(t_list *tokens) {
-	t_cmd	*cmd = (t_cmd*)malloc(sizeof(t_cmd *));
-	return (cmd);
-}
-}
-
-/*
-
-
-
-
-
-
-
-
-
-*/
-
-void testParser(std::vector<std::string> tokens) {
+t_list *generate_tokens(std::vector<std::string> tokens) {
   t_list *tok = NULL;
-  t_cmd *cmd = NULL;
 
   for (std::vector<std::string>::iterator it = tokens.begin();
        it != tokens.end(); ++it) {
     ft_lstadd_back(&tok, ft_lstnew(ft_strdup((char *)it->c_str())));
   }
-  cmd = parser(tok);
+  return tok;
 }
 
-int main(int argc, char **argv) { //
-  testParser({"ls", "-l", "&&", "(", "echo", "hello", ")", "|", "cat", "-e"});
+void compare_str_list(char **actual, char **expected) {
+  int i = 0;
+  while (actual[i] != NULL && expected[i] != NULL) {
+    ASSERT_STREQ(actual[i], expected[i]);
+    // std::cout << "actual: " << actual[i] << " expected: " << expected[i]
+    //           << std::endl;
+    i++;
+  }
+  ASSERT_EQ(actual[i], expected[i]); // check if both are NULL
 }
 
-// TEST(d, d) {}
+void compare_ast(t_cmd *ast, t_cmd *expected) {
+  if (ast == NULL || expected == NULL)
+    FAIL() << "AST is NULL";
+  ASSERT_EQ(ast->type, expected->type);
+  if (ast->type == COMMAND) {
+    compare_str_list(ast->cmd.argv, expected->cmd.argv);
+    if (ast->cmd.next != NULL)
+      compare_ast(ast->cmd.next, expected->cmd.next);
+    else
+      ASSERT_EQ(ast->cmd.next, expected->cmd.next);
+  } else if (ast->type == PIPELINE) {
+    ASSERT_EQ(ast->pipeline.pipe_count, expected->pipeline.pipe_count);
+    ASSERT_NE(ast->pipeline.first_cmd, (t_cmd *)nullptr);
+    compare_ast(ast->pipeline.first_cmd, expected->pipeline.first_cmd);
+  } else if (ast->type == LOGIC_AND || LOGIC_OR) {
+    ASSERT_NE(ast->pipe.left, (t_cmd *)NULL);
+    ASSERT_NE(ast->pipe.right, (t_cmd *)NULL);
+    compare_ast(ast->pipe.left, expected->pipe.left);
+    compare_ast(ast->pipe.right, expected->pipe.right);
+  } else if (ast->type == REDIR_IN || REDIR_OUT || REDIR_APPEND) {
+    ASSERT_STREQ(ast->redir.filename, expected->redir.filename);
+    ASSERT_NE(ast->redir.cmd, (t_cmd *)NULL);
+    compare_ast(ast->redir.cmd, expected->redir.cmd);
+  } else {
+    FAIL() << "Invalid cmd->type";
+  }
+}
+
+void testParser(std::vector<std::string> tokens, t_cmd *expected) {
+  t_list *tok = generate_tokens(tokens);
+  t_cmd *cmd = parser(tok);
+  compare_ast(cmd, expected);
+}
+
+/*********************************** PARSER ***********************************/
+/*********** command *********/
+TEST(ParserCmd, Simple) {
+  t_list *tokens = generate_tokens({"ls"});
+  t_cmd *cmd = new t_cmd;
+  parse_command(tokens, cmd);
+
+  EXPECT_EQ(cmd->type, COMMAND);
+  compare_str_list(cmd->cmd.argv, setup_argv({"ls"}));
+  EXPECT_EQ(cmd->cmd.next, (t_cmd *)NULL);
+}
+
+TEST(ParserCmd, WithArgs) {
+  t_list *tokens = generate_tokens({"ls", "-l", "-a"});
+  t_cmd *cmd = new t_cmd;
+  parse_command(tokens, cmd);
+
+  EXPECT_EQ(cmd->type, COMMAND);
+  compare_str_list(cmd->cmd.argv, setup_argv({"ls", "-l", "-a"}));
+  EXPECT_EQ(cmd->cmd.next, (t_cmd *)NULL);
+}
+
+TEST(ParserCmd, WithManyArgs) {
+  t_list *tokens = generate_tokens({"ls", "-l", "-a", "-h", "-t", "-r", "-S"});
+  t_cmd *cmd = new t_cmd;
+  parse_command(tokens, cmd);
+
+  EXPECT_EQ(cmd->type, COMMAND);
+  compare_str_list(cmd->cmd.argv,
+                   setup_argv({"ls", "-l", "-a", "-h", "-t", "-r", "-S"}));
+  EXPECT_EQ(cmd->cmd.next, (t_cmd *)NULL);
+}
+
+TEST(ParserCmd, SimpleParentesesError) {
+
+  t_list *tokens = generate_tokens({"echo", "(", "ls", ")"});
+  t_cmd *cmd = new t_cmd;
+  std::string expected = "minishell: syntax error near unexpected token `ls'\n";
+  testing::internal::CaptureStderr();
+  parse_command(tokens, cmd);
+  std::string stderr_res = testing::internal::GetCapturedStderr();
+  EXPECT_EQ(stderr_res, expected);
+}
+
+TEST(ParserCmd, RightParentesesError) {
+  t_list *tokens = generate_tokens({"echo", "ls", ")"});
+  t_cmd *cmd = new t_cmd;
+  std::string expected = "minishell: syntax error near unexpected token `)'\n";
+  testing::internal::CaptureStderr();
+  parse_command(tokens, cmd);
+  std::string stderr_res = testing::internal::GetCapturedStderr();
+  EXPECT_EQ(stderr_res, expected);
+}
+
+/*********** pipeline ********/
+TEST(ParserPipeline, NoPipeline) {
+  t_list *tokens = generate_tokens({"ls", "-l", "-a"});
+  t_cmd *cmd = new t_cmd;
+  ASSERT_FALSE(pipeline(tokens, cmd));
+}
+
+TEST(ParserPipeline, Simple) {
+  t_list *tokens = generate_tokens({"ls", "|", "grep", "a"});
+  t_cmd *cmd = new t_cmd;
+  ASSERT_TRUE(pipeline(tokens, cmd));
+  ASSERT_EQ(cmd->type, PIPELINE);
+  ASSERT_EQ(cmd->pipeline.pipe_count, 1);
+  ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->pipeline.first_cmd->type, COMMAND);
+  compare_str_list(cmd->pipeline.first_cmd->cmd.argv, setup_argv({"ls"}));
+  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->type, COMMAND);
+  compare_str_list(cmd->pipeline.first_cmd->cmd.next->cmd.argv,
+                   setup_argv({"grep", "a"}));
+  EXPECT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next, (t_cmd *)NULL);
+}
+
+TEST(ParserPipeline, ManyPipes) {
+  t_list *tokens = generate_tokens({"ls", "|", "grep", "a", "|", "wc", "-l"});
+  t_cmd *cmd = new t_cmd;
+  ASSERT_TRUE(pipeline(tokens, cmd));
+  ASSERT_EQ(cmd->type, PIPELINE);
+  ASSERT_EQ(cmd->pipeline.pipe_count, 2);
+  ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->pipeline.first_cmd->type, COMMAND);
+  compare_str_list(cmd->pipeline.first_cmd->cmd.argv, setup_argv({"ls"}));
+  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->type, COMMAND);
+  compare_str_list(cmd->pipeline.first_cmd->cmd.next->cmd.argv,
+                   setup_argv({"grep", "a"}));
+  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next->cmd.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next->type, COMMAND);
+  compare_str_list(cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.argv,
+                   setup_argv({"wc", "-l"}));
+  EXPECT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.next,
+            (t_cmd *)NULL);
+}
+
+/*********** redir ***********/
+/*********** logic ***********/
+TEST(ParserLogic, NoLogic) {
+  std::vector<std::string> tokens = {"ls", "echo", "hello"};
+  t_cmd *cmd = new t_cmd;
+  bool result = logic(generate_tokens(tokens), cmd);
+  EXPECT_EQ(result, false);
+}
+
+/*********** parser **********/
+/*
+TEST(Parser, EchoHello) {
+  t_cmd *cmd = new_cmd(COMMAND);
+  cmd->cmd.argv = setup_argv({"echo", "hello"});
+  cmd->cmd.next = NULL;
+  testParser({"echo", "hello"}, cmd);
+}
+
+TEST(Parser, EchoPipeCat) {
+  t_cmd *cmd = new_cmd(PIPELINE);
+  cmd->pipeline.pipe_count = 1;
+  cmd->pipeline.first_cmd = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.argv = setup_argv({"echo", "hello"});
+  cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.next->cmd.argv = setup_argv({"cat"});
+  cmd->pipeline.first_cmd->cmd.next->cmd.next = NULL;
+  testParser({"echo", "hello", "|", "cat"}, cmd);
+}
+*/
+
+/************************* ParserUtils, get_token_type ************************/
+
+TEST(ParserUtils, get_token_type) {
+  EXPECT_EQ(get_token_type((char *)"&&"), LOGIC_AND);
+  EXPECT_EQ(get_token_type((char *)"||"), LOGIC_OR);
+  EXPECT_EQ(get_token_type((char *)"|"), PIPELINE);
+  EXPECT_EQ(get_token_type((char *)">"), REDIR_OUT);
+  EXPECT_EQ(get_token_type((char *)">>"), REDIR_APPEND);
+  EXPECT_EQ(get_token_type((char *)"<"), REDIR_IN);
+  EXPECT_EQ(get_token_type((char *)"("), OPEN_PARENTHESES);
+  EXPECT_EQ(get_token_type((char *)")"), CLOSE_PARENTHESES);
+
+  EXPECT_EQ(get_token_type((char *)") "), COMMAND);
+  EXPECT_EQ(get_token_type((char *)"ls"), COMMAND);
+}
+
+/****************** ParserUtils, are_we_in_parentheses ************************/
+
+TEST(ParserUtils, are_we_in_parentheses_SimpleTrue) {
+  t_list *tok = generate_tokens({"(", "&&", "ls", "echo", "hello", ")"});
+  EXPECT_EQ(are_we_in_parentheses(tok), true);
+}
+
+TEST(ParserUtils, are_we_in_parentheses_SimpleFalse) {
+  t_list *tok = generate_tokens({"ls", "&&", "echo", "hello"});
+  EXPECT_EQ(are_we_in_parentheses(tok), false);
+}
+
+TEST(ParserUtils, are_we_in_parentheses_TrickyTrue) {
+  t_list *tok = generate_tokens({"(",                             //
+                                 "ls", "&&",                      //
+                                 "(", "echo", "hello", ")", "||", //
+                                 "(", "echo", "world", ")",       //
+                                 ")"});
+  EXPECT_EQ(are_we_in_parentheses(tok), true);
+}
+
+TEST(ParserUtils, are_we_in_parentheses_TrickyFalse) {
+  t_list *tok = generate_tokens({"ls", "&&", "(", "echo", "hello", ")", "||",
+                                 "(", "echo", "world", ")", ")"});
+  EXPECT_EQ(are_we_in_parentheses(tok), false);
+}
+
+TEST(ParserUtils, are_we_in_parentheses_RandomTrue) {
+  t_list *tok = generate_tokens({"(", "ls", "&&", "(", "echo", "hello", ")"});
+  // TODO ca devrait etre une erreur
+  EXPECT_EQ(are_we_in_parentheses(tok), false);
+}
+
+/********************** ParserUtils, skip_parentheses *************************/
+
+void test_skip_parentheses(std::vector<std::string> tokens, int expected) {
+  t_list *tok = generate_tokens(tokens);
+  t_list *new_tok = skip_parentheses(tok);
+  for (int i = 0; i < expected && new_tok != NULL; i++) {
+    tok = tok->next;
+  }
+  EXPECT_EQ(new_tok, tok);
+  EXPECT_STREQ((char *)new_tok->content, (char *)tok->content);
+}
+
+TEST(ParserUtils, skip_parentheses_Simple) {
+  test_skip_parentheses(
+      {"(", "ls", "&&", "(", "echo", "hello", ")", ")", "&&", "echo", "world"},
+      7);
+}
+
+TEST(ParserUtils, skip_parentheses_NoParentheses) {
+  test_skip_parentheses(
+      {"ls", "&&", "(", "echo", "hello", ")", "&&", "echo", "world"}, 0);
+}
+
+/******************* ParserUtils, lst_cut_first_and_last **********************/
+
+TEST(ParserUtils, lst_cut_first_and_last_Simple) {
+  t_list *tok = generate_tokens({"(", "echo", "hello", ")"});
+  t_list *new_tok = lst_cut_first_and_last(tok);
+  EXPECT_EQ(new_tok, tok->next);
+  EXPECT_STREQ((char *)new_tok->content, (char *)tok->next->content);
+  tok = tok->next;
+  while (new_tok->next != NULL) {
+    // std::cout << (char *)tok->content << std::endl;
+    tok = tok->next;
+    new_tok = new_tok->next;
+    EXPECT_STREQ((char *)new_tok->content, (char *)tok->content);
+  }
+  // std::cout << (char *)new_tok->content << std::endl;
+  EXPECT_EQ(new_tok, tok);
+}
