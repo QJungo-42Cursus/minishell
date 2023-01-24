@@ -12,4 +12,10 @@ présents dans la séquence entre guillemets sauf le $ (signe dollar).
 
 # Priorite en bash
 - avec && et || -> ltr (left to right)
-    - ls && bc dontexist || echo oui     = meme chose que = (ls && bc dontexist) || echo oui
+    - `ls && bc dontexist || echo oui`   =   `(ls && bc dontexist) || echo oui`
+
+- avec les pipes et les redirection : je crois que les pipes sont prioritaire
+    - https://unix.stackexchange.com/questions/163479/pipes-redirection-binding-precedence-with-disjuncts-conjuncts-etc
+	- `< >`   >   `|`   >   `&& ||`
+    - `ls || ls | cat -e`  =  `ls || (ls | cat -e)`
+    - `ls | cat -e > file` =  `(ls | cat -e) > file` ( pas sure ... )
