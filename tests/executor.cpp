@@ -49,6 +49,12 @@ TEST(Executor, aSimpleFailingPipeline) {
   test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
 }
 
+TEST(Executor, SimpleCommand) {
+  t_cmd *cmd = new_cmd(COMMAND);
+  cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
+  test_exec(cmd, "hi friends !\n", "", 0);
+}
+
 TEST(Executor, aThreeCommandsPipelineAndFail) {
   t_cmd *cmd = new_cmd(PIPELINE);
   cmd->pipeline.pipe_count = 3;
@@ -66,11 +72,6 @@ TEST(Executor, aThreeCommandsPipelineAndFail) {
   test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
 }
 
-TEST(Executor, SimpleCommand) {
-  t_cmd *cmd = new_cmd(COMMAND);
-  cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
-  test_exec(cmd, "hi friends !\n", "", 0);
-}
 
 TEST(Executor, SimpleFailingCommand) {
   t_cmd *cmd = new_cmd(COMMAND);
