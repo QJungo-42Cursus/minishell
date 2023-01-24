@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: MINISHELL TESTS
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  TESTS:
+  ALL TESTS:
 
     runs-on: ubuntu-latest
 
@@ -21,3 +21,5 @@ jobs:
       run: make texp
     - name: Executor 
       run: make texec
+    - name: Parser 
+      run: make tpars
