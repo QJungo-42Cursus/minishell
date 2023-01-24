@@ -11,7 +11,7 @@ static char *get_var_value(const char *token, const char **env_copy, t_position 
 	if (var_name == NULL)
 		return (NULL);
 	if (get_env_var_index((const char **)env_copy, var_name) == -1)
-		var_value = ft_strdup("");
+		var_value = ft_strdup((char *)"");
 	else
 		var_value = get_env_var_value(var_name, env_copy);
 	free(var_name);
@@ -21,7 +21,7 @@ static char *get_var_value(const char *token, const char **env_copy, t_position 
 static int	set_sides(const char *token, t_position index, char **a, char **b)
 {
 	if (index.start == 0)
-		*a = ft_strdup("");
+		*a = ft_strdup((char *)"");
 	else
 		*a = ft_substr(token, 0, index.start);
 	if (a == NULL)
