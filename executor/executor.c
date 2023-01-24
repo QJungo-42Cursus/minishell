@@ -109,10 +109,7 @@ int execute_pipeline(t_cmd *cmd)
 	i = 0;
 	while (i < cmd->pipeline.pipe_count)
 	{
-		if (i == cmd->pipeline.pipe_count - 1)
-			waitpid(cmd->pipeline.pids[i], &exit_status, 0);
-		else
-			waitpid(cmd->pipeline.pids[i], NULL, 0);
+		waitpid(cmd->pipeline.pids[i], &exit_status, 0);
 		i++;
 	}
 	return (exit_status);
