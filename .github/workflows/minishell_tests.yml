@@ -19,7 +19,7 @@ jobs:
       run: make ttok
     - name: Expansion
       run: make texp
-    - name: Executor 
-      run: make texec
     - name: Parser 
       run: make tpars
+    - name: Executor 
+      run: make texec
