@@ -34,6 +34,38 @@ void test_redir_out(std::string filename, std::string expected) {
   ASSERT_EQ(content, expected);
 }
 
+/* TODO les 2 qui fails avec github action mais pas en local */
+TEST(Executor, aSimpleFailingPipeline) {
+  t_cmd *cmd = new_cmd(PIPELINE);
+  cmd->pipeline.pipe_count = 2;
+  cmd->pipeline.pids = new int[2];
+  cmd->pipeline.pipes = new int[4];
+  cmd->pipeline.first_cmd = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
+  cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.next->cmd.argv =
+      setup_argv({"/bin/bc", "not_here_file"});
+  cmd->pipeline.first_cmd->cmd.next->cmd.next = NULL;
+  test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
+}
+
+TEST(Executor, aThreeCommandsPipelineAndFail) {
+  t_cmd *cmd = new_cmd(PIPELINE);
+  cmd->pipeline.pipe_count = 3;
+  cmd->pipeline.pids = new int[3];
+  cmd->pipeline.pipes = new int[6];
+  cmd->pipeline.first_cmd = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.argv =
+      setup_argv({"/bin/ls", "tests/test_files"});
+  cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.next->cmd.argv = setup_argv({"/bin/cat", "-e"});
+  cmd->pipeline.first_cmd->cmd.next->cmd.next = new_cmd(COMMAND);
+  cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.argv =
+      setup_argv({"/bin/bc", "not_here_file"});
+  cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.next = NULL;
+  test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
+}
+
 TEST(Executor, SimpleCommand) {
   t_cmd *cmd = new_cmd(COMMAND);
   cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
@@ -74,19 +106,6 @@ TEST(Executor, TrickyPipeline) {
 }
 */
 
-TEST(Executor, SimpleFailingPipeline) {
-  t_cmd *cmd = new_cmd(PIPELINE);
-  cmd->pipeline.pipe_count = 2;
-  cmd->pipeline.pids = new int[2];
-  cmd->pipeline.pipes = new int[4];
-  cmd->pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
-  cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.next->cmd.argv =
-      setup_argv({"/bin/bc", "not_here_file"});
-  cmd->pipeline.first_cmd->cmd.next->cmd.next = NULL;
-  test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
-}
 
 TEST(Executor, ThreeCommandsPipeline) {
   t_cmd *cmd = new_cmd(PIPELINE);
@@ -105,22 +124,6 @@ TEST(Executor, ThreeCommandsPipeline) {
   test_exec(cmd, "never_touch_this_file$\n", "", 0);
 }
 
-TEST(Executor, ThreeCommandsPipelineAndFail) {
-  t_cmd *cmd = new_cmd(PIPELINE);
-  cmd->pipeline.pipe_count = 3;
-  cmd->pipeline.pids = new int[3];
-  cmd->pipeline.pipes = new int[6];
-  cmd->pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.argv =
-      setup_argv({"/bin/ls", "tests/test_files"});
-  cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.next->cmd.argv = setup_argv({"/bin/cat", "-e"});
-  cmd->pipeline.first_cmd->cmd.next->cmd.next = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.argv =
-      setup_argv({"/bin/bc", "not_here_file"});
-  cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.next = NULL;
-  test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
-}
 
 TEST(Executor, SimpleLogicalAnd) {
   t_cmd *cmd = new_cmd(LOGIC_AND);
