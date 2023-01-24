@@ -64,38 +64,18 @@ test:
 
 ttok:
 	@make -C libft
-	c++ tests/main.cpp tests/tokenizer.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	c++ tests/main.cpp tests/tokenizer.cpp tests/tokenizerWithQuote.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Tokenize*"
-
-tquote:
-	@make -C libft
-	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
-	./$(NAME_TEST) "--gtest_filter=*TokenizeWithQuote.*"
 
 texp:
 	@make -C libft
-	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	c++ tests/main.cpp tests/expansion.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Expansion*"
-
-tpipe:
-	@make -C libft
-	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
-	./$(NAME_TEST) "--gtest_filter=*Pipeline.*"
 
 texec:
 	@make -C libft
 	c++ tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Executor*"
 
-u_libft:
-	#rm -rf libft
-	cp -r ../libft .
-	rm -rf libft/.git
-
-lldb:
-	@make -C libft
-	@$(CC) $(CFLAGS) $(SRCS) -g $(LIBFT) -o $(NAME)
-	lldb ./$(NAME)
-
 #### Phony ####
-.PHONY: all clean fclean re test u_libft
+.PHONY: all clean fclean re
