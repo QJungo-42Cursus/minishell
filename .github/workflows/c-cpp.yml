@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  TESTS:
 
     runs-on: ubuntu-latest
 
@@ -15,9 +15,9 @@ jobs:
     - name: Install gtest manually
       run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
     - uses: actions/checkout@v3
-    - name: test Tokenizer
+    - name: Tokenizer
       run: make ttok
-    - name: test Expansion
+    - name: Expansion
       run: make texp
-    - name: test Executor 
-      run: make texex
+    - name: Executor 
+      run: make texec
