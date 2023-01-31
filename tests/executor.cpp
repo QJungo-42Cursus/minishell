@@ -11,11 +11,19 @@ extern "C" {
 #include <string.h>
 }
 
+extern "C" {
+int w_exit_status(int es) {
+	return WEXITSTATUS(es);
+}
+}
+
 void test_exec(t_cmd *cmd, std::string stdout_expected,
                std::string stderr_expected, int exit_status_expected) {
   testing::internal::CaptureStdout();
   testing::internal::CaptureStderr();
-  int exit_status = WEXITSTATUS(execute(cmd));
+  //int exit_status = WEXITSTATUS(execute(cmd));
+  //int exit_status = (execute(cmd));
+  int exit_status = w_exit_status(execute(cmd));
   std::string stdout_res = testing::internal::GetCapturedStdout();
   std::string stderr_res = testing::internal::GetCapturedStderr();
 
