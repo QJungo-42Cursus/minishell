@@ -57,33 +57,37 @@ SRCS_TEST = tests/main.cpp \
 
 #OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
 GTEST =		/usr/local/lib/libgtest.a
+ifeq ($(shell uname), Darwin)
+GTEST_INC = -std=c++17 -I/Users/qjungo/.brew/include
+GTEST =		/Users/qjungo/.brew/lib/libgtest.a
+endif
 NAME_TEST = test
 LIBFT_A = ./libft/libft.a
 
 # Attention, l'ordre de declaration des lib est important !
 test:
 	@make -C libft
-	c++ $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	c++ $(GTEST_INC) $(SRCS_TEST) $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST)
 
 ttok:
 	@make -C libft
-	c++ tests/main.cpp tests/tokenizer.cpp tests/tokenizerWithQuote.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	c++ $(GTEST_INC) tests/main.cpp tests/tokenizer.cpp tests/tokenizerWithQuote.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Tokenize*"
 
 texp:
 	@make -C libft
-	c++ tests/main.cpp tests/expansion.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	c++ $(GTEST_INC) tests/main.cpp tests/expansion.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Expansion*"
 
 texec:
 	@make -C libft
-	c++ tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	c++ $(GTEST_INC) tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
 	./$(NAME_TEST) "--gtest_filter=*Executor*"
 
 tpars:
 	@make -C libft
-	c++ tests/main.cpp tests/parser.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
+	c++ $(GTEST_INC)  tests/main.cpp tests/parser.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
 	./$(NAME_TEST) "--gtest_filter=*Parser*"
 
 #### Phony ####
