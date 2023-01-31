@@ -35,7 +35,9 @@ static int	check_input(char *input)
 static int	init_minishell(t_minishell *minishell, char **envp)
 {
 	minishell->cmd_input = NULL;
-	minishell->prompt_msg = NULL;
+	minishell->prompt_msg = ft_strdup("minishell $>");
+	if (!minishell->prompt_msg)
+		return (ERROR);
 	if (getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1) == NULL)
 		return (ERROR);
 	minishell->env_copy = cpy_envp(envp);
@@ -50,14 +52,27 @@ static int	init_minishell(t_minishell *minishell, char **envp)
 	return (SUCCESS);
 }
 
+int	count_paranthesis_token(t_list *lst)
+{
+
+}
+
 static int	main_minishell(t_minishell *minishell, char *valid_input)
 {
 	t_list	*tokens;
+	t_list	*tmp;
+	int		len_lst;
+	int		i;
 
 	(void) minishell;
+	i = 0;
 	tokens = tokenizer(valid_input);
 	if (tokens == NULL)
 		return (ERROR);
+	len_lst = ft_lstsize(tokens);
+	while (tokens->next)
+		tokens = tokens->next;
+		printf("%s\n", tokens->content);
 	return (SUCCESS);
 }
 
@@ -65,7 +80,6 @@ static int	main_loop(t_minishell *minishell)
 {
 	int		cmd_code;
 
-	minishell->prompt_msg = ft_strdup("minishell $>");
 	while (1)
 	{
 		minishell->cmd_input = readline(minishell->prompt_msg);
@@ -74,7 +88,7 @@ static int	main_loop(t_minishell *minishell)
 		{
 			if (cmd_code != '0')
 			{
-				printf("%s\n", minishell->cmd_input);
+				printf("cmd is: %s\n", minishell->cmd_input);
 				if (main_minishell(minishell, minishell->cmd_input) == ERROR)
 					printf("LOL\n");
 			}
