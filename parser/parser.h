@@ -64,6 +64,7 @@ t_bool		are_we_in_parentheses(t_list *tokens);
 t_list		*lst_cut_first_and_last(t_list *tokens);
 
 int			parse_command(t_list *tokens, t_cmd *cmd);
+int			pipeline(t_list *tokens, t_cmd *cmd);
 
 int			set_command(t_list *tokens, t_cmd *cmd);
 

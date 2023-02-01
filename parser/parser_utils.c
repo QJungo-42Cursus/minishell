@@ -41,6 +41,8 @@ t_bool	are_we_in_parentheses(t_list *tokens)
 			parentheses--;
 		if (parentheses == 0 && cursor->next == NULL)
 			return (TRUE);
+		if (parentheses == 0 && cursor->next != NULL)
+			return (FALSE);
 		cursor = cursor->next;
 	}
 	return (FALSE);
@@ -48,33 +50,32 @@ t_bool	are_we_in_parentheses(t_list *tokens)
 
 /* renvoie un pointeur sur le token ")" fermant le 1er groupe de parentheses 
  * si pas de parentheses des le debut, renvoie le meme pointeur
+ * si pas de parentheses fermantes, renvoie le dernier token
  */
 t_list	*skip_parentheses(t_list *cursor)
 {
 	int			parentheses;
 
-	parentheses = 0;
-	if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
+	if (get_token_type((char *)cursor->content) != OPEN_PARENTHESES)
+		return (cursor);
+	parentheses = 1;
+	while (parentheses > 0 && cursor->next != NULL)
 	{
-		parentheses++;
-		while (parentheses > 0)
-		{
-			cursor = cursor->next;
-			if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
-				parentheses++;
-			else if (get_token_type((char *)cursor->content) == CLOSE_PARENTHESES)
-				parentheses--;
-		}
+		cursor = cursor->next;
+		if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
+			parentheses++;
+		else if (get_token_type((char *)cursor->content) == CLOSE_PARENTHESES)
+			parentheses--;
 	}
 	return (cursor);
 }
 
+/// une sorte de "trim", ca enleve le debut et la fin de la t_list
+/// return le pointeur sur le 1er token (apres cut) de la t_list
 t_list	*lst_cut_first_and_last(t_list *tokens)
 {
 	t_list		*cursor;
-	//t_list		*tmp;
 
-	/* une sorte de "trim", ca enleve le debut et la fin de la t_list */
 	cursor = tokens;
 	while (cursor->next->next != NULL)
 		cursor = cursor->next;

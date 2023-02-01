@@ -18,6 +18,7 @@ SRCS =			main.c \
 				builtins/cd.c \
 				parser/parser_utils.c \
 				parser/parse_command.c \
+				parser/parse_pipeline.c \
 				parser/parser.c
 OBJS =			$(SRCS:.c=.o)
 

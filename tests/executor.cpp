@@ -12,17 +12,15 @@ extern "C" {
 }
 
 extern "C" {
-int w_exit_status(int es) {
-	return WEXITSTATUS(es);
-}
+int w_exit_status(int es) { return WEXITSTATUS(es); }
 }
 
 void test_exec(t_cmd *cmd, std::string stdout_expected,
                std::string stderr_expected, int exit_status_expected) {
   testing::internal::CaptureStdout();
   testing::internal::CaptureStderr();
-  //int exit_status = WEXITSTATUS(execute(cmd));
-  //int exit_status = (execute(cmd));
+  // int exit_status = WEXITSTATUS(execute(cmd));
+  // int exit_status = (execute(cmd));
   int exit_status = w_exit_status(execute(cmd));
   std::string stdout_res = testing::internal::GetCapturedStdout();
   std::string stderr_res = testing::internal::GetCapturedStderr();
@@ -80,7 +78,6 @@ TEST(Executor, aThreeCommandsPipelineAndFail) {
   test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
 }
 
-
 TEST(Executor, SimpleFailingCommand) {
   t_cmd *cmd = new_cmd(COMMAND);
   cmd->cmd.argv = setup_argv({"/bin/bc", "not_here_file"});
@@ -115,7 +112,6 @@ TEST(Executor, TrickyPipeline) {
 }
 */
 
-
 TEST(Executor, ThreeCommandsPipeline) {
   t_cmd *cmd = new_cmd(PIPELINE);
   cmd->pipeline.pipe_count = 3;
@@ -132,7 +128,6 @@ TEST(Executor, ThreeCommandsPipeline) {
   cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.next = NULL;
   test_exec(cmd, "never_touch_this_file$\n", "", 0);
 }
-
 
 TEST(Executor, SimpleLogicalAnd) {
   t_cmd *cmd = new_cmd(LOGIC_AND);
