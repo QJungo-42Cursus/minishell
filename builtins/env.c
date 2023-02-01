@@ -2,14 +2,16 @@
 #include "../libft/libft.h"
 #include <stdio.h>
 
-int env(t_minishell minishell)
+int env(t_minishell *minishell, char **argv)
 {
 	int		i;
 
+	(void)argv; // TODO check args
+
 	i = 0;
-	while(minishell.env_copy[i] != NULL)
+	while(minishell->env_copy[i] != NULL)
 	{
-		printf("minishell.env_copy[%d]: %s\n", i, minishell.env_copy[i]);
+		printf("%s\n", minishell->env_copy[i]);
 		i++;
 	}
 	return (SUCCESS);

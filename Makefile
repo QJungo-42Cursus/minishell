@@ -17,6 +17,8 @@ SRCS =			main_q.c \
 				builtins/env.c \
 				builtins/unset.c \
 				builtins/cd.c \
+				builtins/pwd.c \
+				builtins/exit_.c \
 				executor/executor.c \
 				executor/executor_utils.c \
 				executor/execute_pipeline.c \

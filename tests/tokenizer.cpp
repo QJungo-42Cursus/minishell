@@ -190,3 +190,18 @@ TEST(TokenizeMean, doubleBitch) {
   tokenizerTest("\"", {"\""});
   tokenizerTest("\"\"", {"\"\""});
 }
+
+/***************************** TokenizeParenthese *****************************/
+TEST(TokenizeParenthese, simple) {
+  tokenizerTest("(ls -l)", {"(", "ls", "-l", ")"});
+}
+
+TEST(TokenizeParenthese, simpleWithPipe) {
+  tokenizerTest("(ls -l) | (ls -l)",
+                {"(", "ls", "-l", ")", "|", "(", "ls", "-l", ")"});
+}
+
+TEST(TokenizeParenthese, simpleWithPipeAndWord) {
+  tokenizerTest("(ls -l) | (ls -l) word",
+                {"(", "ls", "-l", ")", "|", "(", "ls", "-l", ")", "word"});
+}

@@ -4,11 +4,45 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include "executor.h"
+#include "../libft/libft.h"
+#include "../builtins/builtins.h"
 
-int	execute_command(t_cmd *cmd)
+int execute_builtin(t_cmd *cmd, t_minishell *minishell)
 {
+	char	*cmd_name;
 	int		exit_status;
 
+	cmd_name = cmd->cmd.argv[0];
+	if (ft_strncmp(cmd_name, "echo", 5) == 0)
+		exit_status = echo(cmd->cmd.argv);
+	else if (ft_strncmp(cmd_name, "cd", 3) == 0)
+		exit_status = cd(minishell, cmd->cmd.argv);
+	else if (ft_strncmp(cmd_name, "pwd", 4) == 0)
+		exit_status = pwd(minishell, cmd->cmd.argv);
+	else if (ft_strncmp(cmd_name, "export", 7) == 0)
+		exit_status = export_(minishell, cmd->cmd.argv);
+	else if (ft_strncmp(cmd_name, "unset", 6) == 0)
+		exit_status = unset(minishell, cmd->cmd.argv);
+	else if (ft_strncmp(cmd_name, "env", 4) == 0)
+		exit_status = env(minishell, cmd->cmd.argv);
+	else if (ft_strncmp(cmd_name, "exit", 5) == 0)
+		exit_status = exit_(minishell, cmd->cmd.argv, SUCCESS);
+	else
+		return (-1);
+	return (exit_status);
+}
+
+int	execute_command(t_cmd *cmd, t_minishell *minishell)
+{
+	int		exit_status;
+	
+	/* 
+	 * 1. Check if the command is a builtin ( If it is, execute it )
+	 * 2. If not, find the path of the command and execute it TODO
+	 */
+	exit_status = execute_builtin(cmd, minishell);
+	if (exit_status != -1)
+		return (exit_status);
 	exit_status = 0;
 	if (fork1() == 0)
 	{
@@ -20,7 +54,7 @@ int	execute_command(t_cmd *cmd)
 	return (exit_status);
 }
 
-int execute_redir(t_cmd *cmd)
+int execute_redir(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
 	int		to_reopen;
@@ -48,7 +82,7 @@ int execute_redir(t_cmd *cmd)
 	close(std_x_fileno);
 	dup(cmd->redir.fd);
 
-	exit_status = execute(cmd->redir.cmd);
+	exit_status = execute(cmd->redir.cmd, minishell);
 
 	close(cmd->redir.fd);
 	dup2(to_reopen, std_x_fileno);
@@ -57,18 +91,18 @@ int execute_redir(t_cmd *cmd)
 }
 
 
-int execute_logic(t_cmd *cmd)
+int execute_logic(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
 	int		left_exit_status;
 
-	left_exit_status = execute(cmd->logic.left);
+	left_exit_status = execute(cmd->logic.left, minishell);
 	if (cmd->type == LOGIC_AND && left_exit_status == 0)
-		exit_status = execute(cmd->logic.right);
+		exit_status = execute(cmd->logic.right, minishell);
 	else if (cmd->type == LOGIC_AND && left_exit_status != 0)
 		exit_status = left_exit_status;
 	else if (cmd->type == LOGIC_OR && left_exit_status != 0)
-		exit_status = execute(cmd->logic.right);
+		exit_status = execute(cmd->logic.right, minishell);
 	else if (cmd->type == LOGIC_OR && left_exit_status == 0)
 		exit_status = left_exit_status;
 	return (exit_status);
@@ -77,19 +111,19 @@ int execute_logic(t_cmd *cmd)
 
 // return un status qui dois etre "extrait" a l'aide de WEXITSTATUS(exit_status) 
 // pour recuperer le bon code de sortie
-int	execute(t_cmd *cmd)
+int	execute(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
 
 	exit_status = 0;
 	if (cmd->type == COMMAND)
-		exit_status = execute_command(cmd);
+		exit_status = execute_command(cmd, minishell);
 	else if (cmd->type == REDIR_IN || cmd->type == REDIR_OUT || cmd->type == REDIR_APPEND)
-		exit_status = execute_redir(cmd);
+		exit_status = execute_redir(cmd, minishell);
 	else if (cmd->type == PIPELINE)
 		exit_status = execute_pipeline(cmd);
 	else if (cmd->type == LOGIC_AND || cmd->type == LOGIC_OR)
-		exit_status = execute_logic(cmd);
+		exit_status = execute_logic(cmd, minishell);
 	else
 	{
 		// TODO cannot happen ?
@@ -97,4 +131,3 @@ int	execute(t_cmd *cmd)
 	}
 	return (exit_status);
 }
-

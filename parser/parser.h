@@ -47,7 +47,7 @@ typedef struct s_cmd {
 		struct {
 			int	*pipes;
 			int *pids;
-			int	pipe_count; // we could just count the count next commands
+			int	pipe_count; // n of command (and not of the pipe op)
 			struct s_cmd *first_cmd;
 		} pipeline;
 		struct {

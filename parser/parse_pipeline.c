@@ -1,6 +1,6 @@
 #include "parser.h"
 
-int pipeline_size(t_list *cursor)
+int number_of_pipe_operator(t_list *cursor)
 {
 	int		size;
 
@@ -68,9 +68,10 @@ int	set_pipeline_and_args(t_list *cursor, t_cmd *cmd)
 
 int	pipeline(t_list *tokens, t_cmd *cmd)
 {
-	cmd->pipeline.pipe_count = pipeline_size(tokens);
+	cmd->pipeline.pipe_count = number_of_pipe_operator(tokens);
 	if (cmd->pipeline.pipe_count == 0)
 		return (FALSE);
+	cmd->pipeline.pipe_count++;
 	cmd->type = PIPELINE;
 	if (set_pipeline_and_args(tokens, cmd) == ERROR)
 		return (ERROR);

@@ -7,6 +7,11 @@ int	echo(char **argv)
 	t_bool	n_mode;
 	int		i;
 
+	if (argv[1] == NULL)
+	{
+		printf("\n");
+		return (SUCCESS);
+	}
 	i = 1;
 	n_mode = (ft_strncmp(argv[i], "-n", 3) == 0);
 	if (n_mode)
@@ -22,13 +27,3 @@ int	echo(char **argv)
 		printf("\n");
 	return (SUCCESS);
 }
-
-/*
-int main(int argc, char **argv, char **envp)
-{
-	(void)argc;
-	(void)envp;
-	echo(argv);
-	return (0);
-}
-*/

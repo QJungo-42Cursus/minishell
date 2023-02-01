@@ -22,11 +22,6 @@ static int	check_input(char *input)
 		return ('0');
 	else if (ft_strlen(input) == 0)
 		return ('0');
-	else if (ft_strncmp(input, "exit", 5) == 0)
-	{
-		rl_clear_history();
-		return ('e');
-	}
 	else
 	{
 		add_history(input);
@@ -77,7 +72,7 @@ static int	main_minishell(t_minishell *minishell, char *valid_input)
 	tokens = tokenizer(valid_input);
 	cmd = (t_cmd *)malloc(sizeof(t_cmd));
 	set_command(tokens, cmd);
-	execute(cmd);
+	execute(cmd, minishell);
 	return (SUCCESS);
 }
 
@@ -85,7 +80,7 @@ static int	main_loop(t_minishell *minishell)
 {
 	int		cmd_code;
 
-	while (1)
+	while (TRUE)
 	{
 		minishell->cmd_input = readline(minishell->prompt_msg);
 		cmd_code = check_input(minishell->cmd_input);

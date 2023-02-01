@@ -30,7 +30,7 @@ int	logic(t_list *cursor, t_cmd *cmd)
 	return (FALSE);
 }
 
-t_bool redir(t_list *tokens, t_cmd *cmd)
+int redir(t_list *tokens, t_cmd *cmd)
 {
 	t_list	*cursor;
 	int		tok_type;
@@ -39,16 +39,14 @@ t_bool redir(t_list *tokens, t_cmd *cmd)
 	while (cursor->next != NULL)
 	{
 		tok_type = get_token_type((char *)cursor->next->content);
-		// TODO dabors le out ? (ca devrait etre egal...)
 		if (tok_type == REDIR_IN || tok_type == REDIR_OUT)
 		{
 			cmd->type = (t_cmd_type)tok_type;
 			cmd->redir.filename = (char *)cursor->next->next->content;
-			/* saute le `> file`, donc 2 tokens */
 			cursor->next = cursor->next->next->next;
 			cmd->redir.cmd = (t_cmd *)malloc(sizeof(t_cmd));
 			set_command(tokens, cmd->redir.cmd);
-			return (TRUE);
+			return (USED);
 		}
 		cursor = cursor->next;
 	}
