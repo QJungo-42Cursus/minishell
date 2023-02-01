@@ -3,7 +3,8 @@ CC =			gcc
 CFLAGS =		-Wall -Wextra -Werror
 LIBFT =			-L./libft -lft
 RM =			rm -f
-SRCS =			main.c \
+#SRCS =			main.c \/
+SRCS =			main_q.c \
 				tokenizer/tokenizer.c \
 				tokenizer/set_next_token_position.c \
 				env/cpy_envp.c \
@@ -16,6 +17,9 @@ SRCS =			main.c \
 				builtins/env.c \
 				builtins/unset.c \
 				builtins/cd.c \
+				executor/executor.c \
+				executor/executor_utils.c \
+				executor/execute_pipeline.c \
 				parser/parser_utils.c \
 				parser/parse_command.c \
 				parser/parse_pipeline.c \
@@ -49,6 +53,9 @@ fclean: clean
 re: fclean all
 
 #### TESTS ####
+lldb: all
+	lldb ./$(NAME)
+
 SRCS_TEST = tests/main.cpp \
 			tests/tokenizer.cpp \
 			tests/tokenizerWithQuote.cpp \

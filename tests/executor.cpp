@@ -5,6 +5,7 @@
 #include <vector>
 
 extern "C" {
+#include "../executor/execute_pipeline.c"
 #include "../executor/executor.c"
 #include "../executor/executor.h"
 #include "../executor/executor_utils.c"
