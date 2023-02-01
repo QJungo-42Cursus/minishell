@@ -12,13 +12,13 @@ int	init_pipes(t_cmd *cmd)
 	int		i;
 
 	i = 0;
-	cmd->pipeline.pipes = (int *)malloc(sizeof(int) * cmd->pipeline.pipe_count * 2);
+	cmd->pipeline.pipes = (int *)malloc(sizeof(int) * (cmd->pipeline.pipe_count + 1) * 2);
 	if (cmd->pipeline.pipes == NULL)
 	{
 		printf("malloc error\n");
 		return (ERROR);
 	}
-	while (i < cmd->pipeline.pipe_count)
+	while (i < cmd->pipeline.pipe_count + 1)
 	{
 		if (pipe(cmd->pipeline.pipes + (i * 2)) == -1)
 		{
@@ -28,7 +28,7 @@ int	init_pipes(t_cmd *cmd)
 		}
 		i++;
 	}
-	cmd->pipeline.pids = (int *)malloc(sizeof(int) * cmd->pipeline.pipe_count);
+	cmd->pipeline.pids = (int *)malloc(sizeof(int) * (cmd->pipeline.pipe_count + 1));
 	return (SUCCESS);
 }
 
@@ -78,7 +78,7 @@ int execute_pipeline(t_cmd *pipeline_cmd)
 			// -
 			// C'est aussi ici qu'on va print les erreurs command not found
 			// le pipe va continuer a tourner meme si la commande n'existe pas
-			close_all_pipes(pipeline_cmd->pipeline.pipes, pipeline_cmd->pipeline.pipe_count);
+			close_all_pipes(pipeline_cmd->pipeline.pipes, pipeline_cmd->pipeline.pipe_count + 1);
 			execvp(cmd_cursor->cmd.argv[0], cmd_cursor->cmd.argv);
 			perror("execvp");
 			exit(EXIT_FAILURE);
@@ -86,10 +86,10 @@ int execute_pipeline(t_cmd *pipeline_cmd)
 		cmd_cursor = cmd_cursor->cmd.next;
 		i++;
 	}
-	close_all_pipes(pipeline_cmd->pipeline.pipes, pipeline_cmd->pipeline.pipe_count);
+	close_all_pipes(pipeline_cmd->pipeline.pipes, pipeline_cmd->pipeline.pipe_count + 1);
 	/* wait */
 	i = 0;
-	while (i < pipeline_cmd->pipeline.pipe_count)
+	while (i < pipeline_cmd->pipeline.pipe_count + 1)
 	{
 		waitpid(pipeline_cmd->pipeline.pids[i], &exit_status, 0);
 		i++;
