@@ -52,9 +52,18 @@ static int	init_minishell(t_minishell *minishell, char **envp)
 	return (SUCCESS);
 }
 
-int	count_paranthesis_token(t_list *lst)
+int	count_seperateur_in_tooken(t_list *lst, char *sep)
 {
+	int	count;
 
+	count = 0;
+	while (lst)
+	{
+		if (ft_strncmp(lst->content, sep, ft_strlen(sep)))
+			count++;
+		lst = lst->next;
+	}
+	return (count);
 }
 
 static int	main_minishell(t_minishell *minishell, char *valid_input)
@@ -67,12 +76,12 @@ static int	main_minishell(t_minishell *minishell, char *valid_input)
 	(void) minishell;
 	i = 0;
 	tokens = tokenizer(valid_input);
+	tmp = tokens;
 	if (tokens == NULL)
 		return (ERROR);
 	len_lst = ft_lstsize(tokens);
-	while (tokens->next)
-		tokens = tokens->next;
-		printf("%s\n", tokens->content);
+	i = count_seperateur_in_tooken(tmp, "(");
+	printf("%d\n", i);
 	return (SUCCESS);
 }
 
