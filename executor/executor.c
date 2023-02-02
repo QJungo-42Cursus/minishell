@@ -7,7 +7,7 @@
 #include "../libft/libft.h"
 #include "../builtins/builtins.h"
 
-int execute_builtin(t_cmd *cmd, t_minishell *minishell)
+int	execute_builtin(t_cmd *cmd, t_minishell *minishell)
 {
 	char	*cmd_name;
 	int		exit_status;
@@ -86,16 +86,15 @@ int execute_redir(t_cmd *cmd, t_minishell *minishell)
 
 	close(cmd->redir.fd);
 	dup2(to_reopen, std_x_fileno);
-
 	return (exit_status);
 }
 
-
-int execute_logic(t_cmd *cmd, t_minishell *minishell)
+int	execute_logic(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
 	int		left_exit_status;
 
+	exit_status = 0;
 	left_exit_status = execute(cmd->logic.left, minishell);
 	if (cmd->type == LOGIC_AND && left_exit_status == 0)
 		exit_status = execute(cmd->logic.right, minishell);
@@ -105,6 +104,8 @@ int execute_logic(t_cmd *cmd, t_minishell *minishell)
 		exit_status = execute(cmd->logic.right, minishell);
 	else if (cmd->type == LOGIC_OR && left_exit_status == 0)
 		exit_status = left_exit_status;
+	else 
+		return (exit_status);
 	return (exit_status);
 }
 

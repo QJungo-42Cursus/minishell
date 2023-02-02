@@ -52,7 +52,7 @@ static int	init_minishell(t_minishell *minishell, char **envp)
 	return (SUCCESS);
 }
 
-int	count_seperateur_in_tooken(t_list *lst, char *sep)
+int	count_separateur_in_tooken(t_list *lst, char *sep)
 {
 	int	count;
 
@@ -64,6 +64,18 @@ int	count_seperateur_in_tooken(t_list *lst, char *sep)
 		lst = lst->next;
 	}
 	return (count);
+}
+
+int	check_valid(t_list *input_tooken)
+{
+	int	open;
+	int	close;
+
+	open = count_separateur_in_tooken(input_tooken, "(");
+	close = count_separateur_in_tooken(input_tooken, ")");
+	if (open != close)
+		return (ERROR);
+	return (SUCCESS);
 }
 
 static int	main_minishell(t_minishell *minishell, char *valid_input)
@@ -80,7 +92,6 @@ static int	main_minishell(t_minishell *minishell, char *valid_input)
 	if (tokens == NULL)
 		return (ERROR);
 	len_lst = ft_lstsize(tokens);
-	i = count_seperateur_in_tooken(tmp, "(");
 	printf("%d\n", i);
 	return (SUCCESS);
 }
