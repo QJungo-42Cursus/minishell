@@ -3,6 +3,8 @@
 #include <stdlib.h>            // ...
 #include <unistd.h>            // .
 #include <signal.h>
+#include <errno.h>
+
 #include <readline/history.h>  // readline history
 #include <readline/readline.h> // readline lib
 #include "fcntl.h"
@@ -82,17 +84,14 @@ static int	main_minishell(t_minishell *minishell, char *valid_input)
 {
 	t_list	*tokens;
 	t_list	*tmp;
-	int		len_lst;
-	int		i;
 
 	(void) minishell;
-	i = 0;
 	tokens = tokenizer(valid_input);
 	tmp = tokens;
 	if (tokens == NULL)
 		return (ERROR);
-	len_lst = ft_lstsize(tokens);
-	printf("%d\n", i);
+	if (!check_valid(tmp))
+		return (ERROR);
 	return (SUCCESS);
 }
 
@@ -127,8 +126,19 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	minishell;
 
-	(void) argc;
+	if (argc != 1)
+	{
+		errno = EINVAL;
+		perror("./minishell error");
+		exit (-1);
+	}
 	(void) argv;
+	if (!isatty(0) || !isatty(1) || !isatty(2))
+	{
+		errno = EINVAL;
+		perror("./minishell error with stream");
+		exit (-1);
+	}
 	if (init_minishell(&minishell, envp) == ERROR)
 		return (EXIT_FAILURE);
 	main_loop(&minishell);
