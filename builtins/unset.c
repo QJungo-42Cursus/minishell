@@ -1,38 +1,40 @@
 #include "../libft/libft.h"
 #include "../minishell.h"
 #include "../env/env.h"
+#include <unistd.h>
 
-static int	remove_env_var(t_minishell *mini, int index_var)
+#include <stdio.h>
+
+static int	remove_env_var(t_minishell *minishell, int index_var)
 {
 	int		last;
 
 	last = 0;
-	while (mini->env_copy[last] != NULL)
+	while (minishell->env_copy[last] != NULL)
 		last++;
-	free(mini->env_copy[index_var]);
-	mini->env_copy[index_var] = mini->env_copy[last - 1];
-	mini->env_copy[last - 1] = NULL;
+	free(minishell->env_copy[index_var]);
+	minishell->env_copy[index_var] = minishell->env_copy[last - 1];
+	minishell->env_copy[last - 1] = NULL;
 	return (SUCCESS);
 }
 
 int	unset(t_minishell *minishell, char **args)
 {
-	// TODO path
-	char	*var;
 	int		var_index;
 
-	var = ft_strjoin(args[1], "=");
-	if (var == NULL)
+	if (args[1] == NULL)
+	{
+		write(2, "unset: not enough arguments\n", 28);
 		return (ERROR);
-	var_index = get_env_var_index((const char **)minishell->env_copy, var);
-	if (var_index != -1)
-		remove_env_var(minishell, var_index);
-	if (ft_strncmp(var, "PATH=", 5))
+	}
+	var_index = get_env_var_index((const char **)minishell->env_copy, args[1]);
+	if (var_index == -1)
+		return (SUCCESS);
+	if (ft_strncmp(minishell->env_copy[var_index], "PATH=", 5) == 0)
 	{
 		split_free(minishell->env_paths);
 		minishell->env_paths = NULL;
 	}
-	free(var);
+	remove_env_var(minishell, var_index);
 	return (SUCCESS);
 }
-

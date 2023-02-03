@@ -79,7 +79,7 @@ int execute_pipeline(t_cmd *pipeline_cmd)
 			// C'est aussi ici qu'on va print les erreurs command not found
 			// le pipe va continuer a tourner meme si la commande n'existe pas
 			close_all_pipes(pipeline_cmd->pipeline.pipes, pipeline_cmd->pipeline.pipe_count);
-			execvp(cmd_cursor->cmd.argv[0], cmd_cursor->cmd.argv);
+			execv(cmd_cursor->cmd.argv[0], cmd_cursor->cmd.argv);
 			perror("execvp");
 			exit(EXIT_FAILURE);
 		}

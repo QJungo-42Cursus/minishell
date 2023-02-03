@@ -54,10 +54,9 @@ static int	export_pwd(t_minishell *minishell, const char *to_join)
 
 static int	change_directory_in_env(t_minishell *minishell)
 {
-
-	if (get_env_var_index((const char **)minishell->env_copy, "OLD_PWD=") != -1)
+	if (get_env_var_index((const char **)minishell->env_copy, "OLDPWD=") != -1)
 	{
-		if (export_pwd(minishell, "export OLD_PWD="))
+		if (export_pwd(minishell, "export OLDPWD="))
 			return (ERROR);
 	}
 	getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1);

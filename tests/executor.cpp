@@ -9,6 +9,16 @@ extern "C" {
 #include "../executor/executor.c"
 #include "../executor/executor.h"
 #include "../executor/executor_utils.c"
+
+#include "../builtins/cd.c"
+#include "../builtins/echo.c"
+#include "../builtins/exit_.c"
+#include "../builtins/export.c"
+#include "../builtins/pwd.c"
+#include "../builtins/env.c"
+#include "../builtins/unset.c"
+#include "../env/get_paths_in_env.c"
+
 #include <string.h>
 }
 
@@ -20,9 +30,12 @@ void test_exec(t_cmd *cmd, std::string stdout_expected,
                std::string stderr_expected, int exit_status_expected) {
   testing::internal::CaptureStdout();
   testing::internal::CaptureStderr();
+
+  t_minishell *minishell;
+
   // int exit_status = WEXITSTATUS(execute(cmd));
   // int exit_status = (execute(cmd));
-  int exit_status = w_exit_status(execute(cmd));
+  int exit_status = w_exit_status(execute(cmd, minishell));
   std::string stdout_res = testing::internal::GetCapturedStdout();
   std::string stderr_res = testing::internal::GetCapturedStderr();
 

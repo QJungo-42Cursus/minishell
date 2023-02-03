@@ -13,7 +13,7 @@ int	echo(char **argv)
 		return (SUCCESS);
 	}
 	i = 1;
-	n_mode = (ft_strncmp(argv[i], "-n", 3) == 0);
+	n_mode = (t_bool)(ft_strncmp(argv[i], "-n", 3) == 0);
 	if (n_mode)
 		i++;
 	while (argv[i] != NULL)

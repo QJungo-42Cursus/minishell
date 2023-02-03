@@ -5,14 +5,6 @@
 #include <stdio.h>
 #include "expansion.h"
 
-enum {
-	MALLOC_ERROR,
-	UNEXISTING,
-	OK,
-};
-
-
-
 char	*get_expanded_dollars(const char *token, const char **env_copy)
 {
 	t_position	index;

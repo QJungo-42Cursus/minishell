@@ -11,7 +11,7 @@ int	add_env_var(t_minishell *mini, char *var)
 	// TODO function list len -> libft
 	while (mini->env_copy[i] != NULL)
 		i++;
-	new_env_copy = malloc(sizeof(char *) * i + 1);
+	new_env_copy = (char **)malloc(sizeof(char *) * i + 1);
 	if (new_env_copy == NULL)
 		return (0);
 	i = 0;

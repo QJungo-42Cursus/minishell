@@ -40,14 +40,14 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 	 * 1. Check if the command is a builtin ( If it is, execute it )
 	 * 2. If not, find the path of the command and execute it TODO
 	 */
-	exit_status = execute_builtin(cmd, minishell);
+	exit_status = execute_builtin(cmd, minishell); // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
 	if (exit_status != -1)
 		return (exit_status);
 	exit_status = 0;
 	if (fork1() == 0)
 	{
-		execvp(cmd->cmd.argv[0], cmd->cmd.argv);
-		perror("execvp");
+		execv(cmd->cmd.argv[0], cmd->cmd.argv);
+		perror("execv");
 		exit(EXIT_FAILURE); // TODO
 	}
 	wait(&exit_status);
@@ -130,5 +130,6 @@ int	execute(t_cmd *cmd, t_minishell *minishell)
 		// TODO cannot happen ?
 		printf("execute: unknown command type: %d\n", cmd->type);
 	}
+	minishell->last_exit_status = exit_status; // TODO WEXITSTATUS ??
 	return (exit_status);
 }

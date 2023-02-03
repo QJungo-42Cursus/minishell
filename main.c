@@ -37,6 +37,7 @@ static int	check_input(char *input)
 static int	init_minishell(t_minishell *minishell, char **envp)
 {
 	minishell->cmd_input = NULL;
+	minishell->last_exit_status = 0;
 	minishell->prompt_msg = ft_strdup("minishell $>");
 	if (!minishell->prompt_msg)
 		return (ERROR);
