@@ -91,5 +91,6 @@ int		cd(t_minishell *minishell, char **argv)
 		// TODO best error handling ?
 		return (ERROR);
 	}
+	refresh_prompt(minishell);
 	return (SUCCESS);
 }
