@@ -29,26 +29,6 @@ static int	check_input(char *input)
 	}
 }
 
-static int	init_minishell(t_minishell *minishell, char **envp)
-{
-	minishell->cmd_input = NULL;
-	minishell->prompt_msg = ft_strdup("minishell $>");
-	if (!minishell->prompt_msg)
-		return (ERROR);
-	if (getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1) == NULL)
-		return (ERROR);
-	minishell->env_copy = cpy_envp(envp);
-	if (minishell->env_copy == NULL)
-		return (ERROR);
-	minishell->env_paths = get_paths_in_env(envp);
-	if (minishell->env_paths == NULL)
-	{
-		split_free(minishell->env_paths);
-		return (ERROR);
-	}
-	return (SUCCESS);
-}
-
 int	count_seperateur_in_tooken(t_list *lst, char *sep)
 {
 	int	count;

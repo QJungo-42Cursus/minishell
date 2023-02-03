@@ -5,6 +5,7 @@ LIBFT =			-L./libft -lft
 RM =			rm -f
 #SRCS =			main.c \/
 SRCS =			main_q.c \
+				minishell_utils.c \
 				tokenizer/tokenizer.c \
 				tokenizer/set_next_token_position.c \
 				env/cpy_envp.c \
