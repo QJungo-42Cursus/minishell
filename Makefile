@@ -3,8 +3,8 @@ CC =			gcc
 CFLAGS =		-Wall -Wextra -Werror
 LIBFT =			-L./libft -lft
 RM =			rm -f
-#SRCS =			main.c \/
-SRCS =			main_q.c \
+#SRCS =			main_q.c \/
+SRCS =			main.c \
 				minishell_utils.c \
 				tokenizer/tokenizer.c \
 				tokenizer/set_next_token_position.c \

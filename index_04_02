@@ -1,0 +1,86 @@
+
+/
+
+	main_q.c
+	|-			int	['count_seperateur_in_tooken(t_list', '*lst,', 'char', '*sep)']
+	|-			int	['main(int', 'argc,', 'char', '**argv,', 'char', '**envp)']
+	minishell_utils.c
+	|-			int	['refresh_prompt(t_minishell', '*minishell)']
+	|-			int	['init_minishell(t_minishell', '*minishell,', 'char', '**envp)']
+
+tokenizer/
+
+	tokenizer.c
+	|-			t_list	['*tokenizer(const', 'char', '*cmd)', '']
+	set_next_token_position.c
+	|-			void	['set_next_token_position(const', 'char', '*cmd,', 'int', 'cursor_index,', 't_position', '*token_position)']
+
+env/
+
+	cpy_envp.c
+	|-			char	['**cpy_envp(char', '**envp)']
+	get_paths_in_env.c
+	|-			char	['**get_paths_in_env(char', '**envp)']
+	get_env_var_index.c
+	|-			int	['get_env_var_index(const', 'char', '**env_copy,', 'char', '*var)']
+	get_env_var_value.c
+	|-			char	['*get_env_var_value(char', '*var_name,', 'const', 'char', '**env_copy)', '']
+	find_command_path.c
+	|-			char	['*find_cmd_path(char', '*cmd_name,', 'char', '**env_paths)']
+
+builtins/
+
+	echo.c
+	|-			int	['echo(char', '**argv)']
+	export.c
+	|-			int	['add_env_var(t_minishell', '*mini,', 'char', '*var)']
+	|-			int	['export_(t_minishell', '*minishell,', 'char', '**argv)']
+	env.c
+	|-			int	['env(t_minishell', '*minishell,', 'char', '**argv)']
+	unset.c
+	|-			int	['unset(t_minishell', '*minishell,', 'char', '**args)']
+	cd.c
+	|-			int	['', 'cd(t_minishell', '*minishell,', 'char', '**argv)']
+	pwd.c
+	|-			int	['pwd(t_minishell', '*minishell,', 'char', '**argv)']
+	exit_.c
+	|-			int	['exit_(t_minishell', '*minishell,', 'char', '**argv,', 'int', 'exit_status)']
+
+executor/
+
+	executor.c
+	|-			int	['execute_builtin(t_cmd', '*cmd,', 't_minishell', '*minishell)']
+	|-			int	['execute_command(t_cmd', '*cmd,', 't_minishell', '*minishell)']
+	|-			int	['execute_redir(t_cmd', '*cmd,', 't_minishell', '*minishell)']
+	|-			int	['execute_logic(t_cmd', '*cmd,', 't_minishell', '*minishell)']
+	|-			int	['execute(t_cmd', '*cmd,', 't_minishell', '*minishell)']
+	executor_utils.c
+	|-			int	['fork1()']
+	|-			void	['close_all_pipes(int', '*fds,', 'int', 'pipe_count)']
+	|-			int	['pipe_index(int', 'i,', 'int', 'read)']
+	execute_pipeline.c
+	|-			int	['init_pipes(t_cmd', '*cmd)']
+	|-			int	['execute_pipeline(t_cmd', '*pipeline_cmd)']
+
+parser/
+
+	parser_utils.c
+	|-			int	['get_token_type(char', '*token)']
+	|-			t_bool	['are_we_in_parentheses(t_list', '*tokens)']
+	|-			t_list	['*skip_parentheses(t_list', '*cursor)']
+	|-			t_list	['*lst_cut_first_and_last(t_list', '*tokens)']
+	parse_command.c
+	|-			int	['is_token_valid(char', '*token,', 't_list', '*cursor)']
+	|-			int	['parse_command(t_list', '*tokens,', 't_cmd', '*cmd)']
+	parse_pipeline.c
+	|-			int	['number_of_pipe_operator(t_list', '*cursor)']
+	|-			t_list	['*set_pipeline_to_null_and_return_next(t_list', '*cursor)']
+	|-			int	['set_pipeline_and_args(t_list', '*cursor,', 't_cmd', '*cmd)']
+	|-			int	['pipeline(t_list', '*tokens,', 't_cmd', '*cmd)']
+	parser.c
+	|-			int	['logic(t_list', '*cursor,', 't_cmd', '*cmd)']
+	|-			int	['redir(t_list', '*tokens,', 't_cmd', '*cmd)']
+	|-			void	['print_rest(t_list', '*cursor)']
+	|-			int	['set_command(t_list', '*tokens,', 't_cmd', '*cmd)']
+	|-			t_cmd	['*parser(t_list', '*tokens)', '{']
+
