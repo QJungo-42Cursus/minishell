@@ -1,32 +1,58 @@
 
 #include "token_checker.h"
 
-int	check_valid(t_list *input_tooken)
+static int	check_parenthesis(t_list *token)
 {
 	int	open;
 	int	close;
-	int	len;
 
-	len = ft_lstsize(input_tooken);
-	open = count_separateur_in_tooken(input_tooken, "(");
-	close = count_separateur_in_tooken(input_tooken, ")");
+	open = count_separateur_in_tooken(token, "(");
+	close = count_separateur_in_tooken(token, ")");
 	if (open != close)
 	{
 		errno = EINVAL;
 		perror("syntax error near unexpected tooken '()'");
 		return (ERROR);
 	}
-	if (count_separateur_in_tooken(input_tooken, "|") != 0)
+	return (SUCCESS);
+}
+
+static int	check_pipe_position(t_list *lst_token)
+{
+	int		close_index;
+	int		len;
+	t_list	*tmp;
+
+	if (count_separateur_in_tooken(lst_token, "|") == 0)
+		return (SUCCESS);
+	len = ft_lstsize(lst_token);
+	// Verification que les pipes ne se trouvent pas aux debuts ou a la fin.
+	close_index = get_last_index_in_list(lst_token, len, "|");
+	if (get_first_occurence_in_list(lst_token, "|") == 0 || close_index == len)
 	{
-		open = get_first_occurence_in_list(input_tooken, "|");
-		close = get_last_index_in_list(input_tooken, len, "|");
-		if (open == 0 || close == len)
-		{
-			errno = EINVAL;
-			perror("syntax error near unexpected tooken '|'");
-			return (ERROR);
-		}
+		errno = EINVAL;
+		perror("syntax error near unexpected tooken '|'");
+		return (ERROR);
 	}
+	tmp = lst_token;
+	// Verification que les pipes ne sont pas acotes. VERIFIER s'il n'y a pas d'erreurs.
+	while (tmp)
+	{
+		if (ft_strncmp(tmp->content, "|", 2) != 0)
+			tmp = tmp->next;
+		else
+			if (ft_strncmp(tmp->next->content, "|", 2) == 0)
+				return (ERROR);
+	}
+	return (SUCCESS);
+}
+
+int	check_valid_tokens(t_list *input_tooken)
+{
+	if (check_parenthesis(input_tooken) == ERROR)
+		return (ERROR);
+	if (check_pipe_position(input_tooken) == ERROR)
+		return (ERROR);
 	return (SUCCESS);
 }
 

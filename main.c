@@ -48,7 +48,7 @@ static int	main_minishell(t_minishell *minishell, char *valid_input)
 	tmp = tokens;
 	if (tokens == NULL)
 		return (ERROR);
-	if (check_valid(tmp) == ERROR)
+	if (check_valid_tokens(tmp) == ERROR)
 	{
 		return (ERROR);
 	}
