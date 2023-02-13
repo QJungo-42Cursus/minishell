@@ -15,6 +15,8 @@
 #include "builtins/builtins.h"
 #include "tests/debug_helper.h"
 #include "minishell.h"
+#include "executor/executor.h"
+#include "token_checker/token_checker.h"
 
 static int	check_input_term(char *input)
 {
@@ -34,68 +36,14 @@ static int	check_input_term(char *input)
 	}
 }
 
-int	get_index_in_list(t_list *lst, char *sep)
-{
-	int	index;
-
-	index = 0;
-	while (lst)
-	{
-		if (!ft_strncmp(lst->content, sep, ft_strlen(sep)))
-			return (index);
-		index++;
-		lst = lst->next;
-	}
-	return (index);
-}
-
-int	count_separateur_in_tooken(t_list *lst, char *sep)
-{
-	int	count;
-
-	count = 0;
-	while (lst)
-	{
-		if (!ft_strncmp(lst->content, sep, ft_strlen(sep) + 1))
-			count++;
-		lst = lst->next;
-	}
-	return (count);
-}
-
-int	check_valid(t_list *input_tooken)
-{
-	int	open_par;
-	int	close_par;
-	int	count;
-
-	open_par = count_separateur_in_tooken(input_tooken, "(");
-	close_par = count_separateur_in_tooken(input_tooken, ")");
-	if (open_par != close_par)
-	{
-		errno = EINVAL;
-		perror("syntax error near unexpected tooken '|'");
-		return (ERROR);
-	}
-	if (count_separateur_in_tooken(input_tooken, "|") != 0)
-	{
-		count = get_index_in_list(input_tooken, "|");
-		if (count == 0)
-		{
-			errno = EINVAL;
-			perror("syntax error near unexpected tooken '|'");
-			return (ERROR);
-		}
-	}
-	return (SUCCESS);
-}
-
 static int	main_minishell(t_minishell *minishell, char *valid_input)
 {
 	t_list	*tokens;
 	t_list	*tmp;
+	t_cmd	*cmd;
 
 	(void) minishell;
+	(void) tmp;
 	tokens = tokenizer(valid_input);
 	tmp = tokens;
 	if (tokens == NULL)
@@ -104,15 +52,14 @@ static int	main_minishell(t_minishell *minishell, char *valid_input)
 	{
 		return (ERROR);
 	}
-	/*
-	printf("\n Print tokens\n-------\n");
-	while (tokens)
+	cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	if (set_command(tokens, cmd) == ERROR)
+		return (ERROR);
+	if (execute(cmd, minishell) == 0)
 	{
-		printf("%s ", (char *) tokens->content);
-		tokens = tokens->next;
+		perror("Command not found");
+		return (ERROR);
 	}
-	printf("\n");
-	*/
 	return (SUCCESS);
 }
 
