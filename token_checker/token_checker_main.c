@@ -1,10 +1,33 @@
-
 #include "token_checker.h"
+
+static int	check_parenthesis_order(t_list *token)
+{
+	int		open;
+	t_list	*tmp;
+
+	open = 0;
+	tmp = token;
+	while (tmp)
+	{
+		if (ft_strncmp(tmp->content, "(", 2) == 0)
+			open++;
+		if (ft_strncmp(tmp->content, ")", 2) == 0)
+			open--;
+		if (open < 0)
+		{
+			errno = EINVAL;
+			perror("syntax error near unexpected tooken ')'");
+			return (ERROR);
+		}
+		tmp = tmp->next;
+	}
+	return (SUCCESS);
+}
 
 static int	check_parenthesis(t_list *token)
 {
-	int	open;
-	int	close;
+	int		open;
+	int		close;
 
 	open = count_separateur_in_tooken(token, "(");
 	close = count_separateur_in_tooken(token, ")");
@@ -14,8 +37,15 @@ static int	check_parenthesis(t_list *token)
 		perror("syntax error near unexpected tooken '()'");
 		return (ERROR);
 	}
+	if (check_parenthesis_order(token) == ERROR)
+		return (ERROR);
 	return (SUCCESS);
 }
+
+// Cette fonction a deux roles:
+	// Verification que les pipes ne se trouvent pas aux debuts ou a la fin.
+	// Verification que les pipes ne sont pas acotes. VERIFIER s'il n'y a pas d'erreurs.
+// Deuxieme option: est peut etre deja gere par ta struct
 
 static int	check_pipe_position(t_list *lst_token)
 {
@@ -26,7 +56,6 @@ static int	check_pipe_position(t_list *lst_token)
 	if (count_separateur_in_tooken(lst_token, "|") == 0)
 		return (SUCCESS);
 	len = ft_lstsize(lst_token);
-	// Verification que les pipes ne se trouvent pas aux debuts ou a la fin.
 	close_index = get_last_index_in_list(lst_token, len, "|");
 	if (get_first_occurence_in_list(lst_token, "|") == 0 || close_index == len)
 	{
@@ -35,7 +64,6 @@ static int	check_pipe_position(t_list *lst_token)
 		return (ERROR);
 	}
 	tmp = lst_token;
-	// Verification que les pipes ne sont pas acotes. VERIFIER s'il n'y a pas d'erreurs.
 	while (tmp)
 	{
 		if (ft_strncmp(tmp->content, "|", 2) != 0)
@@ -54,50 +82,4 @@ int	check_valid_tokens(t_list *input_tooken)
 	if (check_pipe_position(input_tooken) == ERROR)
 		return (ERROR);
 	return (SUCCESS);
-}
-
-int	get_first_occurence_in_list(t_list *lst, char *sep)
-{
-	int	index;
-
-	index = 0;
-	while (lst)
-	{
-		if (!ft_strncmp(lst->content, sep, ft_strlen(sep)))
-			return (index);
-		index++;
-		lst = lst->next;
-	}
-	return (index);
-}
-
-int	get_last_index_in_list(t_list *lst, int len, char *sep)
-{
-	int	index;
-	int	i;
-
-	index = 0;
-	i = 0;
-	while (lst && i < len)
-	{
-		if (!ft_strncmp(lst->content, sep, ft_strlen(sep)))
-			index = i + 1 ;
-		lst = lst->next;
-		i++;
-	}
-	return (index);
-}
-
-int	count_separateur_in_tooken(t_list *lst, char *sep)
-{
-	int	count;
-
-	count = 0;
-	while (lst)
-	{
-		if (!ft_strncmp(lst->content, sep, ft_strlen(sep) + 1))
-			count++;
-		lst = lst->next;
-	}
-	return (count);
 }

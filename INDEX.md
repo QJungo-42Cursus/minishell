@@ -1,17 +1,7 @@
 # INDEX de tout les fichiers et de leur repartition dans les dossiers
-main.c
+##Minishell##
+Voici notre iteration du sujet Minishell du cursus 42. 
 
-tokenizer
-	tokenizer.c
-	get_next_token_functions.c
-	get_token_normal.c
-	get_token_quote.c
-	set_next_token_position.c
+Minishell est un sujet, ou nous cherchons a reproduire certains comportements du bash.
 
-env
-	cpy_envp.c
-	get_paths_in_env.c
-
-builtins
-	echo.c
 

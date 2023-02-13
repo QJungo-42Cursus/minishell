@@ -27,7 +27,8 @@ SRCS =			main.c \
 				parser/parse_command.c \
 				parser/parse_pipeline.c \
 				parser/parser.c \
-				token_checker/token_checker_main.c
+				token_checker/token_checker_main.c \
+				token_checker/token_checker_utils.c
 OBJS =			$(SRCS:.c=.o)
 
 #### INCLUDES (READLINE) ####

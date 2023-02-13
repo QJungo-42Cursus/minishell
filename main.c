@@ -36,23 +36,11 @@ static int	check_input_term(char *input)
 	}
 }
 
-static int	main_minishell(t_minishell *minishell, char *valid_input)
+static int	main_minishell(t_minishell *minishell, t_list *tokens)
 {
-	t_list	*tokens;
-	t_list	*tmp;
 	t_cmd	*cmd;
 
-	(void) minishell;
-	(void) tmp;
-	tokens = tokenizer(valid_input);
-	tmp = tokens;
-	if (tokens == NULL)
-		return (ERROR);
-	if (check_valid_tokens(tmp) == ERROR)
-	{
-		return (ERROR);
-	}
-	cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	cmd = (t_cmd *) malloc(sizeof(t_cmd));
 	if (set_command(tokens, cmd) == ERROR)
 		return (ERROR);
 	if (execute(cmd, minishell) == 0)
@@ -66,6 +54,7 @@ static int	main_minishell(t_minishell *minishell, char *valid_input)
 static int	main_loop(t_minishell *minishell)
 {
 	int		cmd_code;
+	t_list	*tokens;
 
 	while (1)
 	{
@@ -75,10 +64,14 @@ static int	main_loop(t_minishell *minishell)
 		{
 			if (cmd_code != '0')
 			{
-				if (main_minishell(minishell, minishell->cmd_input) == ERROR)
-					printf("DIE MOTHER FUCKER\n");
+				tokens = tokenizer(minishell->cmd_input);
+				if (tokens == NULL)
+					return (ERROR);
+				if (check_valid_tokens(tokens) == SUCCESS)
+					main_minishell(minishell, tokens);
 				else
-					printf("No error\n");
+					printf("prout");
+					//free_tokens(tokens); ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< To do
 			}
 			free(minishell->cmd_input);
 		}
