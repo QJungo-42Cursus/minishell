@@ -18,6 +18,12 @@
 #include "executor/executor.h"
 #include "token_checker/token_checker.h"
 
+void	handler(int num)
+{
+	(void)	num;
+	printf("Did you call master?\n");
+}
+
 static int	check_input_term(char *input)
 {
 	if (input == NULL)
@@ -86,6 +92,7 @@ static int	main_loop(t_minishell *minishell)
 
 int	main(int argc, char **argv, char **envp)
 {
+	signal(SIGINT, handler);
 	t_minishell	minishell;
 
 	if (argc != 1)
