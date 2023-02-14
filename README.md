@@ -1,9 +1,9 @@
 # minishell
 **Best collab ever**
 
-This is the first "real project", We are not alone anymore (with the amazing [Alexis](https://github.com/Cpt-Graby/))
+*This is the first "real project", We are not alone anymore (with the amazing [Alexis](https://github.com/Cpt-Graby/))*
 <br>
-The goal : re-implement a simplified version of **bash** !
+**The goal** : re-implement a simplified version of **bash** !
 <br>
 It is impossible to imagine doing it without unit testing (at least for the main functionality). It begins to be so big that a breaking change might be impossible to find if detected too late. We used gtest in order to avoid this.
 <br>
