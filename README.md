@@ -11,3 +11,5 @@ Regarding the parsing and execution, there are two main ways:
 1. Cover every case "by hand"
 2. Create an AST
 I order to do the bonuses, why decided to implement an AST which was fascinating.
+
+<!-- TODO add a picture of the cmdline -->
