@@ -1,29 +1,17 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell_utils.c                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: agonelle <agonelle@student.42lausanne.ch>  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/03 15:08:45 by agonelle          #+#    #+#             */
-/*   Updated: 2023/02/19 08:40:47 by qjungo           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
-#include "libft/libft.h"       // ...
-#include <errno.h>
-#include <stdio.h>
-#include <unistd.h>            // .
-#include "env/env.h"       // ...
+#include "libft/libft.h"
+#include <unistd.h>
+#include "env/env.h"
 
 int refresh_prompt(t_minishell *minishell)
 {
 	if (minishell->prompt_msg != NULL)
 		free(minishell->prompt_msg);
-	minishell->prompt_msg = ft_strjoin(minishell->current_working_directory,
-			" ./minishell $>");
+	//minishell->prompt_msg = ft_strjoin(minishell->current_working_directory," ./minishell $>");
+    minishell->prompt_msg = ft_sprintf("[msh %s]$ ",
+           minishell->current_working_directory);
 	if (minishell->prompt_msg == NULL)
+        // TODO exit ?
 		return (ERROR);
 	return (SUCCESS);
 }

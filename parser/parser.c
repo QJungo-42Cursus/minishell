@@ -70,9 +70,13 @@ int	set_command(t_list *tokens, t_cmd *cmd)
 
 	if (are_we_in_parentheses(tokens))
 	{
-		//printf("parentheses -> ");
+		if (ft_strncmp((char *)tokens->next->content, ")", 2) == 0)
+		{
+			// TODO
+			write(2, "minishell: syntax error near unexpected token `)'\n", 50);
+			return (EXIT_FAILURE);
+		}
 		tokens = lst_cut_first_and_last(tokens);
-		//print_rest(tokens);
 	}
 	exit_status = logic(tokens, cmd);
 	if (exit_status == ERROR || exit_status == USED)

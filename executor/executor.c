@@ -35,8 +35,6 @@ int	execute_builtin(t_cmd *cmd, t_minishell *minishell, int *exit_status)
 int	execute_command(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
-	char	*path;
-	
 	/* 
 	 * 1. Check if the command is a builtin ( If it is, execute it )
 	 * 2. If not, find the path of the command and execute it TODO
@@ -46,9 +44,8 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 	exit_status = 0;
 	if (fork1() == 0)
 	{
-		path = find_cmd_path(cmd->cmd.argv[0], minishell->env_paths);
-		free(cmd->cmd.argv[0]);
-		cmd->cmd.argv[0] = path;
+        // LATER faire attention a ce que execute pipeline aie la meme chose !!
+		replace_argv0_with_full_path(cmd, minishell);
 		execv(cmd->cmd.argv[0], cmd->cmd.argv);
 		perror("execv");
 		exit(EXIT_FAILURE); // TODO
@@ -125,7 +122,7 @@ int	execute(t_cmd *cmd, t_minishell *minishell)
 	else if (cmd->type == REDIR_IN || cmd->type == REDIR_OUT || cmd->type == REDIR_APPEND)
 		exit_status = execute_redir(cmd, minishell);
 	else if (cmd->type == PIPELINE)
-		exit_status = execute_pipeline(cmd);
+		exit_status = execute_pipeline(cmd, minishell);
 	else if (cmd->type == LOGIC_AND || cmd->type == LOGIC_OR)
 		exit_status = execute_logic(cmd, minishell);
 	else

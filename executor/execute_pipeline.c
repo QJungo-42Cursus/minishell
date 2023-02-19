@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
 #include "executor.h"
@@ -32,7 +31,7 @@ int	init_pipes(t_cmd *cmd)
 	return (SUCCESS);
 }
 
-int execute_pipeline(t_cmd *pipeline_cmd)
+int execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 {
 	int		exit_status;
 	int		i;
@@ -79,6 +78,9 @@ int execute_pipeline(t_cmd *pipeline_cmd)
 			// C'est aussi ici qu'on va print les erreurs command not found
 			// le pipe va continuer a tourner meme si la commande n'existe pas
 			close_all_pipes(pipeline_cmd->pipeline.pipes, pipeline_cmd->pipeline.pipe_count);
+            if (execute_builtin(cmd_cursor, minishell, &exit_status)) // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
+                exit(exit_status);
+			replace_argv0_with_full_path(cmd_cursor, minishell);
 			execv(cmd_cursor->cmd.argv[0], cmd_cursor->cmd.argv);
 			perror("execvp");
 			exit(EXIT_FAILURE);

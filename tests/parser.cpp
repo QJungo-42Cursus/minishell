@@ -418,6 +418,11 @@ TEST(Parser, FailParentheses3) {
              "minishell: syntax error near unexpected token `ls'\n");
 }
 
+TEST(Parser, TrickParenthesise) {
+  testParser({"(", ")"}, NULL,
+             "minishell: syntax error near unexpected token `)'\n");
+}
+
 TEST(Parser, EchoPipeCat) {
   t_cmd *cmd = new_cmd(PIPELINE);
   cmd->pipeline.pipe_count = 2;
@@ -503,5 +508,3 @@ TEST(Parser, SimpleByRedirection) {
   cmd->redir.cmd->redir.cmd->cmd.next = NULL;
   testParser({"cat", "<", "test.txt", ">", "test2.txt"}, cmd);
 }
-
-// TODO add all exeptions (like with parenthesis)

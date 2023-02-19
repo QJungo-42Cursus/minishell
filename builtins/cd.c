@@ -1,7 +1,6 @@
 #include "../libft/libft.h"
 #include "../env/env.h"
 #include "../builtins/builtins.h"
-#include "../minishell.h"
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
@@ -16,19 +15,11 @@ static int	check_argv(char **argv)
 	if (argc > 2)
 	{
 		errno = E2BIG;
-		perror("cd:");
+		perror("cd"); // FIXME n'imprime pas la meme chose que bash
+        write(2, "minishell: cd: too many arguments\n", 34);
 		return (-1);
 	}
 	return (argc);
-}
-
-static int	go_home(t_minishell *minishell)
-{
-	(void)minishell;
-
-
-	// TODO  $HOME
-	return (SUCCESS);
 }
 
 static int	export_pwd(t_minishell *minishell, const char *to_join)
@@ -65,7 +56,42 @@ static int	change_directory_in_env(t_minishell *minishell)
 		if (export_pwd(minishell, "export PWD="))
 			return (ERROR);
 	}
+    printf("PWD: %s\n", get_env_var_value("PWD", (const char **)minishell->env_copy));
+    printf("OLDPWD: %s\n", get_env_var_value("OLDPWD", (const char **)minishell->env_copy));
+    env(minishell, NULL);
 	return (SUCCESS);
+}
+
+static int     change_dir(t_minishell *minishell, char *new_path)
+{
+    if (chdir(new_path) != 0)
+    {
+        perror("chdir:"); // TODO chdir ? cd ?
+        return (errno);
+    }
+    if (change_directory_in_env(minishell) == ERROR)
+    {
+        // TODO best error handling ?
+        return (ERROR);
+    }
+    if (refresh_prompt(minishell) == ERROR)
+    {
+        // TODO error handling ?
+        // return (ERROR);
+    }
+    return (SUCCESS);
+}
+
+static int  go_home(t_minishell *minishell)
+{
+    char    *home;
+
+    home = get_env_var_value("HOME", (const char **)minishell->env_copy);
+    if (home == NULL)
+        return (ERROR);
+    change_dir(minishell, home);
+    free(home);
+    return (SUCCESS);
 }
 
 int		cd(t_minishell *minishell, char **argv)
@@ -76,21 +102,6 @@ int		cd(t_minishell *minishell, char **argv)
 	if (argc == -1)
 		return (errno);
 	if (argc == 1)
-	{
-		if (go_home(minishell) == -1)
-			return (errno);
-		return (SUCCESS);
-	}
-	if (chdir(argv[1]) != 0)
-	{
-		perror("chdir:"); // TODO chdir ? cd ?
-		return (errno);
-	}
-	if (change_directory_in_env(minishell) == ERROR)
-	{
-		// TODO best error handling ?
-		return (ERROR);
-	}
-	refresh_prompt(minishell);
-	return (SUCCESS);
+        return (go_home(minishell));
+    return change_dir(minishell, argv[1]);
 }

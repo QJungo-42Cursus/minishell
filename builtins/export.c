@@ -1,19 +1,27 @@
+#include <unistd.h>
+#include <stdio.h>
 #include "../libft/libft.h"
 #include "../minishell.h"
 #include "../env/env.h"
 
-int	add_env_var(t_minishell *mini, char *var)
+static int list_len(char **list)
+{
+    int i;
+
+    i = 0;
+    while (list[i] != NULL)
+        i++;
+    return (i);
+}
+
+static int	add_env_var(t_minishell *mini, char *var)
 {
 	char	**new_env_copy;
-	int		i;
+    int     i;
 
-	i = 0;
-	// TODO function list len -> libft
-	while (mini->env_copy[i] != NULL)
-		i++;
-	new_env_copy = (char **)malloc(sizeof(char *) * i + 1);
+	new_env_copy = (char **)malloc(sizeof(char *) * list_len(mini->env_copy) + 1);
 	if (new_env_copy == NULL)
-		return (0);
+		return (ERROR);
 	i = 0;
 	while (mini->env_copy[i] != NULL)
 	{
@@ -29,20 +37,34 @@ int	add_env_var(t_minishell *mini, char *var)
 
 static int	check_var_name(char *var)
 {
+	// TODO export work with juste a name, not a name=value
 	if(ft_strchr(var, '=') == NULL)
 		return (ERROR);
 	return (SUCCESS);
 }
 
-// TODO si VAR="a b c" -> VAR=a b c (qui seront 3 arguments séparés)
 int	export_(t_minishell *minishell, char **argv)
 {
 	char	*var;
 	int		var_index;
+	int		i;
+
+    if (argv[1] == NULL)
+	{
+		// TODO le faire comme dans le vrai, par ordre alphabétique ?
+		i = 0;
+		while(minishell->env_copy[i] != NULL)
+		{
+			printf("declare -x %s\n", minishell->env_copy[i]);
+			i++;
+		}
+		return (SUCCESS);
+	}
 
 	if (check_var_name(argv[1]) == ERROR)
 	{
 		//TODO Message error
+        write(2, "minishell: export: not a valid identifier\n", 42);
 		return (ERROR);
 	}
 	var = ft_strdup(argv[1]);
