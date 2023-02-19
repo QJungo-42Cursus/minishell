@@ -18,28 +18,34 @@
 #include "executor/executor.h"
 #include "token_checker/token_checker.h"
 
+//int g_should_exit = FALSE;
+//
+
 void	handler(int num)
 {
-	(void)	num;
-	printf("Did you call master?\n");
+	// TODO avec CAT, ne doit pas quitter le shell
+	if (num == 2)
+		exit(0);
 }
+
+enum e_cmd_code {
+	NONE = 1,
+	EXIT,
+};
 
 static int	check_input_term(char *input)
 {
 	if (input == NULL)
-		return ('0');
-	else if (ft_strlen(input) == 0)
-		return ('0');
-	else if (ft_strncmp(input, "exit", 5) == 0)
+		return (NONE);
+	if (ft_strlen(input) == 0)
+		return (NONE);
+	if (ft_strncmp(input, "exit", 5) == 0) // TODO use a builtin
 	{
 		rl_clear_history();
-		return ('e');
+		return (EXIT);
 	}
-	else
-	{
-		add_history(input);
-		return (1);
-	}
+	add_history(input);
+	return (SUCCESS);
 }
 
 static int	main_minishell(t_minishell *minishell, t_list *tokens)
@@ -49,7 +55,7 @@ static int	main_minishell(t_minishell *minishell, t_list *tokens)
 	cmd = (t_cmd *) malloc(sizeof(t_cmd));
 	if (set_command(tokens, cmd) == ERROR)
 		return (ERROR);
-	if (execute(cmd, minishell) == 0)
+	if (execute(cmd, minishell) != 0)
 	{
 		perror("Command not found");
 		return (ERROR);
@@ -62,38 +68,47 @@ static int	main_loop(t_minishell *minishell)
 	int		cmd_code;
 	t_list	*tokens;
 
-	while (1)
+	while (!minishell->should_exit)
 	{
 		minishell->cmd_input = readline(minishell->prompt_msg);
 		cmd_code = check_input_term(minishell->cmd_input);
-		if (cmd_code != 'e')
-		{
-			if (cmd_code != '0')
-			{
-				tokens = tokenizer(minishell->cmd_input);
-				if (tokens == NULL)
-					return (ERROR);
-				if (check_valid_tokens(tokens) == SUCCESS)
-					main_minishell(minishell, tokens);
-				else
-					printf("prout");
-					//free_tokens(tokens); ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< To do
-			}
-			free(minishell->cmd_input);
-		}
-		else
+		if (cmd_code == EXIT)
 		{
 			free(minishell->cmd_input);
 			free(minishell->prompt_msg);
-			return (0);
+			return (SUCCESS);
 		}
+		if (cmd_code == NONE)
+			continue ;
+		tokens = tokenizer(minishell->cmd_input);
+		if (tokens == NULL)
+			return (ERROR);
+		if (check_valid_tokens(tokens) == SUCCESS)
+			main_minishell(minishell, tokens);
+		else
+			printf("prout");
+			//free_tokens(tokens); ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
+		free(minishell->cmd_input);
 	}
+	return (SUCCESS);
 }
+
+#include <termios.h>
 
 int	main(int argc, char **argv, char **envp)
 {
-	signal(SIGINT, handler);
 	t_minishell	minishell;
+
+	struct termios old_termios, new_termios;
+	tcgetattr(0,&old_termios);
+
+	signal(SIGINT, handler);
+
+	new_termios             = old_termios;
+	new_termios.c_cc[VEOF]  = 3; // ^C
+	new_termios.c_cc[VINTR] = 4; // ^D
+								 // TODO add the ctrl C print
+	tcsetattr(0,TCSANOW,&new_termios);
 
 	if (argc != 1)
 	{
@@ -111,15 +126,10 @@ int	main(int argc, char **argv, char **envp)
 	if (init_minishell(&minishell, envp) == ERROR)
 		return (EXIT_FAILURE);
 	main_loop(&minishell);
-	/*
-	//char **test = ft_split("export CACA=0", ' ');
-	//char **cd_test = ft_split("cd /", ' ');
-	//char **untest = ft_split("unset LS_COLORS", ' ');
-	//export_(&minishell, test);
-	//unset(&minishell, untest);
-	env(minishell);
-	cd(&minishell, cd_test);
-	env(minishell);
-	*/
+
+
+
+	tcsetattr(0,TCSANOW,&old_termios);
+
 	return (0);
 }

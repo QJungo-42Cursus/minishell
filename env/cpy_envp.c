@@ -9,7 +9,7 @@ char	**cpy_envp(char **envp)
 	i = 0;
 	while (envp[i])
 		i++;
-	env_copy = malloc(sizeof(char *) * (i + 1));
+	env_copy = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!env_copy)
 		return (NULL);
 	i = 0;

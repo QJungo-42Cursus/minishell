@@ -6,46 +6,49 @@
 #include "executor.h"
 #include "../libft/libft.h"
 #include "../builtins/builtins.h"
+#include "../env/env.h"
 
-int	execute_builtin(t_cmd *cmd, t_minishell *minishell)
+int	execute_builtin(t_cmd *cmd, t_minishell *minishell, int *exit_status)
 {
 	char	*cmd_name;
-	int		exit_status;
 
 	cmd_name = cmd->cmd.argv[0];
 	if (ft_strncmp(cmd_name, "echo", 5) == 0)
-		exit_status = echo(cmd->cmd.argv);
+		*exit_status = echo(cmd->cmd.argv);
 	else if (ft_strncmp(cmd_name, "cd", 3) == 0)
-		exit_status = cd(minishell, cmd->cmd.argv);
+		*exit_status = cd(minishell, cmd->cmd.argv);
 	else if (ft_strncmp(cmd_name, "pwd", 4) == 0)
-		exit_status = pwd(minishell, cmd->cmd.argv);
+		*exit_status = pwd(minishell, cmd->cmd.argv);
 	else if (ft_strncmp(cmd_name, "export", 7) == 0)
-		exit_status = export_(minishell, cmd->cmd.argv);
+		*exit_status = export_(minishell, cmd->cmd.argv);
 	else if (ft_strncmp(cmd_name, "unset", 6) == 0)
-		exit_status = unset(minishell, cmd->cmd.argv);
+		*exit_status = unset(minishell, cmd->cmd.argv);
 	else if (ft_strncmp(cmd_name, "env", 4) == 0)
-		exit_status = env(minishell, cmd->cmd.argv);
+		*exit_status = env(minishell, cmd->cmd.argv);
 	else if (ft_strncmp(cmd_name, "exit", 5) == 0)
-		exit_status = exit_(minishell, cmd->cmd.argv, SUCCESS);
+		*exit_status = exit_(minishell, cmd->cmd.argv, SUCCESS);
 	else
-		return (-1);
-	return (exit_status);
+		return (FALSE);
+	return (TRUE);
 }
 
 int	execute_command(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
+	char	*path;
 	
 	/* 
 	 * 1. Check if the command is a builtin ( If it is, execute it )
 	 * 2. If not, find the path of the command and execute it TODO
 	 */
-	exit_status = execute_builtin(cmd, minishell); // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
-	if (exit_status != -1)
+	if (execute_builtin(cmd, minishell, &exit_status)) // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
 		return (exit_status);
 	exit_status = 0;
 	if (fork1() == 0)
 	{
+		path = find_cmd_path(cmd->cmd.argv[0], minishell->env_paths);
+		free(cmd->cmd.argv[0]);
+		cmd->cmd.argv[0] = path;
 		execv(cmd->cmd.argv[0], cmd->cmd.argv);
 		perror("execv");
 		exit(EXIT_FAILURE); // TODO

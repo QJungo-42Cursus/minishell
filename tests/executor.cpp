@@ -12,13 +12,19 @@ extern "C" {
 
 #include "../builtins/cd.c"
 #include "../builtins/echo.c"
+#include "../builtins/env.c"
 #include "../builtins/exit_.c"
 #include "../builtins/export.c"
 #include "../builtins/pwd.c"
-#include "../builtins/env.c"
 #include "../builtins/unset.c"
+#include "../env/find_command_path.c"
 #include "../env/get_paths_in_env.c"
 
+// a cause du refresh_prompt() de cd
+#include "../env/cpy_envp.c"
+#include "../minishell_utils.c"
+
+#include "../libft/libft.h"
 #include <string.h>
 }
 
@@ -26,12 +32,16 @@ extern "C" {
 int w_exit_status(int es) { return WEXITSTATUS(es); }
 }
 
+t_minishell *minishell = NULL;
+
 void test_exec(t_cmd *cmd, std::string stdout_expected,
                std::string stderr_expected, int exit_status_expected) {
+  if (minishell == NULL) {
+    minishell = (t_minishell *)malloc(sizeof(t_minishell));
+    minishell->env_paths = ft_split(getenv("PATH"), ':');
+  }
   testing::internal::CaptureStdout();
   testing::internal::CaptureStderr();
-
-  t_minishell *minishell;
 
   // int exit_status = WEXITSTATUS(execute(cmd));
   // int exit_status = (execute(cmd));
@@ -54,6 +64,12 @@ void test_redir_out(std::string filename, std::string expected) {
   ASSERT_EQ(content, expected);
 }
 
+TEST(Executor, SimpleCommand) {
+  t_cmd *cmd = new_cmd(COMMAND);
+  cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
+  test_exec(cmd, "hi friends !\n", "", 0);
+}
+
 /* TODO les 2 qui fails avec github action mais pas en local */
 TEST(Executor, aSimpleFailingPipeline) {
   t_cmd *cmd = new_cmd(PIPELINE);
@@ -67,12 +83,6 @@ TEST(Executor, aSimpleFailingPipeline) {
       setup_argv({"/bin/bc", "not_here_file"});
   cmd->pipeline.first_cmd->cmd.next->cmd.next = NULL;
   test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
-}
-
-TEST(Executor, SimpleCommand) {
-  t_cmd *cmd = new_cmd(COMMAND);
-  cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
-  test_exec(cmd, "hi friends !\n", "", 0);
 }
 
 TEST(Executor, aThreeCommandsPipelineAndFail) {

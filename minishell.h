@@ -10,6 +10,7 @@ typedef struct s_minishell {
 	char	**env_copy; // malloc / pour export et unset
 	char	*cmd_input;
 	int		last_exit_status;
+	int		should_exit;
 }	t_minishell;
 
 typedef struct s_position

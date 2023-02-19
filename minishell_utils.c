@@ -6,7 +6,7 @@
 /*   By: agonelle <agonelle@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/03 15:08:45 by agonelle          #+#    #+#             */
-/*   Updated: 2023/02/03 16:37:30 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/02/19 08:40:47 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,5 +47,6 @@ int	init_minishell(t_minishell *minishell, char **envp)
 	refresh_prompt(minishell);
 	if (!minishell->prompt_msg)
 		return (ERROR);
+	minishell->should_exit = FALSE;
 	return (SUCCESS);
 }
