@@ -46,7 +46,7 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 	{
         // LATER faire attention a ce que execute pipeline aie la meme chose !!
 		replace_argv0_with_full_path(cmd, minishell);
-		execv(cmd->cmd.argv[0], cmd->cmd.argv);
+		execve(cmd->cmd.argv[0], cmd->cmd.argv, minishell->env_copy);
 		perror("execv");
 		exit(EXIT_FAILURE); // TODO
 	}
