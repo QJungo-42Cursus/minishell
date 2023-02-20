@@ -88,9 +88,15 @@ void compare_ast(t_cmd *ast, t_cmd *expected, int depth = 0) {
 
 void testParser(std::vector<std::string> tokens, t_cmd *expected,
                 std::string error_exp = "") {
-  if (error_exp != "")
+  if (error_exp != "") {
     testing::internal::CaptureStderr();
-  t_cmd *cmd = parser(generate_tokens(tokens));
+  }
+
+  t_minishell *minishell = NULL;
+  minishell = (t_minishell *)malloc(sizeof(t_minishell));
+  minishell->env_paths = ft_split(getenv("PATH"), ':');
+
+  t_cmd *cmd = parser(generate_tokens(tokens), minishell);
   if (error_exp != "") {
     std::string stderr_res = testing::internal::GetCapturedStderr();
     ASSERT_EQ(stderr_res, error_exp);

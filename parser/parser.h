@@ -1,5 +1,6 @@
 #ifndef PARSER_H
 # define PARSER_H
+# include "../minishell.h"
 # include "../libft/libft.h"
 
 /* TODO une idee pour pouvoir tout free a la fin : faire une list de t_list, 
@@ -63,10 +64,9 @@ int			get_token_type(char *token);
 t_bool		are_we_in_parentheses(t_list *tokens);
 t_list		*lst_cut_first_and_last(t_list *tokens);
 
-int			parse_command(t_list *tokens, t_cmd *cmd);
-int			pipeline(t_list *tokens, t_cmd *cmd);
-#include "../minishell.h"
-int			set_command(t_list *tokens, t_cmd *cmd);
+int			parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
+int			pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
+int			set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
 t_cmd		*parser(t_list *tokens, t_minishell *minishell);
 
 #endif /* PARSER_H */

@@ -47,8 +47,6 @@ char	*expand(const char *token, const char **env_copy)
 		if (expanded == NULL)
 			return (NULL);
 	}
-	//printf("expanded: |%s|\n", expanded);
-	unquote(expanded);
-	//printf("unquote: |%s|\n", expanded);
+	//unquote(expanded);
 	return (expanded);
 }

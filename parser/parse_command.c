@@ -2,8 +2,49 @@
 #include "parser.h"
 #include <unistd.h>
 #include "../libft/libft.h"
+#include "../tokenizer/tokenizer.h"
+#include "../expansion/expansion.h"
 
-int	is_token_valid(char *token, t_list *cursor)
+t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
+{
+	t_list		*tokens_ptr;
+	char		*initial_token;
+
+	tokens_ptr = tokens;
+	while (tokens_ptr != NULL)
+	{
+		// expand
+		initial_token = (char *)tokens_ptr->content;
+		tokens_ptr->content = expand(initial_token, (const char **)minishell->env_copy);
+		free(initial_token);
+
+		// retokenize
+		t_list	*new_tokens;
+		new_tokens = tokenizer((char *)tokens_ptr->content, TRUE);
+
+		// replace tokens
+		if (new_tokens->next == NULL) // new_tokens taille : 1
+		{
+			tokens_ptr->content = new_tokens->content;
+			free(new_tokens);
+		}
+		else
+		{
+			t_list *next = tokens_ptr->next;
+			tokens_ptr->content = new_tokens->content;
+			tokens_ptr->next = new_tokens->next;
+			//free(new_tokens);
+			tokens_ptr = tokens_ptr->next;
+			while (tokens_ptr->next != NULL)
+				tokens_ptr = tokens_ptr->next;
+			tokens_ptr->next = next;
+		}
+		tokens_ptr = tokens_ptr->next;
+	}
+	return tokens;
+}
+
+static int	is_token_valid(char *token, t_list *cursor)
 {
 	if (get_token_type(token) == OPEN_PARENTHESES)
 	{
@@ -25,10 +66,31 @@ int	is_token_valid(char *token, t_list *cursor)
 	return (TRUE);
 }
 
-int	parse_command(t_list *tokens, t_cmd *cmd)
+
+void	print_resti(t_list *cursor)
+{
+	printf("[");
+	while (cursor != NULL)
+	{
+		printf("%s, ", (char *)cursor->content);
+		cursor = cursor->next;
+	}
+	printf("]\n");
+}
+
+int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	t_list	*cursor;
 	int		i;
+
+	tokens = expand_and_retokenize(tokens, minishell);
+	cursor = tokens;
+	while  (cursor != NULL)
+	{
+		unquote((char *)cursor->content);
+		cursor = cursor->next;
+	}
+	//print_resti(tokens); //
 
 	cmd->type = COMMAND;
 	cmd->cmd.argv = (char **)malloc(sizeof(char *) * (ft_lstsize(tokens) + 1));

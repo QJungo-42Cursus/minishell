@@ -57,12 +57,12 @@ static void	set_normal_token_position(const char *str, int cursor_index, t_posit
 	token_pos->end = cursor_index;
 }
 
-void	set_next_token_position(const char *cmd, int cursor_index, t_position *token_position)
+void	set_next_token_position(const char *cmd, int cursor_index, t_position *token_position, t_bool is_expand_mode)
 {
 	token_position->start = cursor_index;
 	if (is_in_charset(cmd[cursor_index], "\"'"))
 		set_quoted_token_position(cmd, cursor_index, token_position);
-	else if (is_in_charset(cmd[cursor_index], SPECIAL_CHARACTERS))
+	else if (is_in_charset(cmd[cursor_index], SPECIAL_CHARACTERS) && !is_expand_mode)
 		set_special_token_position(cmd, cursor_index, token_position);
 	else
 		set_normal_token_position(cmd, cursor_index, token_position);

@@ -32,14 +32,11 @@ extern "C" {
 int w_exit_status(int es) { return WEXITSTATUS(es); }
 }
 
-t_minishell *minishell = NULL;
-
 void test_exec(t_cmd *cmd, std::string stdout_expected,
                std::string stderr_expected, int exit_status_expected) {
-  if (minishell == NULL) {
-    minishell = (t_minishell *)malloc(sizeof(t_minishell));
-    minishell->env_paths = ft_split(getenv("PATH"), ':');
-  }
+  t_minishell *minishell = NULL;
+  minishell = (t_minishell *)malloc(sizeof(t_minishell));
+  minishell->env_paths = ft_split(getenv("PATH"), ':');
   testing::internal::CaptureStdout();
   testing::internal::CaptureStderr();
 
