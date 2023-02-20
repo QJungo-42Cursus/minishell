@@ -65,7 +65,8 @@ t_list		*lst_cut_first_and_last(t_list *tokens);
 
 int			parse_command(t_list *tokens, t_cmd *cmd);
 int			pipeline(t_list *tokens, t_cmd *cmd);
-
+#include "../minishell.h"
 int			set_command(t_list *tokens, t_cmd *cmd);
+t_cmd		*parser(t_list *tokens, t_minishell *minishell);
 
 #endif /* PARSER_H */

@@ -53,7 +53,7 @@ static int	main_minishell(t_minishell *minishell, t_list *tokens)
 	t_cmd	*cmd;
 
 	cmd = parser(tokens, minishell);
-	if (set_command(tokens, cmd) == ERROR)
+	if (cmd == NULL)
 		return (ERROR);
 	if (execute(cmd, minishell) != 0)
 	{
