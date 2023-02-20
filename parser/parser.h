@@ -43,6 +43,7 @@ typedef struct s_cmd {
 		} pipe;
 		struct {
 			char **argv;
+			char *heredoc; // NULL if none
 			struct s_cmd *next; // only for pipeline
 		} cmd;
 		struct {

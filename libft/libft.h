@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/11 21:22:48 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/03 11:27:02 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/20 19:03:34 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,7 @@ typedef enum e_bool {
 	SUCCESS = 0,
 	ERROR = 1,
 }	t_bool;
+
+char	*get_next_line(int fd);
 
 #endif

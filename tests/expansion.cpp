@@ -179,5 +179,5 @@ TEST(Expansion, shouldRemoveUnexistingVariable) {
 
 TEST(Expansion, shouldRemoveEmpytVariable) {
   test_expand("$HOME", {"HOME="}, "");
-  // test_expand("$HOME", {"HOME"}, ""); // TODO segfault
+  test_expand("$HOME", {"HOME"}, "");
 }

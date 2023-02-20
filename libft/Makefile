@@ -70,7 +70,8 @@ SRCS = 			$(addprefix char/,	$(SRCS_CHAR)) \
 				$(addprefix lst/,	$(SRCS_LST)) \
 				$(addprefix mem/,	$(SRCS_MEM)) \
 				$(addprefix nb/,	$(SRCS_NB)) \
-				$(addprefix prt/,	$(SRCS_PRT))
+				$(addprefix prt/,	$(SRCS_PRT)) \
+				get_next_line.c
 
 OBJS =			$(SRCS:.c=.o)
 

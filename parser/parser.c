@@ -108,10 +108,6 @@ t_cmd *parser(t_list *tokens, t_minishell *minishell)
 {
 	t_cmd	*cmd = (t_cmd*)malloc(sizeof(t_cmd));
 
-	// TODO dans le main ?
-	//tokens = expand_and_retokenize(tokens, minishell);
-	(void)minishell;
-
 	if (set_command(tokens, cmd, minishell) == ERROR)
 	{
 		// TODO
