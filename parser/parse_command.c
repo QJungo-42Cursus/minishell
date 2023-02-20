@@ -16,6 +16,13 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 		// expand
 		initial_token = (char *)tokens_ptr->content;
 		tokens_ptr->content = expand(initial_token, (const char **)minishell->env_copy);
+		if (ft_strncmp((char *)tokens_ptr->content, initial_token, ft_strlen(initial_token)) == 0)
+		{
+			tokens_ptr = tokens_ptr->next;
+			free(initial_token);
+			continue ;
+		}
+
 		free(initial_token);
 
 		// retokenize
@@ -83,6 +90,7 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	t_list	*cursor;
 	int		i;
 
+	//print_resti(tokens); //
 	tokens = expand_and_retokenize(tokens, minishell);
 	cursor = tokens;
 	while  (cursor != NULL)
@@ -90,7 +98,6 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 		unquote((char *)cursor->content);
 		cursor = cursor->next;
 	}
-	//print_resti(tokens); //
 
 	cmd->type = COMMAND;
 	cmd->cmd.argv = (char **)malloc(sizeof(char *) * (ft_lstsize(tokens) + 1));

@@ -9,7 +9,7 @@ extern "C" {
 }
 
 void tokenizerTest(const char *sentence, std::vector<std::string> expected) {
-  t_list *tokens = tokenizer(sentence);
+  t_list *tokens = tokenizer(sentence, FALSE);
   t_list *current = tokens;
   for (size_t i = 0; i < expected.size(); i++) {
     EXPECT_EQ(std::string((char *)current->content), expected[i]);

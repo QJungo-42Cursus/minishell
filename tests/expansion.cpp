@@ -35,6 +35,24 @@ void test_expand(const char *token, std::vector<std::string> env,
   EXPECT_STREQ(expected.c_str(), result);
 }
 
+void test_unquote(const char *token, std::string expected) {
+  char *result = strdup(token);
+  unquote(result);
+  EXPECT_STREQ(expected.c_str(), result);
+}
+
+void test_expand_and_unquote(const char *token, std::vector<std::string> env,
+                             std::string expected) {
+
+  const char **env_copy = new const char *[env.size() + 1];
+  for (size_t i = 0; i < env.size(); i++)
+    env_copy[i] = env[i].c_str();
+  env_copy[env.size()] = NULL;
+  char *result = expand(token, env_copy);
+  unquote(result);
+  EXPECT_STREQ(expected.c_str(), result);
+}
+
 void test_get_var_position(const char *token, int begin_from,
                            int expected_start, int expected_end,
                            bool expected_found) {
@@ -68,32 +86,32 @@ TEST(ExpansionGetVarPosition, FromIndex) {
   test_get_var_position("$HOME$HOME", 4, 5, 9, true);
 }
 
-TEST(Expansion, shouldUnquoteDquote) { test_expand("\"hello\"", {}, "hello"); }
+TEST(Expansion, shouldUnquoteDquote) { test_unquote("\"hello\"", "hello"); }
 
 TEST(Expansion, shouldUnquoteDquoteAndWorldAfter) {
-  test_expand("\"hello\"world", {}, "helloworld");
+  test_unquote("\"hello\"world", "helloworld");
 }
 
 TEST(Expansion, shouldUnquoteDquoteAndWorldBefore) {
-  test_expand("hello\"world\"", {}, "helloworld");
+  test_unquote("hello\"world\"", "helloworld");
 }
 
 TEST(Expansion, shouldUnquoteDquoteAndWorldBeforeAndAfter) {
-  test_expand("hello\"world\"world", {}, "helloworldworld");
+  test_unquote("hello\"world\"world", "helloworldworld");
 }
 
-TEST(Expansion, shouldUnquoteQuote) { test_expand("'hello'", {}, "hello"); }
+TEST(Expansion, shouldUnquoteQuote) { test_unquote("'hello'", "hello"); }
 
 TEST(Expansion, shouldUnquoteQuoteAndWorldAfter) {
-  test_expand("'hello'world", {}, "helloworld");
+  test_unquote("'hello'world", "helloworld");
 }
 
 TEST(Expansion, shouldUnquoteQuoteAndWorldBefore) {
-  test_expand("hello'world'", {}, "helloworld");
+  test_unquote("hello'world'", "helloworld");
 }
 
 TEST(Expansion, shouldUnquoteQuoteAndWorldBeforeAndAfter) {
-  test_expand("hello'world'world", {}, "helloworldworld");
+  test_unquote("hello'world'world", "helloworldworld");
 }
 
 TEST(DollarExpansion, Simple) {
@@ -114,20 +132,21 @@ TEST(Expansion, shouldExpandSeparatedArgs) {
 }
 
 TEST(Expansion, shouldExpandHomeInDoubleQuotes) {
-  test_expand("\"$HOME\"", {"HOME=/home/user"}, "/home/user");
+  test_expand_and_unquote("\"$HOME\"", {"HOME=/home/user"}, "/home/user");
 }
 
 TEST(Expansion, shouldExpandHomeInDoubleQuotesWithTextAppendBefore) {
-  test_expand("maison:\"$HOME\"", {"HOME=/home/user"}, "maison:/home/user");
+  test_expand_and_unquote("maison:\"$HOME\"", {"HOME=/home/user"},
+                          "maison:/home/user");
 }
 
 TEST(Expansion, shouldExpandHomeInDoubleQuotesWithTextAppendAfter) {
-  test_expand("\"$HOME\"_isMyhouse", {"HOME=/home/user"},
-              "/home/user_isMyhouse");
+  test_expand_and_unquote("\"$HOME\"_isMyhouse", {"HOME=/home/user"},
+                          "/home/user_isMyhouse");
 }
 
 TEST(Expansion, shouldNotExpandHomeInSingleQuotes) {
-  test_expand("'$HOME'", {"HOME=/home/user"}, "$HOME");
+  test_expand_and_unquote("'$HOME'", {"HOME=/home/user"}, "$HOME");
 }
 
 TEST(Expansion, doubleHome) {
@@ -155,7 +174,7 @@ TEST(Expansion, doubleHomeAndSpace2) {
 
 TEST(Expansion, shouldRemoveUnexistingVariable) {
   test_expand("$HOME", {}, "");
-  test_expand("salut $HOME\"ca\" va ?", {"HOME="}, "salut ca va ?");
+  test_expand_and_unquote("salut $HOME\"ca\" va ?", {"HOME="}, "salut ca va ?");
 }
 
 TEST(Expansion, shouldRemoveEmpytVariable) {

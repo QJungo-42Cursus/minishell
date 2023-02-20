@@ -197,10 +197,14 @@ TEST(ParserUtils, lst_cut_first_and_last_Simple) {
 
 /*********************************** PARSER ***********************************/
 /*********** command *********/
+t_minishell *g_minishell = NULL;
+
 TEST(ParserCmd, Simple) {
+  g_minishell = (t_minishell *)malloc(sizeof(t_minishell));
+  g_minishell->env_paths = ft_split(getenv("PATH"), ':');
   t_list *tokens = generate_tokens({"ls"});
   t_cmd *cmd = new t_cmd;
-  parse_command(tokens, cmd);
+  parse_command(tokens, cmd, g_minishell);
 
   EXPECT_EQ(cmd->type, COMMAND);
   compare_str_list(cmd->cmd.argv, setup_argv({"ls"}));
@@ -210,7 +214,7 @@ TEST(ParserCmd, Simple) {
 TEST(ParserCmd, WithArgs) {
   t_list *tokens = generate_tokens({"ls", "-l", "-a"});
   t_cmd *cmd = new t_cmd;
-  parse_command(tokens, cmd);
+  parse_command(tokens, cmd, g_minishell);
 
   EXPECT_EQ(cmd->type, COMMAND);
   compare_str_list(cmd->cmd.argv, setup_argv({"ls", "-l", "-a"}));
@@ -220,7 +224,7 @@ TEST(ParserCmd, WithArgs) {
 TEST(ParserCmd, WithManyArgs) {
   t_list *tokens = generate_tokens({"ls", "-l", "-a", "-h", "-t", "-r", "-S"});
   t_cmd *cmd = new t_cmd;
-  parse_command(tokens, cmd);
+  parse_command(tokens, cmd, g_minishell);
 
   EXPECT_EQ(cmd->type, COMMAND);
   compare_str_list(cmd->cmd.argv,
@@ -234,7 +238,7 @@ TEST(ParserCmd, SimpleParentesesError) {
   t_cmd *cmd = new t_cmd;
   std::string expected = "minishell: syntax error near unexpected token `ls'\n";
   testing::internal::CaptureStderr();
-  parse_command(tokens, cmd);
+  parse_command(tokens, cmd, g_minishell);
   std::string stderr_res = testing::internal::GetCapturedStderr();
   EXPECT_EQ(stderr_res, expected);
 }
@@ -244,7 +248,7 @@ TEST(ParserCmd, RightParentesesError) {
   t_cmd *cmd = new t_cmd;
   std::string expected = "minishell: syntax error near unexpected token `)'\n";
   testing::internal::CaptureStderr();
-  parse_command(tokens, cmd);
+  parse_command(tokens, cmd, g_minishell);
   std::string stderr_res = testing::internal::GetCapturedStderr();
   EXPECT_EQ(stderr_res, expected);
 }
@@ -253,13 +257,13 @@ TEST(ParserCmd, RightParentesesError) {
 TEST(ParserPipeline, NoPipeline) {
   t_list *tokens = generate_tokens({"ls", "-l", "-a"});
   t_cmd *cmd = new t_cmd;
-  ASSERT_FALSE(pipeline(tokens, cmd));
+  ASSERT_FALSE(pipeline(tokens, cmd, g_minishell));
 }
 
 TEST(ParserPipeline, Simple) {
   t_list *tokens = generate_tokens({"ls", "|", "grep", "a"});
   t_cmd *cmd = new t_cmd;
-  ASSERT_TRUE(pipeline(tokens, cmd));
+  ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
   ASSERT_EQ(cmd->pipeline.pipe_count, 2);
   ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
@@ -275,7 +279,7 @@ TEST(ParserPipeline, Simple) {
 TEST(ParserPipeline, ManyPipes) {
   t_list *tokens = generate_tokens({"ls", "|", "grep", "a", "|", "wc", "-l"});
   t_cmd *cmd = new t_cmd;
-  ASSERT_TRUE(pipeline(tokens, cmd));
+  ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
   ASSERT_EQ(cmd->pipeline.pipe_count, 3);
   ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
@@ -301,7 +305,7 @@ TEST(ParserPipeline, PipelinesAndParenteses) {
   t_list *tokens = generate_tokens(
       {"ls", "|", "wc", "-l", "|", "(", "grep", "a", "|", "cat", ")"});
   t_cmd *cmd = new t_cmd;
-  ASSERT_TRUE(pipeline(tokens, cmd));
+  ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
   ASSERT_EQ(cmd->pipeline.pipe_count, 3);
   ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
@@ -341,7 +345,7 @@ TEST(ParserPipeline, PipelinesAndParenteses2) {
   t_list *tokens = generate_tokens({"(", "ls", "|", "wc", "-l", ")", "|", "(",
                                     "grep", "a", "|", "cat", ")"});
   t_cmd *cmd = new t_cmd;
-  ASSERT_TRUE(pipeline(tokens, cmd));
+  ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
   ASSERT_EQ(cmd->pipeline.pipe_count, 2);
   ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
@@ -390,7 +394,7 @@ TEST(ParserPipeline, PipelinesAndParenteses2) {
 TEST(ParserLogic, NoLogic) {
   std::vector<std::string> tokens = {"ls", "echo", "hello"};
   t_cmd *cmd = new t_cmd;
-  bool result = logic(generate_tokens(tokens), cmd);
+  bool result = logic(generate_tokens(tokens), cmd, g_minishell);
   EXPECT_EQ(result, false);
 }
 
