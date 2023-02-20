@@ -69,8 +69,11 @@ static int	check_pipe_position(t_list *lst_token)
 		if (ft_strncmp(tmp->content, "|", 2) != 0)
 			tmp = tmp->next;
 		else
+		{
 			if (ft_strncmp(tmp->next->content, "|", 2) == 0)
 				return (ERROR);
+			tmp = tmp->next;
+		}
 	}
 	return (SUCCESS);
 }

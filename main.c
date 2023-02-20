@@ -83,11 +83,9 @@ static int	main_loop(t_minishell *minishell)
 		tokens = tokenizer(minishell->cmd_input);
 		if (tokens == NULL)
 			return (ERROR);
-		//if (check_valid_tokens(tokens) == SUCCESS) // FIXME -> par en infinite loop quand y'a un |
-		main_minishell(minishell, tokens);
-		//else
-			//printf("prout");
-			//free_tokens(tokens); ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
+		if (check_valid_tokens(tokens) == SUCCESS)
+			main_minishell(minishell, tokens);
+		//free_tokens(tokens); ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
 		free(minishell->cmd_input);
 	}
 	return (SUCCESS);

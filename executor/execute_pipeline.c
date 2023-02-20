@@ -81,7 +81,7 @@ int execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
             if (execute_builtin(cmd_cursor, minishell, &exit_status)) // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
                 exit(exit_status);
 			replace_argv0_with_full_path(cmd_cursor, minishell);
-			execv(cmd_cursor->cmd.argv[0], cmd_cursor->cmd.argv);
+			execve(cmd_cursor->cmd.argv[0], cmd_cursor->cmd.argv, minishell->env_copy);
 			perror("execvp");
 			exit(EXIT_FAILURE);
 		}
