@@ -2,6 +2,7 @@
 #include "parser.h"
 #include <unistd.h>
 #include "../libft/libft.h"
+#include "../expansion/expansion.h"
 
 int	logic(t_list *cursor, t_cmd *cmd)
 {
@@ -91,8 +92,20 @@ int	set_command(t_list *tokens, t_cmd *cmd)
 	return (exit_status);
 }
 
-t_cmd *parser(t_list *tokens) {
+t_cmd *parser(t_list *tokens, t_minishell *minishell) 
+{
 	t_cmd	*cmd = (t_cmd*)malloc(sizeof(t_cmd));
+
+	// TEST: mettre l'expansion ici
+	t_list *tokens_ptr = tokens;
+	while (tokens_ptr != NULL)
+	{
+		tokens_ptr->content = (char *)expand(tokens_ptr->content, (const char **)minishell->env_copy);
+		printf("token: %s\n", (char *)tokens_ptr->content);
+		tokens_ptr = tokens_ptr->next;
+	}
+	// END
+
 	if (set_command(tokens, cmd) == ERROR)
 	{
 		// TODO
