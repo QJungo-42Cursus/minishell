@@ -16,6 +16,8 @@ int get_token_type(char *token)
 		return PIPELINE;
 	else if (ft_strncmp(token, ">>", 3) == 0)
 		return REDIR_APPEND;
+	else if (ft_strncmp(token, "<<", 3) == 0)
+		return HEREDOC;
 	else if (ft_strncmp(token, "<", 2) == 0)
 		return REDIR_IN;
 	else if (ft_strncmp(token, ">", 2) == 0)

@@ -68,15 +68,6 @@ int execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 			if (i != pipeline_cmd->pipeline.pipe_count - 1) /* si c'est pas la fin */
 				dup2(pipeline_cmd->pipeline.pipes[pipe_index(i, STDOUT_FILENO)], STDOUT_FILENO);
 			// TODO si ici je met une fonction custom qui s'occupe des here_doc, c'est niquel
-			// en fait les here_doc sont gerer avant l'exécution
-			// Ca doit etre intersepter par le parser et gerer (input) avant l'execution
-			//
-			// On peut l'enregistrer dans une variable et le write dans le pipe en question
-			// Si on a une struct cmd, on peu mettre la variable dedans, si c'est non null, on redirige
-			//
-			// -
-			// C'est aussi ici qu'on va print les erreurs command not found
-			// le pipe va continuer a tourner meme si la commande n'existe pas
 			close_all_pipes(pipeline_cmd->pipeline.pipes, pipeline_cmd->pipeline.pipe_count);
             if (execute_builtin(cmd_cursor, minishell, &exit_status)) // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
                 exit(exit_status);

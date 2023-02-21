@@ -83,8 +83,8 @@ static int	main_loop(t_minishell *minishell)
 		tokens = tokenizer(minishell->cmd_input, FALSE);
 		if (tokens == NULL)
 			return (ERROR);
-		if (check_valid_tokens(tokens) == SUCCESS)
-			main_minishell(minishell, tokens);
+		//if (check_valid_tokens(tokens) == SUCCESS)
+		main_minishell(minishell, tokens);
 		//free_tokens(tokens); ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
 		free(minishell->cmd_input);
 	}

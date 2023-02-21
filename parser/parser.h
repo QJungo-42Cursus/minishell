@@ -17,12 +17,13 @@ typedef enum e_cmd_type {
 	REDIR_IN,		/* < file cmd */
 	REDIR_OUT,		/* cmd > file */
 	REDIR_APPEND,	/* cmd >> file */
+	HEREDOC,		/* cmd << EOF */
 } t_cmd_type;
 
 // la suite, juste pour le parser
 enum e_token_type {
-  OPEN_PARENTHESES = 7,
-  CLOSE_PARENTHESES = 8,
+  OPEN_PARENTHESES = 10,
+  CLOSE_PARENTHESES,
 };
 
 enum e_result_more {

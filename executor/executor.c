@@ -35,10 +35,14 @@ int	execute_builtin(t_cmd *cmd, t_minishell *minishell, int *exit_status)
 int	execute_command(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
-	/* 
-	 * 1. Check if the command is a builtin ( If it is, execute it )
-	 * 2. If not, find the path of the command and execute it TODO
-	 */
+	int		pipes[2];
+
+	if (cmd->cmd.heredoc != NULL)
+	{
+		if (pipe(pipes) == -1)
+			return (ERROR);
+	}
+
 	if (execute_builtin(cmd, minishell, &exit_status)) // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
 		return (exit_status);
 	exit_status = 0;
@@ -46,9 +50,24 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 	{
         // LATER faire attention a ce que execute pipeline aie la meme chose !!
 		replace_argv0_with_full_path(cmd, minishell);
+
+		if (cmd->cmd.heredoc != NULL)
+		{
+			// redirect stdin to the pipe
+			dup2(pipes[0], STDIN_FILENO);
+			close(pipes[0]);
+			close(pipes[1]);
+		}
+
 		execve(cmd->cmd.argv[0], cmd->cmd.argv, minishell->env_copy);
 		perror("execv");
 		exit(EXIT_FAILURE); // TODO
+	}
+	if (cmd->cmd.heredoc != NULL)
+	{
+		write(pipes[1], cmd->cmd.heredoc, ft_strlen(cmd->cmd.heredoc));
+		close(pipes[0]);
+		close(pipes[1]);
 	}
 	wait(&exit_status);
 	return (exit_status);

@@ -57,11 +57,37 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 	return tokens;
 }
 
-static int	is_token_valid(char *token, t_list *cursor)
+#define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
+
+int	is_heredoc_valid(t_list *cursor, t_cmd *cmd)
+{
+	(void)cmd;
+	char	*token;
+
+	if (cursor == NULL)
+	{
+		write(STDERR_FILENO, UNEXPECTED_TOKEN"newline'\n", 55);
+		return (FALSE);
+	}
+
+
+	token = (char *)cursor->content;
+	if (get_token_type(token) != COMMAND)
+	{
+		write(STDERR_FILENO, UNEXPECTED_TOKEN, 47);
+		write(STDERR_FILENO, token, ft_strlen(token));
+		write(STDERR_FILENO, "'\n", 2);
+		return (FALSE);
+	}
+	return (TRUE);
+	// TODO plein de cas a ajouter !
+}
+
+int	is_token_valid(char *token, t_list *cursor, t_cmd *cmd)
 {
 	if (get_token_type(token) == OPEN_PARENTHESES)
 	{
-		write(STDERR_FILENO, "minishell: syntax error near unexpected token `", 47);
+		write(STDERR_FILENO, UNEXPECTED_TOKEN, 47);
 		if (cursor->next == NULL)
 			write(STDERR_FILENO, "newline", 7);
 		else
@@ -71,10 +97,15 @@ static int	is_token_valid(char *token, t_list *cursor)
 	}
 	if (get_token_type(token) == CLOSE_PARENTHESES)
 	{
-		write(STDERR_FILENO, "minishell: syntax error near unexpected token `", 47);
+		write(STDERR_FILENO, UNEXPECTED_TOKEN, 47);
 		write(STDERR_FILENO, token, ft_strlen(token));
 		write(STDERR_FILENO, "'\n", 2);
 		return (FALSE);
+	}
+
+	if (get_token_type(token) == HEREDOC)
+	{
+		return (is_heredoc_valid(cursor->next, cmd));
 	}
 	return (TRUE);
 }
@@ -108,41 +139,34 @@ char	*get_heredoc_input(char *delimiter)
 		int delimiter_len = ft_strlen(delimiter);
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0 && line[delimiter_len] == '\n' && ft_strlen(line) == delimiter_len + 1) 
 		{
-			printf("%s\n", line);
 			free(line);
 			break ;
 		}
 		to_free = input;
 		input = ft_strjoin(input, line);
 		free(to_free);
+		free(line);
 	}
 	return (input);
 }
 
-int	get_heredoc(t_list **tokens, t_cmd *cmd)
+int	get_heredoc(t_list **cursor, t_cmd *cmd)
 {
-	//char	*line;
-
-	if (ft_strncmp((*tokens)->content, "<<", 3) != 0)
+	if (ft_strncmp((char *)(*cursor)->content, "<<", 3) != 0)
 		return (SUCCESS);
-	if (cmd->cmd.heredoc != NULL)
-	{
-		// TODO il y a deja un heredoc !!!
-		//write(STDERR_FILENO, "minishell: syntax error near unexpected token `newline'\n", 55);
+	cmd->cmd.heredoc = get_heredoc_input((char *)(*cursor)->next->content);
+	if (cmd->cmd.heredoc == NULL)
 		return (ERROR);
-	}
-
-	// TODO attention segfault si pas de token apres <<
-	cmd->cmd.heredoc = get_heredoc_input((*tokens)->next->content);
-
-	*tokens = (*tokens)->next->next;
-	return (SUCCESS);
+	*cursor = (*cursor)->next->next;
+	return (USED);
 }
 
 int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	t_list	*cursor;
 	int		i;
+	char	*token;
+	int		get_heredoc_res;
 
 	//print_resti(tokens); //
 	tokens = expand_and_retokenize(tokens, minishell);
@@ -160,15 +184,22 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	i = 0;
 	while (cursor != NULL)
 	{
-		// TODO heredoc !!!
-		get_heredoc(&cursor, cmd);
-		cmd->cmd.argv[i] = (char *)cursor->content;
-		if (!is_token_valid(cmd->cmd.argv[i], cursor))
+		token = (char *)cursor->content;
+		if (!is_token_valid(token, cursor, cmd))
 		{
 			free(cmd->cmd.argv);
 			return (ERROR);
 		}
-
+		get_heredoc_res = get_heredoc(&cursor, cmd);
+		if (get_heredoc_res == ERROR)
+		{
+			// TODO
+			free(cmd->cmd.argv);
+			return (ERROR);
+		}
+		if (get_heredoc_res == USED)
+			continue ;
+		cmd->cmd.argv[i] = (char *)cursor->content;
 		cursor = cursor->next;
 		i++;
 	}
