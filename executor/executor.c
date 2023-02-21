@@ -85,6 +85,23 @@ int execute_redir(t_cmd *cmd, t_minishell *minishell)
 	else
 		std_x_fileno = STDOUT_FILENO;
 
+	// TODO check if file exists and can be opened
+	if ((cmd->type == REDIR_APPEND || cmd->type == REDIR_OUT) && access(cmd->redir.filename, W_OK) != 0)
+	{
+		write(2, "minishell: ", 11);
+		write(2, cmd->redir.filename, ft_strlen(cmd->redir.filename));
+		write(2, ": Permission denied\n", 20);
+		return (EXIT_FAILURE);
+	}
+	if (cmd->type == REDIR_IN && access(cmd->redir.filename, R_OK) != 0)
+	{
+		write(2, "minishell: ", 11);
+		write(2, cmd->redir.filename, ft_strlen(cmd->redir.filename));
+		write(2, ": Permission denied\n", 20);
+		return (EXIT_FAILURE);
+	}
+
+
 	if (cmd->type == REDIR_APPEND)
 		cmd->redir.fd = open(cmd->redir.filename, O_APPEND | O_CREAT | O_RDWR, 0000644);
 	else if (cmd->type == REDIR_OUT)
@@ -95,6 +112,7 @@ int execute_redir(t_cmd *cmd, t_minishell *minishell)
 	{
 		perror("open"); // TODO nom d'erreur complet
 		exit(EXIT_FAILURE);
+		return (ERROR);
 	}
 
 	to_reopen = dup(std_x_fileno);

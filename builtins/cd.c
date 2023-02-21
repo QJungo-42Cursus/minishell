@@ -45,20 +45,17 @@ static int	export_pwd(t_minishell *minishell, const char *to_join)
 
 static int	change_directory_in_env(t_minishell *minishell)
 {
-	if (get_env_var_index((const char **)minishell->env_copy, "OLDPWD=") != -1)
+	if (get_env_var_index((const char **)minishell->env_copy, (char *)"OLDPWD=") != -1)
 	{
-		if (export_pwd(minishell, "export OLDPWD="))
+		if (export_pwd(minishell, (char *)"export OLDPWD="))
 			return (ERROR);
 	}
 	getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1);
-	if (get_env_var_index((const char **)minishell->env_copy, "PWD=") != -1)
+	if (get_env_var_index((const char **)minishell->env_copy, (char *)"PWD=") != -1)
 	{
-		if (export_pwd(minishell, "export PWD="))
+		if (export_pwd(minishell, (char *)"export PWD="))
 			return (ERROR);
 	}
-    printf("PWD: %s\n", get_env_var_value("PWD", (const char **)minishell->env_copy));
-    printf("OLDPWD: %s\n", get_env_var_value("OLDPWD", (const char **)minishell->env_copy));
-    env(minishell, NULL);
 	return (SUCCESS);
 }
 
@@ -86,7 +83,7 @@ static int  go_home(t_minishell *minishell)
 {
     char    *home;
 
-    home = get_env_var_value("HOME", (const char **)minishell->env_copy);
+    home = get_env_var_value((char *)"HOME", (const char **)minishell->env_copy);
     if (home == NULL)
         return (ERROR);
     change_dir(minishell, home);

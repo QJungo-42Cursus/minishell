@@ -5,31 +5,8 @@
 #include <vector>
 
 extern "C" {
-#include "../executor/execute_pipeline.c"
-#include "../executor/executor.c"
-#include "../executor/executor.h"
-#include "../executor/executor_utils.c"
-
-#include "../builtins/cd.c"
-#include "../builtins/echo.c"
-#include "../builtins/env.c"
-#include "../builtins/exit_.c"
-#include "../builtins/export.c"
-#include "../builtins/pwd.c"
-#include "../builtins/unset.c"
-#include "../env/find_command_path.c"
-#include "../env/get_paths_in_env.c"
-
-// a cause du refresh_prompt() de cd
-#include "../env/cpy_envp.c"
-#include "../minishell_utils.c"
-
-#include "../libft/libft.h"
-#include <string.h>
-}
-
-extern "C" {
 int w_exit_status(int es) { return WEXITSTATUS(es); }
+int	execute(t_cmd *cmd, t_minishell *minishell);
 }
 
 void test_exec(t_cmd *cmd, std::string stdout_expected,
@@ -40,15 +17,10 @@ void test_exec(t_cmd *cmd, std::string stdout_expected,
   testing::internal::CaptureStdout();
   testing::internal::CaptureStderr();
 
-  // int exit_status = WEXITSTATUS(execute(cmd));
-  // int exit_status = (execute(cmd));
   int exit_status = w_exit_status(execute(cmd, minishell));
+
   std::string stdout_res = testing::internal::GetCapturedStdout();
   std::string stderr_res = testing::internal::GetCapturedStderr();
-
-  // std::cout << stdout_res;
-  // std::cout << stderr_res;
-
   EXPECT_EQ(stdout_res, stdout_expected);
   EXPECT_EQ(stderr_res, stderr_expected);
   EXPECT_EQ(exit_status, exit_status_expected);

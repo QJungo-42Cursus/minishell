@@ -19,6 +19,7 @@ static char **setup_argv(std::vector<std::string> argv) {
 static t_cmd *new_cmd(t_cmd_type type) {
   t_cmd *cmd = (t_cmd *)malloc(sizeof(t_cmd));
   cmd->type = type;
+  cmd->cmd.heredoc = NULL;
   return cmd;
 }
 

@@ -5,16 +5,8 @@
 #include <vector>
 
 extern "C" {
-#include "../libft/libft.h"
-#include "../parser/parse_command.c"
-#include "../parser/parse_pipeline.c"
 #include "../parser/parser.c"
-#include "../parser/parser.h"
-#include "../parser/parser_utils.c"
-#include <stdio.h>
-#include <stdlib.h>
 }
-
 void print_token_type(int token_type) {
   if (token_type == OPEN_PARENTHESES)
     std::cout << "OPEN_PARENTHESES" << std::endl;
@@ -390,6 +382,7 @@ TEST(ParserPipeline, PipelinesAndParenteses2) {
 }
 
 /*********** redir ***********/
+int logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell);
 /*********** logic ***********/
 TEST(ParserLogic, NoLogic) {
   std::vector<std::string> tokens = {"ls", "echo", "hello"};

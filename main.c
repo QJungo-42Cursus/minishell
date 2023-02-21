@@ -1,15 +1,14 @@
-#include "libft/libft.h"       // ...
-#include <stdio.h>             // ...
-#include <stdlib.h>            // ...
-#include <unistd.h>            // .
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <signal.h>
 #include <errno.h>
-
-#include <readline/history.h>  // readline history
-#include <readline/readline.h> // readline lib
-#include "fcntl.h"
-#include "sys/wait.h"
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <fcntl.h>
+#include <sys/wait.h>
 // nous
+#include "libft/libft.h"
 #include "tokenizer/tokenizer.h"
 #include "env/env.h"
 #include "builtins/builtins.h"
@@ -18,12 +17,9 @@
 #include "executor/executor.h"
 #include "token_checker/token_checker.h"
 
-//int g_should_exit = FALSE;
-//
-
 void	handler(int num)
 {
-	// TODO avec CAT, ne doit pas quitter le shell
+	// TODO avec CAT, ne doit pas quitter le shell (?)
 	if (num == 2)
 		exit(0);
 }
@@ -57,13 +53,13 @@ static int	main_minishell(t_minishell *minishell, t_list *tokens)
 		return (ERROR);
 	if (execute(cmd, minishell) != 0)
 	{
-		perror("Command not found");
+		// set le $? ici ?
 		return (ERROR);
 	}
 	return (SUCCESS);
 }
 
-static int	main_loop(t_minishell *minishell)
+/*static*/ int	main_loop(t_minishell *minishell)
 {
 	int		cmd_code;
 	t_list	*tokens;
@@ -92,7 +88,7 @@ static int	main_loop(t_minishell *minishell)
 }
 
 #include <termios.h>
-
+#ifndef TEST
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	minishell;
@@ -131,3 +127,4 @@ int	main(int argc, char **argv, char **envp)
 
 	return (0);
 }
+#endif

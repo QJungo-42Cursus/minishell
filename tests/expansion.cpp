@@ -3,12 +3,7 @@
 #include <vector>
 
 extern "C" {
-#include "../env/get_env_var_index.c"
-#include "../env/get_env_var_value.c"
-#include "../expansion/expansion.c"
-#include "../expansion/expend_dollar.c"
-#include "../expansion/get_var_position.c"
-#include "../expansion/unquote.c"
+#include "../expansion/expansion.h"
 #include "../minishell.h"
 }
 

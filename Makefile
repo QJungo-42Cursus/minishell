@@ -73,7 +73,7 @@ SRCS_TEST = tests/main.cpp \
 			tests/parser.cpp
 
 #OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
-GTEST =		/usr/local/lib/libgtest.a
+GTEST =		/usr/local/lib/libgtest.a $(OUT_LIBS)
 ifeq ($(shell uname), Darwin)
 GTEST_INC = -std=c++17 -I/Users/qjungo/.brew/include
 GTEST =		/Users/qjungo/.brew/lib/libgtest.a
@@ -90,22 +90,26 @@ test:
 ttok:
 	@make -C libft
 	c++ $(GTEST_INC) tests/main.cpp tests/tokenizer.cpp tests/tokenizerWithQuote.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
-	./$(NAME_TEST) "--gtest_filter=*Tokenize*"
+	./$(NAME_TEST)
 
 texp:
 	@make -C libft
 	c++ $(GTEST_INC) tests/main.cpp tests/expansion.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
-	./$(NAME_TEST) "--gtest_filter=*Expansion*"
+	./$(NAME_TEST)
 
 texec:
 	@make -C libft
 	c++ $(GTEST_INC) tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
-	./$(NAME_TEST) "--gtest_filter=*Executor*"
+	./$(NAME_TEST)
 
 tpars:
 	@make -C libft
 	c++ $(GTEST_INC)  tests/main.cpp tests/parser.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
-	./$(NAME_TEST) "--gtest_filter=*Parser*"
+	./$(NAME_TEST)
+
+tend:
+	@make -C libft
+	c++ $(GTEST_INC)  tests/main.cpp tests/end2end.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
 
 #### Phony ####
 .PHONY: all clean fclean re $(NAME_TEST)

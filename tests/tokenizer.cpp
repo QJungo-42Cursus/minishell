@@ -4,8 +4,7 @@
 
 extern "C" {
 #include "../libft/libft.h"
-#include "../tokenizer/set_next_token_position.c"
-#include "../tokenizer/tokenizer.c"
+#include "../tokenizer/tokenizer.h"
 }
 
 void tokenizerTest(const char *sentence, std::vector<std::string> expected) {

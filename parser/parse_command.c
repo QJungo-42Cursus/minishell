@@ -129,7 +129,7 @@ char	*get_heredoc_input(char *delimiter)
 	char	*input;
 	char	*to_free;
 
-	input = ft_strdup("");
+	input = ft_strdup((char *)"");
 	while (TRUE)
 	{
 		write(1, "> ", 2);
@@ -178,7 +178,6 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	}
 
 	cmd->type = COMMAND;
-	cmd->cmd.heredoc = NULL;
 	cmd->cmd.argv = (char **)malloc(sizeof(char *) * (ft_lstsize(tokens) + 1));
 	cursor = tokens;
 	i = 0;
@@ -205,5 +204,6 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	}
 	cmd->cmd.argv[i] = NULL;
 	cmd->cmd.next = NULL;
+	cmd->cmd.heredoc = NULL;
 	return (SUCCESS);
 }
