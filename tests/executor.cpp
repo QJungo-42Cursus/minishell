@@ -188,7 +188,7 @@ TEST(Executor, SimpleLogicalOrFail) {
 
 TEST(Executor, SimpleRedirIn) {
   t_cmd *cmd = new_cmd(REDIR_IN);
-  cmd->redir.filename = strdup("tests/test_files/file_input");
+  cmd->redir.filename = (char *)strdup("tests/test_files/file_input");
   cmd->redir.cmd = new_cmd(COMMAND);
   cmd->redir.cmd->cmd.argv = setup_argv({"/bin/cat", "-e"});
   test_exec(cmd,
@@ -199,7 +199,7 @@ TEST(Executor, SimpleRedirIn) {
 
 TEST(Executor, RedirInAndPipe) {
   t_cmd *cmd = new_cmd(REDIR_IN);
-  cmd->redir.filename = strdup("tests/test_files/file_input");
+  cmd->redir.filename = (char *)strdup("tests/test_files/file_input");
   cmd->redir.cmd = new_cmd(PIPELINE);
   cmd->redir.cmd->pipeline.pipe_count = 2;
   cmd->redir.cmd->pipeline.pids = new int[2];
@@ -216,7 +216,7 @@ TEST(Executor, RedirInAndPipe) {
 TEST(Executor, SimpleRedirOut) {
   std::string filename = "tests/test_files/file_output";
   t_cmd *cmd = new_cmd(REDIR_OUT);
-  cmd->redir.filename = strdup(filename.c_str());
+  cmd->redir.filename = (char *)strdup(filename.c_str());
   cmd->redir.cmd = new_cmd(COMMAND);
   cmd->redir.cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
   test_exec(cmd, "", "", 0);
@@ -226,7 +226,7 @@ TEST(Executor, SimpleRedirOut) {
 TEST(Executor, RedirOutWithPipe) {
   std::string filename = "tests/test_files/file_output";
   t_cmd *cmd = new_cmd(REDIR_OUT);
-  cmd->redir.filename = strdup(filename.c_str());
+  cmd->redir.filename = (char *)strdup(filename.c_str());
   cmd->redir.cmd = new_cmd(PIPELINE);
   cmd->redir.cmd->pipeline.pipe_count = 2;
   cmd->redir.cmd->pipeline.pids = new int[2];
@@ -248,7 +248,7 @@ TEST(Executor, SimpleRedirAppend) {
   file << "hello world" << std::endl;
   file.close();
   t_cmd *cmd = new_cmd(REDIR_APPEND);
-  cmd->redir.filename = strdup(filename.c_str());
+  cmd->redir.filename = (char *)strdup(filename.c_str());
   cmd->redir.cmd = new_cmd(COMMAND);
   cmd->redir.cmd->cmd.argv = setup_argv({"/bin/echo", "hi friends !"});
   test_exec(cmd, "", "", 0);

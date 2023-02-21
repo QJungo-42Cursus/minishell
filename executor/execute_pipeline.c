@@ -35,7 +35,15 @@ int execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 {
 	int		exit_status;
 	int		i;
+	//int		last_had_heredoc;
 	t_cmd	*cmd_cursor;
+	int		shitty_pipe[2];
+
+	if (pipe(shitty_pipe) == -1)
+	{
+		perror("pipe");
+		exit(EXIT_FAILURE);
+	}
 
 	if (pipeline_cmd == NULL)
 	{
@@ -57,17 +65,24 @@ int execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 		exit(EXIT_FAILURE);
 	}
 
-
 	while (i < pipeline_cmd->pipeline.pipe_count)
 	{
 		pipeline_cmd->pipeline.pids[i] = fork();
 		if (pipeline_cmd->pipeline.pids[i] == 0)
 		{
-			if (i != 0) /* si c'est pas la premiere command */
+			if (i != 0) /* si c'est pas la premiere command, ou qu'elle a un heredoc */
 				dup2(pipeline_cmd->pipeline.pipes[pipe_index(i - 1, STDIN_FILENO)], STDIN_FILENO);
-			if (i != pipeline_cmd->pipeline.pipe_count - 1) /* si c'est pas la fin */
+
+			if (cmd_cursor->cmd.next != NULL && cmd_cursor->cmd.next->cmd.heredoc != NULL)
+			{
+				dup2(shitty_pipe[STDOUT_FILENO], STDOUT_FILENO);
+				//dup2(pipeline_cmd->pipeline.pipes[pipe_index(i, STDOUT_FILENO)], STDOUT_FILENO);
+				close(shitty_pipe[STDIN_FILENO]);
+				close(shitty_pipe[STDOUT_FILENO]);
+			}
+			else if (i != pipeline_cmd->pipeline.pipe_count - 1) /* si c'est pas la fin */
 				dup2(pipeline_cmd->pipeline.pipes[pipe_index(i, STDOUT_FILENO)], STDOUT_FILENO);
-			// TODO si ici je met une fonction custom qui s'occupe des here_doc, c'est niquel
+
 			close_all_pipes(pipeline_cmd->pipeline.pipes, pipeline_cmd->pipeline.pipe_count);
             if (execute_builtin(cmd_cursor, minishell, &exit_status)) // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
                 exit(exit_status);
@@ -76,6 +91,9 @@ int execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 			perror("execvp");
 			exit(EXIT_FAILURE);
 		}
+		if (cmd_cursor->cmd.heredoc != NULL)
+			write(pipeline_cmd->pipeline.pipes[pipe_index(i - 1, STDOUT_FILENO)], cmd_cursor->cmd.heredoc, ft_strlen(cmd_cursor->cmd.heredoc));
+		//last_had_heredoc = (cmd_cursor->cmd.heredoc != NULL);
 		cmd_cursor = cmd_cursor->cmd.next;
 		i++;
 	}
