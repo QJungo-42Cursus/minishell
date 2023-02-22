@@ -7,7 +7,6 @@ void	free_minishell(t_minishell *minishell)
 {
 	free(minishell->prompt_msg);
 	split_free(minishell->env_copy);
-	free(minishell->cmd_input);
 }
 
 int	exit_(t_minishell *minishell, char **argv, int exit_status)

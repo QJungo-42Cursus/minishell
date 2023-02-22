@@ -45,19 +45,50 @@ int	check_input_term(char *input, t_minishell *minishell)
 	return (SUCCESS);
 }
 
+void	**token_free_list(t_list *tokens)
+{
+	t_list	*tmp;
+	void	**result;
+	int		i;
 
-
+	result = (void **)malloc(sizeof(void *) * (ft_lstsize(tokens) + 1));
+	if (result == NULL)
+		return (NULL);
+	i = 0;
+	tmp = tokens;
+	while (tmp != NULL)
+	{
+		result[i] = tmp;
+		tmp = tmp->next;
+		i++;
+	}
+	result[i] = NULL;
+	return (result);
+}
 
 int	main_minishell(t_minishell *minishell, t_list *tokens)
 {
 	t_cmd	*cmd;
 	int		exit_status;
+	void	**tokens_to_free;
 
+	tokens_to_free = token_free_list(tokens);
 	cmd = parser(tokens, minishell);
 	if (cmd == NULL)
 		return (ERROR);
 	exit_status = execute(cmd, minishell);
 	free_ast(cmd);
+
+	int i = 0;
+	while (tokens_to_free[i] != NULL)
+	{
+		free(tokens_to_free[i]);
+		//free(((t_list *)tokens_to_free[i])->content); // nope
+		i++;
+	}
+	free(tokens_to_free);
+
+
 	return (exit_status);
 }
 
@@ -65,26 +96,26 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 {
 	int		cmd_code;
 	t_list	*tokens;
+	char	*cmd_input;
 
 	while (!minishell->should_exit)
 	{
-		minishell->cmd_input = readline(minishell->prompt_msg);
-		cmd_code = check_input_term(minishell->cmd_input, minishell);
+		cmd_input = readline(minishell->prompt_msg);
+		cmd_code = check_input_term(cmd_input, minishell);
 		if (cmd_code == EXIT)
 		{
-			free(minishell->cmd_input);
+			free(cmd_input);
 			free(minishell->prompt_msg);
 			return (SUCCESS);
 		}
 		if (cmd_code == NONE)
 			continue ;
-		tokens = tokenizer(minishell->cmd_input, FALSE);
+		tokens = tokenizer(cmd_input, FALSE);
 		if (tokens == NULL)
 			return (ERROR);
-		//if (check_valid_tokens(tokens) == SUCCESS)
-		main_minishell(minishell, tokens);
-		//free_tokens(tokens); ////<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO
-		free(minishell->cmd_input);
+		if (check_valid_tokens(tokens) == SUCCESS)
+			main_minishell(minishell, tokens);
+		free(cmd_input);
 	}
 	return (SUCCESS);
 }

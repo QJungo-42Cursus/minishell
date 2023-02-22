@@ -18,7 +18,6 @@ int refresh_prompt(t_minishell *minishell)
 
 int	init_minishell(t_minishell *minishell, char **envp)
 {
-	minishell->cmd_input = NULL;
 	minishell->last_exit_status = 0;
 	minishell->prompt_msg = NULL;
 	if (getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1) == NULL)

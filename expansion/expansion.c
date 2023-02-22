@@ -11,18 +11,17 @@ char	*get_expanded_dollars(const char *token, t_minishell *minishell)
 	char		*new_token;
 	char		*new_token_tmp;
 
-	index.start = 0;
-	index.end = 0;
 	new_token = NULL;
-
 	new_token_tmp = ft_strdup((char *)token);
 	if (new_token_tmp == NULL)
 		return (NULL);
-	if (get_var_position(index.end, new_token_tmp, &index.start, &index.end) == FALSE)
+	if (get_var_position(0, new_token_tmp, &index.start, &index.end) == FALSE)
 	{
 		free(new_token_tmp);
 		return (ft_strdup((char *)token));
 	}
+	index.start = 0;
+	index.end = 0;
 	while (get_var_position(index.end, new_token_tmp, &index.start, &index.end) == TRUE)
 	{
 		new_token = expand_dollar(new_token_tmp, minishell, index);
