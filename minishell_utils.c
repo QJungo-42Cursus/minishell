@@ -26,12 +26,12 @@ int	init_minishell(t_minishell *minishell, char **envp)
 	minishell->env_copy = cpy_envp(envp);
 	if (minishell->env_copy == NULL)
 		return (ERROR);
-	minishell->env_paths = get_paths_in_env(envp);
-	if (minishell->env_paths == NULL)
-	{
-		split_free(minishell->env_paths);
-		return (ERROR);
-	}
+	//minishell->env_paths = get_paths_in_env(envp);
+	//if (minishell->env_paths == NULL)
+	//{
+	//	split_free(minishell->env_paths);
+	//	return (ERROR);
+	//}
 	refresh_prompt(minishell);
 	if (!minishell->prompt_msg)
 		return (ERROR);

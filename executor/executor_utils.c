@@ -34,8 +34,15 @@ int pipe_index(int i, int read)
 void	replace_argv0_with_full_path(t_cmd *cmd, t_minishell *minishell)
 {
 	char	*path;
+	char	**env_paths;
 
-	path = find_cmd_path(cmd->cmd.argv[0], minishell->env_paths);
+	env_paths = get_paths_in_env(minishell->env_copy);
+	if (env_paths == NULL)
+		return ; // TODO error handling
+	path = find_cmd_path(cmd->cmd.argv[0], env_paths);
+	if (path == NULL)
+		return ; // TODO error handling
+	split_free(env_paths);
 	free(cmd->cmd.argv[0]);
 	cmd->cmd.argv[0] = path;
 }

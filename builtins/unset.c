@@ -30,11 +30,11 @@ int	unset(t_minishell *minishell, char **args)
 	var_index = get_env_var_index((const char **)minishell->env_copy, args[1]);
 	if (var_index == -1)
 		return (SUCCESS);
-	if (ft_strncmp(minishell->env_copy[var_index], "PATH=", 5) == 0)
-	{
-		split_free(minishell->env_paths);
-		minishell->env_paths = NULL;
-	}
+	//if (ft_strncmp(minishell->env_copy[var_index], "PATH=", 5) == 0)
+	//{
+	//	split_free(minishell->env_paths);
+	//	minishell->env_paths = NULL;
+	//}
 	remove_env_var(minishell, var_index);
 	return (SUCCESS);
 }

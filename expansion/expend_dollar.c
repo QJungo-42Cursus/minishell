@@ -2,31 +2,36 @@
 #include "expansion.h"
 #include "../env/env.h"
 
-static char *get_var_value(const char *token, const char **env_copy, t_position index)
+static char *get_var_value(const char *token, t_minishell *minishell, t_position position)
 {
 	char		*var_name;
 	char		*var_value;
 
-	var_name = ft_substr(token, index.start + 1, index.end - index.start);
+	var_name = ft_substr(token, position.start + 1, position.end - position.start);
 	if (var_name == NULL)
 		return (NULL);
-	if (get_env_var_index((const char **)env_copy, var_name) == -1)
-		var_value = ft_strdup((char *)"");
+	if (ft_strncmp(var_name, "?", 2) == 0)
+		var_value = ft_itoa(minishell->last_exit_status);
 	else
-		var_value = get_env_var_value(var_name, env_copy);
+	{
+		if (get_env_var_index((const char **)minishell->env_copy, var_name) == -1)
+			var_value = ft_strdup((char *)"");
+		else
+			var_value = get_env_var_value(var_name, (const char **)minishell->env_copy);
+	}
 	free(var_name);
 	return (var_value);
 }
 
-static int	set_sides(const char *token, t_position index, char **a, char **b)
+static int	set_sides(const char *token, t_position position, char **a, char **b)
 {
-	if (index.start == 0)
+	if (position.start == 0)
 		*a = ft_strdup((char *)"");
 	else
-		*a = ft_substr(token, 0, index.start);
+		*a = ft_substr(token, 0, position.start);
 	if (a == NULL)
 		return (ERROR);
-	*b = ft_substr(token, index.end + 1, ft_strlen(token) - index.end);
+	*b = ft_substr(token, position.end + 1, ft_strlen(token) - position.end);
 	if (b == NULL)
 	{
 		free(*a);
@@ -35,17 +40,17 @@ static int	set_sides(const char *token, t_position index, char **a, char **b)
 	return (SUCCESS);
 }
 
-char	*expand_dollar(const char *token, const char **env_copy, t_position index)
+char	*expand_dollar(const char *token, t_minishell *minishell, t_position position)
 {
 	char	*var_value;
 	char	*a;
 	char	*new_token;
 	char	*b;
 
-	var_value = get_var_value(token, env_copy, index);
+	var_value = get_var_value(token, minishell, position);
 	if (var_value == NULL)
 		return (NULL);
-	if (set_sides(token, index, &a, &b) == ERROR)
+	if (set_sides(token, position, &a, &b) == ERROR)
 	{
 		free(var_value);
 		return (NULL);

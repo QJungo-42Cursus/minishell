@@ -29,7 +29,7 @@ enum e_cmd_code {
 	EXIT = 2,
 };
 
-int	check_input_term(char *input)
+int	check_input_term(char *input, t_minishell *minishell)
 {
 	if (input == NULL)
 		return (NONE);
@@ -38,22 +38,27 @@ int	check_input_term(char *input)
 	if (ft_strncmp(input, "exit", 5) == 0) // TODO use a builtin
 	{
 		rl_clear_history();
+		exit_(minishell, NULL, 0);
 		return (EXIT);
 	}
 	add_history(input);
 	return (SUCCESS);
 }
 
+
+
+
 int	main_minishell(t_minishell *minishell, t_list *tokens)
 {
 	t_cmd	*cmd;
-	int		exit_code;
+	int		exit_status;
 
 	cmd = parser(tokens, minishell);
 	if (cmd == NULL)
 		return (ERROR);
-	exit_code = execute(cmd, minishell);
-	return (exit_code);
+	exit_status = execute(cmd, minishell);
+	free_ast(cmd);
+	return (exit_status);
 }
 
 /*static*/ int	main_loop(t_minishell *minishell)
@@ -64,7 +69,7 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 	while (!minishell->should_exit)
 	{
 		minishell->cmd_input = readline(minishell->prompt_msg);
-		cmd_code = check_input_term(minishell->cmd_input);
+		cmd_code = check_input_term(minishell->cmd_input, minishell);
 		if (cmd_code == EXIT)
 		{
 			free(minishell->cmd_input);

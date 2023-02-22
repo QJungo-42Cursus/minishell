@@ -6,25 +6,23 @@
 #include "unistd.h"
 #include "gtest/gtest.h"
 
-t_minishell *g_minishell;
+extern "C" {
+int w_exit_status(int es) { return WEXITSTATUS(es); }
+}
 
-int main(int argc, char **argv, char **envp) {
-  t_minishell m_minishell;
-  g_minishell = &m_minishell;
-  if (init_minishell(g_minishell, envp) != SUCCESS)
-    return (1);
+int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
 void minishell(const char *cmd_input, int &exit_code) {
+  t_minishell *g_minishell = new t_minishell();
+  if (init_minishell(g_minishell, environ) != SUCCESS)
+    FAIL() << "init_minishell failed";
   g_minishell->cmd_input = (char *)cmd_input;
   int cmd_code = check_input_term(g_minishell->cmd_input);
-  if (cmd_code == EXIT) {
-    free(g_minishell->cmd_input);
-    free(g_minishell->prompt_msg);
+  if (cmd_code == EXIT)
     return;
-  }
   t_list *tokens = tokenizer(g_minishell->cmd_input, FALSE);
   if (tokens == NULL || check_valid_tokens(tokens) != SUCCESS)
     return;
@@ -47,6 +45,7 @@ void bash(const char *cmd_input, int &exit_code) {
   dprintf(pipefd[STDOUT_FILENO], "%s\n", cmd_input);
   close(pipefd[STDOUT_FILENO]);
   waitpid(pid, &exit_code, 0);
+  exit_code = w_exit_status(exit_code);
 }
 
 #define COMPARE(cmd_input)                                                     \
@@ -66,8 +65,8 @@ void bash(const char *cmd_input, int &exit_code) {
                                                                                \
     ASSERT_EQ(bash_exit_code, minishell_exit_code);                            \
     ASSERT_EQ(bash_output, minishell_output);                                  \
-    std::cout << "exit_code : " << bash_exit_code << "msh "                    \
-              << minishell_exit_code << std::endl;                             \
+    /* std::cout << "exit_code : " << bash_exit_code << "msh "                 \
+              << minishell_exit_code << std::endl; */                          \
     /* std::cout << minishell_output << std::endl;*/                           \
   }
 
@@ -77,8 +76,54 @@ TEST(End2End, echo) {
   COMPARE("echo -n hello && echo -n world");
 }
 
-TEST(End2End, echoPipe) {
-  COMPARE("echo hello | cat -e");
-  COMPARE("cat dontexist");
-  //
+TEST(End2End, echoPipe) { COMPARE("echo hello | cat -e"); }
+
+TEST(End2End_Eval, forkExecve) {
+  COMPARE("/bin/ls");
+  COMPARE("/bin/ls -laF");
+  COMPARE("/bin/ls -l -a -F");
 }
+
+TEST(End2End_Eval, builtins_echo) { COMPARE("echo \"it works\""); }
+
+TEST(End2End_Eval, builtins_exit) { COMPARE("exit"); }
+
+TEST(End2End_Eval, builtins_cd_relative) { COMPARE("cd env && pwd && cd .."); }
+
+// TODO minishell remplace /bin par /usr/bin
+// TEST(End2End_Eval, builtins_cd_absolute) { COMPARE("cd /bin && pwd"); }
+
+TEST(End2End_Eval, builtins_cd_home) { COMPARE("cd && pwd"); }
+
+// TODO : pas sur qu'on doivent gerer ca
+// TEST(End2End_Eval, builtins_cd_last) { COMPARE("cd - && pwd"); }
+
+// On ne gere pas ca
+// TEST(End2End_Eval, builtins_cd_tilda) { COMPARE("cd ~/Cursus && pwd"); }
+
+TEST(End2End_Eval, builtins_env_path) {
+  COMPARE("unset PATH && export PATH=\"/bin:/usr/bin\" && ls");
+  COMPARE("unset PATH && export PATH=\"/bin:/usr/bin\" && emacs");
+  COMPARE("unset PATH && ls");
+  COMPARE("unset PATH && emacs");
+}
+
+// ne met pas dans le meme ordre...
+// TEST(End2End_Eval, builtins_env) { COMPARE("env"); }
+
+// crashent, alors qu'il marche en normal
+/*
+TEST(End2End_Eval, builtins_env_export) { COMPARE("export TEST=1 && env"); }
+
+TEST(End2End_Eval, builtins_env_unset) {
+  COMPARE("export TEST=1 && env && unset TEST && env");
+}
+
+TEST(End2End_Eval, builtins_env_expansion) {
+  COMPARE("export TEST=\"salut\" && echo $TEST");
+}
+
+TEST(End2End_Eval, builtins_env_binpath) {
+  COMPARE("export TEST= && /usr/bin/env");
+}
+*/

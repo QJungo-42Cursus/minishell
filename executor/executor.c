@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -42,8 +43,7 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 		if (pipe(pipes) == -1)
 			return (ERROR);
 	}
-
-	if (execute_builtin(cmd, minishell, &exit_status)) // TODO ce exit status n'a pas a etre WEXITSTATUS !!!
+	if (execute_builtin(cmd, minishell, &exit_status))
 		return (exit_status);
 	exit_status = 0;
 	if (fork1() == 0)
@@ -58,10 +58,16 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 			close(pipes[0]);
 			close(pipes[1]);
 		}
-
+		if (access(cmd->cmd.argv[0], F_OK) == -1)
+		{
+			ft_putstr_fd("minishell: ", STDERR_FILENO);
+			ft_putstr_fd(cmd->cmd.argv[0], STDERR_FILENO);
+			ft_putstr_fd(": command not found\n", STDERR_FILENO);
+			exit(127);
+		}
 		execve(cmd->cmd.argv[0], cmd->cmd.argv, minishell->env_copy);
 		perror("execv");
-		exit(EXIT_FAILURE); // TODO
+		exit(errno); // TODO
 	}
 	if (cmd->cmd.heredoc != NULL)
 	{
@@ -70,7 +76,7 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 		close(pipes[1]);
 	}
 	wait(&exit_status);
-	return (exit_status);
+	return (WEXITSTATUS(exit_status));
 }
 
 int execute_redir(t_cmd *cmd, t_minishell *minishell)
@@ -146,9 +152,6 @@ int	execute_logic(t_cmd *cmd, t_minishell *minishell)
 	return (exit_status);
 }
 
-
-// return un status qui dois etre "extrait" a l'aide de WEXITSTATUS(exit_status) 
-// pour recuperer le bon code de sortie
 int	execute(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
@@ -162,11 +165,6 @@ int	execute(t_cmd *cmd, t_minishell *minishell)
 		exit_status = execute_pipeline(cmd, minishell);
 	else if (cmd->type == LOGIC_AND || cmd->type == LOGIC_OR)
 		exit_status = execute_logic(cmd, minishell);
-	else
-	{
-		// TODO cannot happen ?
-		printf("execute: unknown command type: %d\n", cmd->type);
-	}
-	minishell->last_exit_status = exit_status; // TODO WEXITSTATUS ??
+	minishell->last_exit_status = exit_status;
 	return (exit_status);
 }

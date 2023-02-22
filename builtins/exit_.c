@@ -3,13 +3,19 @@
 #include "../libft/libft.h"
 #include "builtins.h"
 
+void	free_minishell(t_minishell *minishell)
+{
+	free(minishell->prompt_msg);
+	split_free(minishell->env_copy);
+	free(minishell->cmd_input);
+}
 
 int	exit_(t_minishell *minishell, char **argv, int exit_status)
 {
 	(void)argv; // TODO check args
 	(void)minishell;
 
-	// free_minishell(minishell); // TODO
+	free_minishell(minishell);
 	exit(exit_status);
 	return (SUCCESS);
 }

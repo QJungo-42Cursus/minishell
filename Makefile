@@ -27,6 +27,7 @@ SRCS =			main.c \
 				parser/parse_command.c \
 				parser/parse_pipeline.c \
 				parser/parser.c \
+				parser/free_ast.c \
 				expansion/expansion.c \
 				expansion/expend_dollar.c \
 				expansion/unquote.c \

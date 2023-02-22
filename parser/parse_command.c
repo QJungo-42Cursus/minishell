@@ -9,28 +9,27 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 {
 	t_list		*tokens_ptr;
 	char		*initial_token;
+	t_list		*new_tokens;
+	t_list		*next;
+	char		*new_token;
 
 	tokens_ptr = tokens;
 	while (tokens_ptr != NULL)
 	{
 		// expand
 		initial_token = (char *)tokens_ptr->content;
-		tokens_ptr->content = expand(initial_token, (const char **)minishell->env_copy);
-		if (ft_strncmp((char *)tokens_ptr->content, initial_token, ft_strlen(initial_token)) == 0)
+		new_token = expand(initial_token, minishell);
+		tokens_ptr->content = new_token;
+		if (ft_strncmp(new_token, initial_token, ft_strlen(initial_token)) == 0)
 		{
 			tokens_ptr = tokens_ptr->next;
 			free(initial_token);
 			continue ;
 		}
-
 		free(initial_token);
 
-		// retokenize
-		t_list	*new_tokens;
-		new_tokens = tokenizer((char *)tokens_ptr->content, TRUE);
-
-
-		// replace tokens
+		// retokenize and replace
+		new_tokens = tokenizer(new_token, TRUE);
 		if (new_tokens == NULL)
 		{
 			tokens_ptr = tokens_ptr->next;
@@ -39,19 +38,21 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 		if (new_tokens->next == NULL) // new_tokens taille : 1
 		{
 			tokens_ptr->content = new_tokens->content;
+			free(new_token);
 			free(new_tokens);
 		}
 		else
 		{
-			t_list *next = tokens_ptr->next;
+			next = tokens_ptr->next;
 			tokens_ptr->content = new_tokens->content;
+			free(new_token);
 			tokens_ptr->next = new_tokens->next;
-			//free(new_tokens);
 			tokens_ptr = tokens_ptr->next;
 			while (tokens_ptr->next != NULL)
 				tokens_ptr = tokens_ptr->next;
 			tokens_ptr->next = next;
 		}
+			//free(new_token);
 		tokens_ptr = tokens_ptr->next;
 	}
 	return tokens;
@@ -168,7 +169,6 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	char	*token;
 	int		get_heredoc_res;
 
-	//print_resti(tokens); //
 	tokens = expand_and_retokenize(tokens, minishell);
 	cursor = tokens;
 	while  (cursor != NULL)

@@ -71,4 +71,6 @@ int			pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
 int			set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
 t_cmd		*parser(t_list *tokens, t_minishell *minishell);
 
+void		free_ast(t_cmd *cmd);
+
 #endif /* PARSER_H */

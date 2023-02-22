@@ -105,5 +105,5 @@ int execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 		waitpid(pipeline_cmd->pipeline.pids[i], &exit_status, 0);
 		i++;
 	}
-	return (exit_status);
+	return (WEXITSTATUS(exit_status));
 }
