@@ -107,9 +107,10 @@ tpars:
 	c++ $(GTEST_INC)  tests/main.cpp tests/parser.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
 	./$(NAME_TEST)
 
-tend:
+tend: $(OBJS)
 	@make -C libft
-	c++ $(GTEST_INC)  tests/main.cpp tests/end2end.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
+	c++ $(GTEST_INC)  tests/end2end.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
+	./$(NAME_TEST)
 
 #### Phony ####
 .PHONY: all clean fclean re $(NAME_TEST)

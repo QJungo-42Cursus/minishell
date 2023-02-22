@@ -26,10 +26,10 @@ void	handler(int num)
 
 enum e_cmd_code {
 	NONE = 1,
-	EXIT,
+	EXIT = 2,
 };
 
-static int	check_input_term(char *input)
+int	check_input_term(char *input)
 {
 	if (input == NULL)
 		return (NONE);
@@ -44,19 +44,16 @@ static int	check_input_term(char *input)
 	return (SUCCESS);
 }
 
-static int	main_minishell(t_minishell *minishell, t_list *tokens)
+int	main_minishell(t_minishell *minishell, t_list *tokens)
 {
 	t_cmd	*cmd;
+	int		exit_code;
 
 	cmd = parser(tokens, minishell);
 	if (cmd == NULL)
 		return (ERROR);
-	if (execute(cmd, minishell) != 0)
-	{
-		// set le $? ici ?
-		return (ERROR);
-	}
-	return (SUCCESS);
+	exit_code = execute(cmd, minishell);
+	return (exit_code);
 }
 
 /*static*/ int	main_loop(t_minishell *minishell)
@@ -89,7 +86,7 @@ static int	main_minishell(t_minishell *minishell, t_list *tokens)
 
 #include <termios.h>
 #ifndef TEST
-int	main(int argc, char **argv, char **envp)
+int	main_(int argc, char **argv, char **envp)
 {
 	t_minishell	minishell;
 

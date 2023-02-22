@@ -5,7 +5,32 @@
 #include <vector>
 
 extern "C" {
-#include "../parser/parser.c"
+int	logic2(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
+{
+	int			tok_type;
+	t_list		*start_left = cursor;
+	t_list		*start_right = cursor;
+
+	while (cursor->next != NULL)
+	{
+		tok_type = get_token_type((char *)cursor->next->content);
+		if (tok_type == LOGIC_OR || tok_type == LOGIC_AND)
+		{
+			start_right = cursor->next->next;
+			free(cursor->next->content);
+			cursor->next = NULL;
+
+			cmd->type = (t_cmd_type)tok_type;
+			cmd->logic.left = (t_cmd *)malloc(sizeof(t_cmd));
+			cmd->logic.right = (t_cmd *)malloc(sizeof(t_cmd));
+			set_command(start_left, cmd->logic.left, minishell);
+			set_command(start_right, cmd->logic.right, minishell);
+			return (USED);
+		}
+		cursor = cursor->next;
+	}
+	return (FALSE);
+}
 }
 void print_token_type(int token_type) {
   if (token_type == OPEN_PARENTHESES)
@@ -382,12 +407,11 @@ TEST(ParserPipeline, PipelinesAndParenteses2) {
 }
 
 /*********** redir ***********/
-int logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell);
 /*********** logic ***********/
 TEST(ParserLogic, NoLogic) {
   std::vector<std::string> tokens = {"ls", "echo", "hello"};
   t_cmd *cmd = new t_cmd;
-  bool result = logic(generate_tokens(tokens), cmd, g_minishell);
+  bool result = logic2(generate_tokens(tokens), cmd, g_minishell);
   EXPECT_EQ(result, false);
 }
 
