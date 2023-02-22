@@ -2,59 +2,39 @@
 #define TEST
 #endif
 
+#include "all.h"
 #include "unistd.h"
 #include "gtest/gtest.h"
 
-extern "C" {
-#include "../builtins/cd.c"
-#include "../builtins/echo.c"
-#include "../builtins/env.c"
-#include "../builtins/exit_.c"
-#include "../builtins/export.c"
-#include "../builtins/pwd.c"
-#include "../builtins/unset.c"
-#include "../env/cpy_envp.c"
-#include "../env/find_command_path.c"
-#include "../env/get_env_var_index.c"
-#include "../env/get_env_var_value.c"
-#include "../env/get_paths_in_env.c"
-#include "../executor/execute_pipeline.c"
-#include "../executor/executor.c"
-#include "../executor/executor_utils.c"
-#include "../minishell_utils.c"
-#include "../parser/parse_command.c"
-#include "../parser/parse_pipeline.c"
-#include "../parser/parser_utils.c"
-#include "../tokenizer/set_next_token_position.c"
-#include "../tokenizer/tokenizer.c"
-
-#include "../parser/parser.c"
-
-#include "../expansion/expansion.c"
-#include "../expansion/expend_dollar.c"
-#include "../expansion/get_var_position.c"
-#include "../expansion/unquote.c"
-// #include "../token_checker/token_checker_main.c"
-// #include "../token_checker/token_checker_utils.c"
-
-#include "../main.c"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-}
+t_minishell *g_minishell;
 
 int main(int argc, char **argv, char **envp) {
+  t_minishell m_minishell;
+  g_minishell = &m_minishell;
+  if (init_minishell(g_minishell, envp) != SUCCESS)
+    return (1);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
 
-TEST(End2End, Test) {
+void minishell(const char *cmd_input, int &exit_code) {
+  g_minishell->cmd_input = (char *)cmd_input;
+  int cmd_code = check_input_term(g_minishell->cmd_input);
+  if (cmd_code == EXIT) {
+    free(g_minishell->cmd_input);
+    free(g_minishell->prompt_msg);
+    return;
+  }
+  t_list *tokens = tokenizer(g_minishell->cmd_input, FALSE);
+  if (tokens == NULL || check_valid_tokens(tokens) != SUCCESS)
+    return;
+  exit_code = main_minishell(g_minishell, tokens);
+}
+
+void bash(const char *cmd_input, int &exit_code) {
   int pipefd[2];
   int pid;
-
   ASSERT_TRUE(pipe(pipefd) == 0);
-
   pid = fork();
   ASSERT_TRUE(pid >= 0);
   if (pid == 0) {
@@ -64,26 +44,41 @@ TEST(End2End, Test) {
     execv("/bin/bash", NULL);
   }
   close(pipefd[STDIN_FILENO]);
-  dprintf(pipefd[STDOUT_FILENO], "echo hello\n");
+  dprintf(pipefd[STDOUT_FILENO], "%s\n", cmd_input);
   close(pipefd[STDOUT_FILENO]);
-  waitpid(pid, NULL, 0);
+  waitpid(pid, &exit_code, 0);
 }
 
-int main_loop_(char *cmd_input) {
-  t_minishell *minishell;
-  minishell->cmd_input = cmd_input;
-  //int cmd_code = check_input_term(minishell->cmd_input);
-  int cmd_code = 0;
-  if (cmd_code == EXIT) {
-    free(minishell->cmd_input);
-    free(minishell->prompt_msg);
-    return (SUCCESS);
+#define COMPARE(cmd_input)                                                     \
+  {                                                                            \
+    int bash_exit_code = 0;                                                    \
+    int minishell_exit_code = 0;                                               \
+    std::string minishell_output;                                              \
+    std::string bash_output;                                                   \
+                                                                               \
+    ::testing::internal::CaptureStdout();                                      \
+    minishell(cmd_input, minishell_exit_code);                                 \
+    minishell_output = ::testing::internal::GetCapturedStdout();               \
+                                                                               \
+    ::testing::internal::CaptureStdout();                                      \
+    bash(cmd_input, bash_exit_code);                                           \
+    bash_output = ::testing::internal::GetCapturedStdout();                    \
+                                                                               \
+    ASSERT_EQ(bash_exit_code, minishell_exit_code);                            \
+    ASSERT_EQ(bash_output, minishell_output);                                  \
+    std::cout << "exit_code : " << bash_exit_code << "msh "                    \
+              << minishell_exit_code << std::endl;                             \
+    /* std::cout << minishell_output << std::endl;*/                           \
   }
-  t_list *tokens = tokenizer(minishell->cmd_input, FALSE);
-  if (tokens == NULL)
-    return (ERROR);
 
-  return check_valid_tokens(tokens) == SUCCESS
-             ? main_minishell(minishell, tokens)
-             : ERROR;
+TEST(End2End, echo) {
+  COMPARE("echo hello");
+  COMPARE("echo -n hello");
+  COMPARE("echo -n hello && echo -n world");
+}
+
+TEST(End2End, echoPipe) {
+  COMPARE("echo hello | cat -e");
+  COMPARE("cat dontexist");
+  //
 }

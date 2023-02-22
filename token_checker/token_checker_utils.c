@@ -8,7 +8,7 @@ int	get_first_occurence_in_list(t_list *lst, char *sep)
 	index = 0;
 	while (lst)
 	{
-		if (!ft_strncmp(lst->content, sep, ft_strlen(sep)))
+		if (!ft_strncmp((char *)lst->content, sep, ft_strlen(sep)))
 			return (index);
 		index++;
 		lst = lst->next;
@@ -25,7 +25,7 @@ int	get_last_index_in_list(t_list *lst, int len, char *sep)
 	i = 0;
 	while (lst && i < len)
 	{
-		if (!ft_strncmp(lst->content, sep, ft_strlen(sep)))
+		if (!ft_strncmp((char *)lst->content, sep, ft_strlen(sep)))
 			index = i + 1 ;
 		lst = lst->next;
 		i++;
@@ -40,7 +40,7 @@ int	count_separateur_in_tooken(t_list *lst, char *sep)
 	count = 0;
 	while (lst)
 	{
-		if (!ft_strncmp(lst->content, sep, ft_strlen(sep) + 1))
+		if (!ft_strncmp((char *)lst->content, sep, ft_strlen(sep) + 1))
 			count++;
 		lst = lst->next;
 	}

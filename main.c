@@ -86,7 +86,7 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 
 #include <termios.h>
 #ifndef TEST
-int	main_(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	minishell;
 
