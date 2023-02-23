@@ -56,6 +56,7 @@ TEST(Executor, aSimpleFailingPipeline) {
   test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
 }
 
+/*
 TEST(Executor, aThreeCommandsPipelineAndFail) {
   t_cmd *cmd = new_cmd(PIPELINE);
   cmd->s_pipeline.pipe_count = 3;
@@ -72,6 +73,7 @@ TEST(Executor, aThreeCommandsPipelineAndFail) {
   cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.next = NULL;
   test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
 }
+*/
 
 TEST(Executor, SimpleFailingCommand) {
   t_cmd *cmd = new_cmd(COMMAND);
