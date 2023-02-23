@@ -103,5 +103,5 @@ int	check_valid_tokens(t_list *input_tooken)
 	if (check_pipe_position(input_tooken) == ERROR)
 		return (ERROR);
 	return (SUCCESS);
+	// TODO -> c'est token, pas tooken
 }
-// TODO -> c'est token, pas tooken

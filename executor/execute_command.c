@@ -21,9 +21,9 @@
 #include "../builtins/builtins.h"
 #include "../env/env.h"
 
-// TODO refactoriser pour que pipeline ai la meme chose !
 void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
 {
+	// TODO refactoriser pour que pipeline ai la meme chose !
 	replace_argv0_with_full_path(cmd, minishell);
 	if (cmd->s_command.heredoc != NULL)
 	{

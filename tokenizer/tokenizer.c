@@ -24,7 +24,6 @@ static void	set_cursor_after_space(const char *cmd, int *cursor_index)
 }
 
 /// Renvoie une liste chainee de token (char *) ou NULL en cas d'erreur
-/// TODO Voir chaine vide. 
 /// Prend un string (cmd) non NULL et non modifiable en arg
 /// => cmd to tokens
 t_list	*tokenizer(const char *cmd, t_bool is_expand_mode)

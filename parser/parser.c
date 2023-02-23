@@ -22,7 +22,6 @@ int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 	t_list		*start_right;
 
 	start_left = cursor;
-	start_right = cursor;
 	while (cursor->next != NULL)
 	{
 		tok_type = get_token_type((char *)cursor->next->content);

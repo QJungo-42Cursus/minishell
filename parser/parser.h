@@ -16,12 +16,6 @@
 # include "../libft/libft.h"
 # define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
 
-/* TODO une idee pour pouvoir tout free a la fin : faire une list de t_list, 
- *		bien garder la taille, et free tout les elements qui ne sont pas NULL
- *		- en cas d'erreur : tout free
- *		- reussite : ne free que les t_list et pas les strings 
- */
-
 typedef enum e_cmd_type {
 	PIPELINE,
 	COMMAND,
