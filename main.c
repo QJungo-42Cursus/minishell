@@ -25,8 +25,12 @@ typedef struct s_transmitter_signal {
 
 void	parent_handler(int sig)
 {
+	/*
 	if (sig == 2)
 		exit(0);
+		*/
+	(void) sig;
+	printf("Coucou\n");
 }
 
 enum e_cmd_code {
@@ -126,6 +130,9 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	minishell;
+	struct sigaction new_sigaction;
+	struct sigaction old_sigaction;
+
 	struct termios	old_termios, new_termios;
 
 	tcgetattr(0, &old_termios);
@@ -133,7 +140,8 @@ int	main(int argc, char **argv, char **envp)
 	new_termios.c_cc[VEOF] = 3; // ^C
 	new_termios.c_cc[VINTR] = 4; // ^D
 	tcsetattr(0, TCSANOW, &new_termios);
-	signal(SIGINT, parent_handler);
+	new_sigaction.sa_handler = parent_handler;
+	sigaction(SIGINT, &new_sigaction, &old_sigaction);
 	if (argc != 1)
 	{
 		errno = EINVAL;
