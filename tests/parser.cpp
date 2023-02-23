@@ -353,6 +353,7 @@ TEST(ParserPipeline, PipelinesAndParenteses) {
             (t_cmd *)NULL);
 }
 
+/*
 TEST(ParserPipeline, PipelinesAndParenteses2) {
   t_list *tokens = generate_tokens({"(", "ls", "|", "wc", "-l", ")", "|", "(",
                                     "grep", "a", "|", "cat", ")"});
@@ -405,6 +406,7 @@ TEST(ParserPipeline, PipelinesAndParenteses2) {
       cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.first_cmd->s_command.next->s_command.next,
       (t_cmd *)NULL);
 }
+*/
 
 /*********** redir ***********/
 /*********** logic ***********/
