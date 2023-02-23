@@ -1,37 +1,30 @@
 #include "parser.h"
 
-/*
-   struct {
-   struct s_cmd *left;
-   struct s_cmd *right;
-   } pipe;
-*/
-
 void	free_ast(t_cmd *cmd)
 {
 	if (cmd == NULL)
 		return ;
 	if (cmd->type == COMMAND)
 	{
-		split_free(cmd->cmd.argv);
-		free(cmd->cmd.heredoc);
+		split_free(cmd->s_command.argv);
+		free(cmd->s_command.heredoc);
 	}
 	else if (cmd->type == PIPELINE)
 	{
-		free(cmd->pipeline.pipes);
-		free(cmd->pipeline.pids);
-		free_ast(cmd->pipeline.first_cmd);
+		free(cmd->s_pipeline.pipes);
+		free(cmd->s_pipeline.pids);
+		free_ast(cmd->s_pipeline.first_cmd);
 	}
-	else if (cmd->type == REDIR_OUT || cmd->type == REDIR_IN || cmd->type == REDIR_APPEND)
+	else if (cmd->type == REDIR_OUT
+		|| cmd->type == REDIR_IN || cmd->type == REDIR_APPEND)
 	{
-		free(cmd->redir.filename);
-		free_ast(cmd->redir.cmd);
+		free(cmd->s_redir.filename);
+		free_ast(cmd->s_redir.cmd);
 	}
 	else if (cmd->type == LOGIC_AND || cmd->type == LOGIC_OR)
 	{
-		free_ast(cmd->logic.left);
-		free_ast(cmd->logic.right);
+		free_ast(cmd->s_logic.left);
+		free_ast(cmd->s_logic.right);
 	}
 	free(cmd);
 }
-

@@ -12,20 +12,20 @@
 static int	check_error(t_cmd *cmd)
 {
 	if ((cmd->type == REDIR_APPEND || cmd->type == REDIR_OUT)
-		&& access(cmd->redir.filename, F_OK) != 0)
+		&& access(cmd->s_redir.filename, F_OK) != 0)
 		return (SUCCESS);
 	if ((cmd->type == REDIR_APPEND || cmd->type == REDIR_OUT)
-		&& access(cmd->redir.filename, W_OK) != 0)
+		&& access(cmd->s_redir.filename, W_OK) != 0)
 	{
 		write(2, "minishell: ", 11);
-		write(2, cmd->redir.filename, ft_strlen(cmd->redir.filename));
+		write(2, cmd->s_redir.filename, ft_strlen(cmd->s_redir.filename));
 		write(2, ": Permission denied\n", 20);
 		return (ERROR);
 	}
-	if (cmd->type == REDIR_IN && access(cmd->redir.filename, R_OK) != 0)
+	if (cmd->type == REDIR_IN && access(cmd->s_redir.filename, R_OK) != 0)
 	{
 		write(2, "minishell: ", 11);
-		write(2, cmd->redir.filename, ft_strlen(cmd->redir.filename));
+		write(2, cmd->s_redir.filename, ft_strlen(cmd->s_redir.filename));
 		write(2, ": Permission denied\n", 20);
 		return (ERROR);
 	}
@@ -35,14 +35,14 @@ static int	check_error(t_cmd *cmd)
 static int	open_file(t_cmd *cmd)
 {
 	if (cmd->type == REDIR_APPEND)
-		cmd->redir.fd = open(cmd->redir.filename,
+		cmd->s_redir.fd = open(cmd->s_redir.filename,
 				O_APPEND | O_CREAT | O_RDWR, 0000644);
 	else if (cmd->type == REDIR_OUT)
-		cmd->redir.fd = open(cmd->redir.filename,
+		cmd->s_redir.fd = open(cmd->s_redir.filename,
 				O_TRUNC | O_CREAT | O_RDWR, 0000644);
 	else if (cmd->type == REDIR_IN)
-		cmd->redir.fd = open(cmd->redir.filename, O_RDONLY);
-	if (cmd->redir.fd == -1)
+		cmd->s_redir.fd = open(cmd->s_redir.filename, O_RDONLY);
+	if (cmd->s_redir.fd == -1)
 	{
 		// TODO nom d'erreur complet
 		perror("open");
@@ -69,9 +69,9 @@ int	execute_redir(t_cmd *cmd, t_minishell *minishell)
 		return (ERROR);
 	to_reopen = dup(std_x_fileno);
 	close(std_x_fileno);
-	dup(cmd->redir.fd);
-	exit_status = execute(cmd->redir.cmd, minishell);
-	close(cmd->redir.fd);
+	dup(cmd->s_redir.fd);
+	exit_status = execute(cmd->s_redir.cmd, minishell);
+	close(cmd->s_redir.fd);
 	dup2(to_reopen, std_x_fileno);
 	return (exit_status);
 }

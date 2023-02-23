@@ -2,28 +2,28 @@
 #include "parser.h"
 #include "../libft/libft.h"
 
-int get_token_type(char *token)
+int	get_token_type(char *token)
 {
 	if (ft_strncmp(token, "(", 2) == 0)
-		return OPEN_PARENTHESES;
+		return (OPEN_PARENTHESES);
 	else if (ft_strncmp(token, ")", 2) == 0)
-		return CLOSE_PARENTHESES;
+		return (CLOSE_PARENTHESES);
 	else if (ft_strncmp(token, "&&", 3) == 0)
-		return LOGIC_AND;
+		return (LOGIC_AND);
 	else if (ft_strncmp(token, "||", 3) == 0)
-		return LOGIC_OR;
+		return (LOGIC_OR);
 	else if (ft_strncmp(token, "|", 2) == 0)
-		return PIPELINE;
+		return (PIPELINE);
 	else if (ft_strncmp(token, ">>", 3) == 0)
-		return REDIR_APPEND;
+		return (REDIR_APPEND);
 	else if (ft_strncmp(token, "<<", 3) == 0)
-		return HEREDOC;
+		return (HEREDOC);
 	else if (ft_strncmp(token, "<", 2) == 0)
-		return REDIR_IN;
+		return (REDIR_IN);
 	else if (ft_strncmp(token, ">", 2) == 0)
-		return REDIR_OUT;
+		return (REDIR_OUT);
 	else
-		return COMMAND;
+		return (COMMAND);
 }
 
 t_bool	are_we_in_parentheses(t_list *tokens)

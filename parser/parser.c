@@ -19,10 +19,10 @@ int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 			cursor->next = NULL;
 
 			cmd->type = (t_cmd_type)tok_type;
-			cmd->logic.left = (t_cmd *)malloc(sizeof(t_cmd));
-			cmd->logic.right = (t_cmd *)malloc(sizeof(t_cmd));
-			set_command(start_left, cmd->logic.left, minishell);
-			set_command(start_right, cmd->logic.right, minishell);
+			cmd->s_logic.left = (t_cmd *)malloc(sizeof(t_cmd));
+			cmd->s_logic.right = (t_cmd *)malloc(sizeof(t_cmd));
+			set_command(start_left, cmd->s_logic.left, minishell);
+			set_command(start_right, cmd->s_logic.right, minishell);
 			return (USED);
 		}
 		cursor = cursor->next;
@@ -42,10 +42,10 @@ int redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 		if (tok_type == REDIR_IN || tok_type == REDIR_OUT)
 		{
 			cmd->type = (t_cmd_type)tok_type;
-			cmd->redir.filename = (char *)cursor->next->next->content;
+			cmd->s_redir.filename = (char *)cursor->next->next->content;
 			cursor->next = cursor->next->next->next;
-			cmd->redir.cmd = (t_cmd *)malloc(sizeof(t_cmd));
-			set_command(tokens, cmd->redir.cmd, minishell);
+			cmd->s_redir.cmd = (t_cmd *)malloc(sizeof(t_cmd));
+			set_command(tokens, cmd->s_redir.cmd, minishell);
 			return (USED);
 		}
 		cursor = cursor->next;

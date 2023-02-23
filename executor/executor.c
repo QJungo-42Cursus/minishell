@@ -15,13 +15,13 @@ int	execute_logic(t_cmd *cmd, t_minishell *minishell)
 	int		left_exit_status;
 
 	exit_status = 0;
-	left_exit_status = execute(cmd->logic.left, minishell);
+	left_exit_status = execute(cmd->s_logic.left, minishell);
 	if (cmd->type == LOGIC_AND && left_exit_status == 0)
-		exit_status = execute(cmd->logic.right, minishell);
+		exit_status = execute(cmd->s_logic.right, minishell);
 	else if (cmd->type == LOGIC_AND && left_exit_status != 0)
 		exit_status = left_exit_status;
 	else if (cmd->type == LOGIC_OR && left_exit_status != 0)
-		exit_status = execute(cmd->logic.right, minishell);
+		exit_status = execute(cmd->s_logic.right, minishell);
 	else if (cmd->type == LOGIC_OR && left_exit_status == 0)
 		exit_status = left_exit_status;
 	else

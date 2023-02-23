@@ -8,8 +8,8 @@
  *
  */
 
-//#include "../libft/libft.h"
-//#include "../tokenizer/tokenizer.h"
+// #include "../libft/libft.h"
+// #include "../tokenizer/tokenizer.h"
 #include <stdio.h>
 
 #define LOG(msg)                                                               \
@@ -61,6 +61,17 @@
                                                                                \
     printf(" (%d)\n", to_log_sep);                                             \
     fflush(stdout);                                                            \
+  }
+
+#define PRINT_TOKENS(tokens)                                                   \
+  {                                                                            \
+    t_list *dbh_cursor = tokens;                                               \
+    printf("[");                                                               \
+    while (dbg_cursor != NULL) {                                               \
+      printf("%s, ", (char *)dbh_cursor->content);                             \
+      dbh_cursor = dbh_cursor->next;                                           \
+    }                                                                          \
+    printf("]\n");                                                             \
   }
 
 #endif /* DEBUG_HELPER_H */

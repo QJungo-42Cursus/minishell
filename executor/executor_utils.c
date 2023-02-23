@@ -44,11 +44,11 @@ void	replace_argv0_with_full_path(t_cmd *cmd, t_minishell *minishell)
 	// TODO error handling
 	if (env_paths == NULL)
 		return ;
-	path = find_cmd_path(cmd->cmd.argv[0], env_paths);
+	path = find_cmd_path(cmd->s_command.argv[0], env_paths);
 	// TODO error handling
 	if (path == NULL)
 		return ;
 	split_free(env_paths);
-	free(cmd->cmd.argv[0]);
-	cmd->cmd.argv[0] = path;
+	free(cmd->s_command.argv[0]);
+	cmd->s_command.argv[0] = path;
 }

@@ -54,24 +54,24 @@ int	set_pipeline_and_args(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 		new_cmd = (t_cmd *)malloc(sizeof(t_cmd));
 		set_command(start, new_cmd, minishell);
 		if (cmd_cursor->type == PIPELINE)
-			cmd_cursor->pipeline.first_cmd = new_cmd;
+			cmd_cursor->s_pipeline.first_cmd = new_cmd;
 		else
-			cmd_cursor->cmd.next = new_cmd;
+			cmd_cursor->s_command.next = new_cmd;
 		cmd_cursor = new_cmd;
 		start = cursor;
 	}
-	cmd_cursor->cmd.next = (t_cmd *)malloc(sizeof(t_cmd));
-	set_command(start, cmd_cursor->cmd.next, minishell);
-	cmd_cursor = cmd_cursor->cmd.next;
+	cmd_cursor->s_command.next = (t_cmd *)malloc(sizeof(t_cmd));
+	set_command(start, cmd_cursor->s_command.next, minishell);
+	cmd_cursor = cmd_cursor->s_command.next;
 	return (SUCCESS);
 }
 
 int	pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
-	cmd->pipeline.pipe_count = number_of_pipe_operator(tokens);
-	if (cmd->pipeline.pipe_count == 0)
+	cmd->s_pipeline.pipe_count = number_of_pipe_operator(tokens);
+	if (cmd->s_pipeline.pipe_count == 0)
 		return (FALSE);
-	cmd->pipeline.pipe_count++;
+	cmd->s_pipeline.pipe_count++;
 	cmd->type = PIPELINE;
 	if (set_pipeline_and_args(tokens, cmd, minishell) == ERROR)
 		return (ERROR);

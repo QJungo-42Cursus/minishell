@@ -10,20 +10,22 @@
  */
 
 typedef enum e_cmd_type {
-	PIPELINE,		/* cmd | cmd | cmd | ... */
-	COMMAND,		/* cmd */
-	LOGIC_AND,		/* cmd && cmd */
-	LOGIC_OR,		/* cmd || cmd */
-	REDIR_IN,		/* < file cmd */
-	REDIR_OUT,		/* cmd > file */
-	REDIR_APPEND,	/* cmd >> file */
-	HEREDOC,		/* cmd << EOF */
-} t_cmd_type;
+	PIPELINE,
+	COMMAND,
+	LOGIC_AND,
+	LOGIC_OR,
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_APPEND,
+	HEREDOC,
+}	t_cmd_type;
+
+#define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
 
 // la suite, juste pour le parser
 enum e_token_type {
-  OPEN_PARENTHESES = 10,
-  CLOSE_PARENTHESES,
+	OPEN_PARENTHESES = 10,
+	CLOSE_PARENTHESES,
 };
 
 enum e_result_more {
@@ -33,33 +35,32 @@ enum e_result_more {
 typedef struct s_cmd {
 	t_cmd_type	type;
 	union {
-		// TODO simplify this
 		struct {
-			struct s_cmd *left;
-			struct s_cmd *right;
-		} logic;
+			struct s_cmd	*left;
+			struct s_cmd	*right;
+		} s_logic;
 		struct {
-			struct s_cmd *left;
-			struct s_cmd *right;
-		} pipe;
+			struct s_cmd	*left;
+			struct s_cmd	*right;
+		} s_pipe;
 		struct {
-			char **argv;
-			char *heredoc; // NULL if none
-			struct s_cmd *next; // only for pipeline
-		} cmd;
+			char			**argv;
+			char			*heredoc;
+			struct s_cmd	*next;
+		} s_command;
 		struct {
-			int	*pipes;
-			int *pids;
-			int	pipe_count; // n of command (and not of the pipe op)
-			struct s_cmd *first_cmd;
-		} pipeline;
+			int				*pipes;
+			int				*pids;
+			int				pipe_count;
+			struct s_cmd	*first_cmd;
+		} s_pipeline;
 		struct {
-			char *filename;
-			int fd;
-			struct s_cmd *cmd;
-		} redir;
+			char			*filename;
+			int				fd;
+			struct s_cmd	*cmd;
+		} s_redir;
 	};
-} t_cmd;
+}	t_cmd;
 
 t_list		*skip_parentheses(t_list *cursor);
 int			get_token_type(char *token);
@@ -72,5 +73,8 @@ int			set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
 t_cmd		*parser(t_list *tokens, t_minishell *minishell);
 
 void		free_ast(t_cmd *cmd);
+
+int			is_heredoc_valid(t_list *cursor, t_cmd *cmd);
+int			get_heredoc(t_list **cursor, t_cmd *cmd);
 
 #endif /* PARSER_H */
