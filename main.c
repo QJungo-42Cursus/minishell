@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:31:36 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/23 20:47:24 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #include "tokenizer/tokenizer.h"
 #include "env/env.h"
 #include "builtins/builtins.h"
-#include "tests/debug_helper.h"
+#include "tests/debug_helper.hpp"
 #include "minishell.h"
 #include "executor/executor.h"
 #include "token_checker/token_checker.h"
@@ -88,14 +88,14 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 	while (tokens_to_free[i] != NULL)
 	{
 		free(tokens_to_free[i]);
-		//free(((t_list *)tokens_to_free[i])->content); // nope
+		//free(((t_list *)tokens_to_free[i])->content); // TODO
 		i++;
 	}
 	free(tokens_to_free);
 	return (exit_status);
 }
 
-/*static*/ int	main_loop(t_minishell *minishell)
+int	main_loop(t_minishell *minishell)
 {
 	t_list	*tokens;
 	char	*cmd_input;
@@ -116,22 +116,30 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 	return (SUCCESS);
 }
 
-#ifndef TEST
-int	main(int argc, char **argv, char **envp)
+static void	set_termios(void)
 {
-	t_minishell	minishell;
-	struct sigaction new_sigaction;
-	struct sigaction old_sigaction;
-
-	struct termios	old_termios, new_termios;
+	struct sigaction	new_sigaction;
+	struct sigaction	old_sigaction;
+	struct termios		old_termios;
+	struct termios		new_termios;
 
 	tcgetattr(0, &old_termios);
 	new_termios = old_termios;
-	new_termios.c_cc[VEOF] = 3; // ^C
-	new_termios.c_cc[VINTR] = 4; // ^D
+	new_termios.c_cc[VEOF] = 3;
+	new_termios.c_cc[VINTR] = 4;
 	tcsetattr(0, TCSANOW, &new_termios);
 	new_sigaction.sa_handler = parent_handler;
 	sigaction(SIGINT, &new_sigaction, &old_sigaction);
+}
+// new_termios.c_cc[VEOF] = 3; // ^C
+// new_termios.c_cc[VINTR] = 4; // ^D
+
+#ifndef TEST
+int	main(int argc, char **argv, char **envp)
+{
+	t_minishell		minishell;
+
+	set_termios();
 	if (argc != 1)
 	{
 		errno = EINVAL;
@@ -148,7 +156,7 @@ int	main(int argc, char **argv, char **envp)
 	if (init_minishell(&minishell, envp) == ERROR)
 		return (EXIT_FAILURE);
 	main_loop(&minishell);
-	tcsetattr(0, TCSANOW, &old_termios);
+	// tcsetattr(0, TCSANOW, &old_termios); // TODO -> dans le exit !
 	return (0);
 }
 #endif

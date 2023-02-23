@@ -6,12 +6,11 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:17:52 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:17:55 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/23 20:41:00 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
-#include "../tests/debug_helper.h"
 
 #define SPECIAL_CHARACTERS "|&<>()"
 

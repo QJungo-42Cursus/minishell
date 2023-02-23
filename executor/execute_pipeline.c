@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:33 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:23:00 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/23 20:41:07 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include "executor.h"
-#include "../tests/debug_helper.h"
 
 static void	set_pipes(int i,
 		t_cmd *pipeline_cmd, t_cmd *cmd_cursor, int *shitty_pipe)

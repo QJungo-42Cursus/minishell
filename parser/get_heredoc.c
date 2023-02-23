@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:57 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:32:17 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/23 20:39:29 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ static t_bool	is_delimiter(char *line, char *delimiter)
 	int		delimiter_len;
 
 	delimiter_len = ft_strlen(delimiter);
-	return (t_bool)(ft_strncmp(line, delimiter, delimiter_len) == 0
+	return ((t_bool)(ft_strncmp(line, delimiter, delimiter_len) == 0
 		&& line[delimiter_len] == '\n'
-		&& ft_strlen(line) == delimiter_len + 1);
+		&& ft_strlen(line) == delimiter_len + 1));
 }
 
 static char	*get_heredoc_input(char *delimiter)

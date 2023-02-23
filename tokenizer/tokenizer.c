@@ -6,13 +6,13 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:17:58 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:17:59 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/23 20:40:56 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 #include "../libft/libft.h"
-#include "../tests/debug_helper.h"
+#include "../tests/debug_helper.hpp"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>

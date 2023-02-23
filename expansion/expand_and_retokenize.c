@@ -54,5 +54,5 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 		}
 		tokens_ptr = tokens_ptr->next;
 	}
-	return tokens;
+	return (tokens);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   token_checker_main.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:52:31 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:52:32 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "token_checker.h"
 
 static int	check_parenthesis_order(t_list *token)
@@ -42,11 +54,21 @@ static int	check_parenthesis(t_list *token)
 	return (SUCCESS);
 }
 
-// Cette fonction a deux roles:
-	// Verification que les pipes ne se trouvent pas aux debuts ou a la fin.
-	// Verification que les pipes ne sont pas acotes. VERIFIER s'il n'y a pas d'erreurs.
-// Deuxieme option: est peut etre deja gere par ta struct
+static t_bool	are_two_pipe_consecutive(t_list *current)
+{
+	char	*current_token;
+	char	*next_token;
 
+	current_token = (char *)current->content;
+	next_token = (char *)current->next->content;
+	return ((t_bool)(ft_strncmp(current_token, (char *)"|", 2) == 0
+		&& ft_strncmp(next_token, (char *)"|", 2) == 0));
+}
+
+// Cette fonction a deux roles:
+	// les pipes ne se trouvent pas aux debuts ou a la fin.
+	// les pipes ne sont pas acotes. VERIFIER s'il n'y a pas d'erreurs.
+// Deuxieme option: est peut etre deja gere par ta struct
 static int	check_pipe_position(t_list *lst_token)
 {
 	int		close_index;
@@ -57,7 +79,8 @@ static int	check_pipe_position(t_list *lst_token)
 		return (SUCCESS);
 	len = ft_lstsize(lst_token);
 	close_index = get_last_index_in_list(lst_token, len, (char *)"|");
-	if (get_first_occurence_in_list(lst_token, (char *)"|") == 0 || close_index == len)
+	if (get_first_occurence_in_list(lst_token, (char *)"|") == 0
+		|| close_index == len)
 	{
 		errno = EINVAL;
 		perror("syntax error near unexpected tooken '|'");
@@ -66,14 +89,9 @@ static int	check_pipe_position(t_list *lst_token)
 	tmp = lst_token;
 	while (tmp)
 	{
-		if (ft_strncmp((char *)tmp->content, (char *)"|", 2) != 0)
-			tmp = tmp->next;
-		else
-		{
-			if (ft_strncmp((char *)tmp->next->content, (char *)"|", 2) == 0)
-				return (ERROR);
-			tmp = tmp->next;
-		}
+		if (are_two_pipe_consecutive(tmp))
+			return (ERROR);
+		tmp = tmp->next;
 	}
 	return (SUCCESS);
 }
@@ -86,3 +104,4 @@ int	check_valid_tokens(t_list *input_tooken)
 		return (ERROR);
 	return (SUCCESS);
 }
+// TODO -> c'est token, pas tooken
