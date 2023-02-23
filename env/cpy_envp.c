@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cpy_envp.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:18:13 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:19:07 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdlib.h>
 #include "../libft/libft.h"
 
 char	**cpy_envp(char **envp)
 {
-	int i;
-	char **env_copy;
+	int		i;
+	char	**env_copy;
 
 	i = 0;
 	while (envp[i])

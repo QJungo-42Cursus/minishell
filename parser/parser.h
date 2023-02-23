@@ -1,7 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:01:50 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:11:11 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PARSER_H
 # define PARSER_H
 # include "../minishell.h"
 # include "../libft/libft.h"
+# define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
 
 /* TODO une idee pour pouvoir tout free a la fin : faire une list de t_list, 
  *		bien garder la taille, et free tout les elements qui ne sont pas NULL
@@ -19,8 +32,6 @@ typedef enum e_cmd_type {
 	REDIR_APPEND,
 	HEREDOC,
 }	t_cmd_type;
-
-#define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
 
 // la suite, juste pour le parser
 enum e_token_type {

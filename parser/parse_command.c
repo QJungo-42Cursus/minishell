@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_command.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:02:01 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:03:20 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include "parser.h"
 #include <unistd.h>
@@ -44,7 +56,8 @@ static int	unquote_and_expand(t_list **tokens,
 		cursor = cursor->next;
 	}
 	cmd->type = COMMAND;
-	cmd->s_command.argv = (char **)malloc(sizeof(char *) * (ft_lstsize(*tokens) + 1));
+	cmd->s_command.argv
+		= (char **)malloc(sizeof(char *) * (ft_lstsize(*tokens) + 1));
 	return (SUCCESS);
 }
 

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:31:36 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -37,22 +49,6 @@ enum e_cmd_code {
 	NONE = 1,
 	EXIT = 2,
 };
-
-int	check_input_term(char *input, t_minishell *minishell)
-{
-	if (input == NULL)
-		return (NONE);
-	if (ft_strlen(input) == 0)
-		return (NONE);
-	if (ft_strncmp(input, "exit", 5) == 0) // TODO use a builtin
-	{
-		rl_clear_history();
-		exit_(minishell, NULL, 0);
-		return (EXIT);
-	}
-	add_history(input);
-	return (SUCCESS);
-}
 
 void	**token_free_list(t_list *tokens)
 {
@@ -101,22 +97,15 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 
 /*static*/ int	main_loop(t_minishell *minishell)
 {
-	int		cmd_code;
 	t_list	*tokens;
 	char	*cmd_input;
 
 	while (!minishell->should_exit)
 	{
 		cmd_input = readline(minishell->prompt_msg);
-		cmd_code = check_input_term(cmd_input, minishell);
-		if (cmd_code == EXIT)
-		{
-			free(cmd_input);
-			free(minishell->prompt_msg);
-			return (SUCCESS);
-		}
-		if (cmd_code == NONE)
+		if (cmd_input == NULL || ft_strlen(cmd_input) == 0)
 			continue ;
+		add_history(cmd_input);
 		tokens = tokenizer(cmd_input, FALSE);
 		if (tokens == NULL)
 			return (ERROR);
@@ -127,6 +116,7 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 	return (SUCCESS);
 }
 
+#ifndef TEST
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	minishell;
@@ -161,3 +151,4 @@ int	main(int argc, char **argv, char **envp)
 	tcsetattr(0, TCSANOW, &old_termios);
 	return (0);
 }
+#endif

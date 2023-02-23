@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:01:45 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:12:02 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include "parser.h"
 #include <unistd.h>
@@ -6,9 +18,11 @@
 int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 {
 	int			tok_type;
-	t_list		*start_left = cursor;
-	t_list		*start_right = cursor;
+	t_list		*start_left;
+	t_list		*start_right;
 
+	start_left = cursor;
+	start_right = cursor;
 	while (cursor->next != NULL)
 	{
 		tok_type = get_token_type((char *)cursor->next->content);
@@ -17,7 +31,6 @@ int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 			start_right = cursor->next->next;
 			free(cursor->next->content);
 			cursor->next = NULL;
-
 			cmd->type = (t_cmd_type)tok_type;
 			cmd->s_logic.left = (t_cmd *)malloc(sizeof(t_cmd));
 			cmd->s_logic.right = (t_cmd *)malloc(sizeof(t_cmd));
@@ -30,7 +43,7 @@ int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 	return (FALSE);
 }
 
-int redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
+int	redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	t_list	*cursor;
 	int		tok_type;
@@ -53,24 +66,12 @@ int redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	return (FALSE);
 }
 
-void	print_rest(t_list *cursor)
-{
-	printf("[");
-	while (cursor != NULL)
-	{
-		printf("%s, ", (char *)cursor->content);
-		cursor = cursor->next;
-	}
-	printf("]\n");
-}
-
 int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
 
 	if (are_we_in_parentheses(tokens))
 	{
-		//printf("in parentheses : "); print_rest(tokens);
 		if (ft_strncmp((char *)tokens->next->content, ")", 2) == 0)
 		{
 			// TODO
@@ -92,10 +93,11 @@ int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	return (exit_status);
 }
 
-t_cmd *parser(t_list *tokens, t_minishell *minishell) 
+t_cmd	*parser(t_list *tokens, t_minishell *minishell)
 {
-	t_cmd	*cmd = (t_cmd*)malloc(sizeof(t_cmd));
+	t_cmd	*cmd;
 
+	cmd = (t_cmd *)malloc(sizeof(t_cmd));
 	if (set_command(tokens, cmd, minishell) == ERROR)
 	{
 		// TODO

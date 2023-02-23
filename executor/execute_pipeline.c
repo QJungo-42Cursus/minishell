@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_pipeline.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:20:33 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:23:00 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -30,7 +42,8 @@ static void	run_exec(t_minishell *minishell,
 	if (execute_builtin(cmd_cursor, minishell, exit_status))
 		exit(*exit_status);
 	replace_argv0_with_full_path(cmd_cursor, minishell);
-	execve(cmd_cursor->s_command.argv[0], cmd_cursor->s_command.argv, minishell->env_copy);
+	execve(cmd_cursor->s_command.argv[0],
+		cmd_cursor->s_command.argv, minishell->env_copy);
 	perror("execvp");
 	exit(EXIT_FAILURE);
 }
@@ -66,8 +79,10 @@ int	execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 	int		shitty_pipe[2];
 
 	if (init_pipes(pipeline_cmd, shitty_pipe) == ERROR)
+	{
 		// TODO
 		return (ERROR);
+	}
 	exit_status = 0;
 	m(pipeline_cmd, minishell, shitty_pipe, &exit_status);
 	close_all_pipes(pipeline_cmd->s_pipeline.pipes,

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_command.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:20:30 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:23:33 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -49,7 +61,8 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 		child(minishell, cmd, pipes);
 	if (cmd->s_command.heredoc != NULL)
 	{
-		write(pipes[1], cmd->s_command.heredoc, ft_strlen(cmd->s_command.heredoc));
+		write(pipes[1], cmd->s_command.heredoc,
+			ft_strlen(cmd->s_command.heredoc));
 		close(pipes[0]);
 		close(pipes[1]);
 	}

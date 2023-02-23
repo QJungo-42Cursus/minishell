@@ -27,15 +27,19 @@ extern "C" {
 #include "../env/get_paths_in_env.c"
 
 #include "../executor/execute_pipeline.c"
+#include "../executor/execute_pipeline_utils.c"
 #include "../executor/executor.c"
+#include "../executor/execute_command.c"
+#include "../executor/execute_builtin.c"
 #include "../executor/executor_utils.c"
-#include "../executor/executor_redir.c"
+#include "../executor/execute_redir.c"
 
 #include "../parser/parse_command.c"
 #include "../parser/parse_pipeline.c"
 #include "../parser/parser.c"
 #include "../parser/free_ast.c"
 #include "../parser/parser_utils.c"
+#include "../parser/get_heredoc.c"
 
 #include "../tokenizer/set_next_token_position.c"
 #include "../tokenizer/tokenizer.c"
@@ -44,6 +48,7 @@ extern "C" {
 #include "../expansion/expend_dollar.c"
 #include "../expansion/get_var_position.c"
 #include "../expansion/unquote.c"
+#include "../expansion/expand_and_retokenize.c"
 
 #include <stdio.h>
 #include <stdlib.h>

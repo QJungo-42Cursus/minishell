@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_pipeline.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:02:04 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:05:55 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parser.h"
 
-int number_of_pipe_operator(t_list *cursor)
+int	number_of_pipe_operator(t_list *cursor)
 {
 	int		size;
 
@@ -34,7 +46,8 @@ t_list	*set_pipeline_to_null_and_return_next(t_list *cursor)
 	return (NULL);
 }
 
-int	set_pipeline_and_args(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
+static void	set_pipeline_and_args(t_list *cursor,
+	t_cmd *cmd, t_minishell *minishell)
 {
 	t_list		*start;
 	t_cmd		*new_cmd;
@@ -45,9 +58,7 @@ int	set_pipeline_and_args(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 	while (TRUE)
 	{
 		if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
-		{
-			cursor  = skip_parentheses(cursor);
-		}
+			cursor = skip_parentheses(cursor);
 		cursor = set_pipeline_to_null_and_return_next(cursor);
 		if (cursor == NULL)
 			break ;
@@ -63,7 +74,6 @@ int	set_pipeline_and_args(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 	cmd_cursor->s_command.next = (t_cmd *)malloc(sizeof(t_cmd));
 	set_command(start, cmd_cursor->s_command.next, minishell);
 	cmd_cursor = cmd_cursor->s_command.next;
-	return (SUCCESS);
 }
 
 int	pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
@@ -73,7 +83,6 @@ int	pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 		return (FALSE);
 	cmd->s_pipeline.pipe_count++;
 	cmd->type = PIPELINE;
-	if (set_pipeline_and_args(tokens, cmd, minishell) == ERROR)
-		return (ERROR);
+	set_pipeline_and_args(tokens, cmd, minishell);
 	return (USED);
 }

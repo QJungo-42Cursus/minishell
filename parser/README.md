@@ -1,4 +1,3 @@
-
 # Bon a savoir
 - pas besoin d'interpreter les ';', les (d)quotes non fermee, et les \   
     - Est-ce qu'on affiche juste rien ?

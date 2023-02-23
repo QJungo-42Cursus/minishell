@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:01:04 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:16:36 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <stdio.h>
 #include "../libft/libft.h"
@@ -40,7 +52,7 @@ static int	check_var_name(char *var)
 {
 	if (ft_strchr(var, '=') == NULL)
 	{
-		// TODO Message error
+		// TODO Message error // no error ?
 		write(2, "minishell: export: not a valid identifier\n", 42);
 		return (ERROR);
 	}

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   find_command_path.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:19:41 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:19:59 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../libft/libft.h"
 #include <unistd.h>
 
@@ -13,7 +25,6 @@ static char	*find_cmd_path_in_env(char *cmd_name, char **env_paths)
 	i = 0;
 	while (env_paths[i] != 0)
 	{
-		// TODO la meme chose sans malloc a chaque fois ??
 		tmp_full_path = ft_sprintf("%s/%s", env_paths[i], cmd_name);
 		if (access(tmp_full_path, F_OK) == 0)
 			return (tmp_full_path);

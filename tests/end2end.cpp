@@ -2,7 +2,7 @@
 #define TEST
 #endif
 
-#include "all.h"
+#include "all.hpp"
 #include "unistd.h"
 #include "gtest/gtest.h"
 

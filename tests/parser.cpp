@@ -1,4 +1,4 @@
-#include "parserAndExecutor.h"
+#include "parserAndExecutor.hpp"
 #include "gtest/gtest.h"
 #include <fstream>
 #include <iostream>
@@ -18,10 +18,10 @@ int logic2(t_list *cursor, t_cmd *cmd, t_minishell *minishell) {
       cursor->next = NULL;
 
       cmd->type = (t_cmd_type)tok_type;
-      cmd->logic.left = (t_cmd *)malloc(sizeof(t_cmd));
-      cmd->logic.right = (t_cmd *)malloc(sizeof(t_cmd));
-      set_command(start_left, cmd->logic.left, minishell);
-      set_command(start_right, cmd->logic.right, minishell);
+      cmd->s_logic.left = (t_cmd *)malloc(sizeof(t_cmd));
+      cmd->s_logic.right = (t_cmd *)malloc(sizeof(t_cmd));
+      set_command(start_left, cmd->s_logic.left, minishell);
+      set_command(start_right, cmd->s_logic.right, minishell);
       return (USED);
     }
     cursor = cursor->next;
@@ -76,25 +76,25 @@ void compare_ast(t_cmd *ast, t_cmd *expected, int depth = 0) {
     FAIL() << "AST is NULL at depth " << depth;
   ASSERT_EQ(ast->type, expected->type);
   if (ast->type == COMMAND) {
-    compare_str_list(ast->cmd.argv, expected->cmd.argv);
-    if (ast->cmd.next != NULL)
-      compare_ast(ast->cmd.next, expected->cmd.next, depth + 1);
+    compare_str_list(ast->s_command.argv, expected->s_command.argv);
+    if (ast->s_command.next != NULL)
+      compare_ast(ast->s_command.next, expected->s_command.next, depth + 1);
     else
-      ASSERT_EQ(ast->cmd.next, expected->cmd.next);
+      ASSERT_EQ(ast->s_command.next, expected->s_command.next);
   } else if (ast->type == PIPELINE) {
-    ASSERT_EQ(ast->pipeline.pipe_count, expected->pipeline.pipe_count);
-    ASSERT_NE(ast->pipeline.first_cmd, (t_cmd *)nullptr);
-    compare_ast(ast->pipeline.first_cmd, expected->pipeline.first_cmd,
+    ASSERT_EQ(ast->s_pipeline.pipe_count, expected->s_pipeline.pipe_count);
+    ASSERT_NE(ast->s_pipeline.first_cmd, (t_cmd *)nullptr);
+    compare_ast(ast->s_pipeline.first_cmd, expected->s_pipeline.first_cmd,
                 depth + 1);
   } else if (ast->type == LOGIC_AND || ast->type == LOGIC_OR) {
-    ASSERT_NE(ast->pipe.left, (t_cmd *)NULL);
-    ASSERT_NE(ast->pipe.right, (t_cmd *)NULL);
-    compare_ast(ast->pipe.left, expected->pipe.left, depth + 1);
-    compare_ast(ast->pipe.right, expected->pipe.right, depth + 1);
+    ASSERT_NE(ast->s_pipe.left, (t_cmd *)NULL);
+    ASSERT_NE(ast->s_pipe.right, (t_cmd *)NULL);
+    compare_ast(ast->s_pipe.left, expected->s_pipe.left, depth + 1);
+    compare_ast(ast->s_pipe.right, expected->s_pipe.right, depth + 1);
   } else if (ast->type == REDIR_IN || REDIR_OUT || REDIR_APPEND) {
-    ASSERT_STREQ(ast->redir.filename, expected->redir.filename);
-    ASSERT_NE(ast->redir.cmd, (t_cmd *)NULL);
-    // compare_ast(ast->redir.cmd, expected->redir.cmd, depth + 1);
+    ASSERT_STREQ(ast->s_redir.filename, expected->s_redir.filename);
+    ASSERT_NE(ast->s_redir.cmd, (t_cmd *)NULL);
+    // compare_ast(ast->s_redir.cmd, expected->s_redir.cmd, depth + 1);
   } else {
     FAIL() << "Invalid cmd->type at depth " << depth;
   }
@@ -219,8 +219,8 @@ TEST(ParserCmd, Simple) {
   parse_command(tokens, cmd, g_minishell);
 
   EXPECT_EQ(cmd->type, COMMAND);
-  compare_str_list(cmd->cmd.argv, setup_argv({"ls"}));
-  EXPECT_EQ(cmd->cmd.next, (t_cmd *)NULL);
+  compare_str_list(cmd->s_command.argv, setup_argv({"ls"}));
+  EXPECT_EQ(cmd->s_command.next, (t_cmd *)NULL);
 }
 
 TEST(ParserCmd, WithArgs) {
@@ -229,8 +229,8 @@ TEST(ParserCmd, WithArgs) {
   parse_command(tokens, cmd, g_minishell);
 
   EXPECT_EQ(cmd->type, COMMAND);
-  compare_str_list(cmd->cmd.argv, setup_argv({"ls", "-l", "-a"}));
-  EXPECT_EQ(cmd->cmd.next, (t_cmd *)NULL);
+  compare_str_list(cmd->s_command.argv, setup_argv({"ls", "-l", "-a"}));
+  EXPECT_EQ(cmd->s_command.next, (t_cmd *)NULL);
 }
 
 TEST(ParserCmd, WithManyArgs) {
@@ -239,9 +239,9 @@ TEST(ParserCmd, WithManyArgs) {
   parse_command(tokens, cmd, g_minishell);
 
   EXPECT_EQ(cmd->type, COMMAND);
-  compare_str_list(cmd->cmd.argv,
+  compare_str_list(cmd->s_command.argv,
                    setup_argv({"ls", "-l", "-a", "-h", "-t", "-r", "-S"}));
-  EXPECT_EQ(cmd->cmd.next, (t_cmd *)NULL);
+  EXPECT_EQ(cmd->s_command.next, (t_cmd *)NULL);
 }
 
 TEST(ParserCmd, SimpleParentesesError) {
@@ -277,15 +277,15 @@ TEST(ParserPipeline, Simple) {
   t_cmd *cmd = new t_cmd;
   ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
-  ASSERT_EQ(cmd->pipeline.pipe_count, 2);
-  ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->type, COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->cmd.argv, setup_argv({"ls"}));
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->type, COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->cmd.next->cmd.argv,
+  ASSERT_EQ(cmd->s_pipeline.pipe_count, 2);
+  ASSERT_NE(cmd->s_pipeline.first_cmd, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->type, COMMAND);
+  compare_str_list(cmd->s_pipeline.first_cmd->s_command.argv, setup_argv({"ls"}));
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->type, COMMAND);
+  compare_str_list(cmd->s_pipeline.first_cmd->s_command.next->s_command.argv,
                    setup_argv({"grep", "a"}));
-  EXPECT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next, (t_cmd *)NULL);
+  EXPECT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_command.next, (t_cmd *)NULL);
 }
 
 TEST(ParserPipeline, ManyPipes) {
@@ -293,19 +293,19 @@ TEST(ParserPipeline, ManyPipes) {
   t_cmd *cmd = new t_cmd;
   ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
-  ASSERT_EQ(cmd->pipeline.pipe_count, 3);
-  ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->type, COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->cmd.argv, setup_argv({"ls"}));
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->type, COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->cmd.next->cmd.argv,
+  ASSERT_EQ(cmd->s_pipeline.pipe_count, 3);
+  ASSERT_NE(cmd->s_pipeline.first_cmd, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->type, COMMAND);
+  compare_str_list(cmd->s_pipeline.first_cmd->s_command.argv, setup_argv({"ls"}));
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->type, COMMAND);
+  compare_str_list(cmd->s_pipeline.first_cmd->s_command.next->s_command.argv,
                    setup_argv({"grep", "a"}));
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next->cmd.next, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next->type, COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.argv,
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next->s_command.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->type, COMMAND);
+  compare_str_list(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.argv,
                    setup_argv({"wc", "-l"}));
-  EXPECT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.next,
+  EXPECT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.next,
             (t_cmd *)NULL);
 }
 
@@ -319,37 +319,37 @@ TEST(ParserPipeline, PipelinesAndParenteses) {
   t_cmd *cmd = new t_cmd;
   ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
-  ASSERT_EQ(cmd->pipeline.pipe_count, 3);
-  ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->type, COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->cmd.argv, setup_argv({"ls"}));
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->type, COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->cmd.next->cmd.argv,
+  ASSERT_EQ(cmd->s_pipeline.pipe_count, 3);
+  ASSERT_NE(cmd->s_pipeline.first_cmd, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->type, COMMAND);
+  compare_str_list(cmd->s_pipeline.first_cmd->s_command.argv, setup_argv({"ls"}));
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->type, COMMAND);
+  compare_str_list(cmd->s_pipeline.first_cmd->s_command.next->s_command.argv,
                    setup_argv({"wc", "-l"}));
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next->cmd.next, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next->type, PIPELINE);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next->pipeline.pipe_count,
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next->s_command.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->type, PIPELINE);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_pipeline.pipe_count,
             2);
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next->cmd.next->pipeline.first_cmd,
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_pipeline.first_cmd,
             (t_cmd *)NULL);
   ASSERT_EQ(
-      cmd->pipeline.first_cmd->cmd.next->cmd.next->pipeline.first_cmd->type,
+      cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_pipeline.first_cmd->type,
       COMMAND);
   compare_str_list(
-      cmd->pipeline.first_cmd->cmd.next->cmd.next->pipeline.first_cmd->cmd.argv,
+      cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_pipeline.first_cmd->s_command.argv,
       setup_argv({"grep", "a"}));
   ASSERT_NE(
-      cmd->pipeline.first_cmd->cmd.next->cmd.next->pipeline.first_cmd->cmd.next,
+      cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_pipeline.first_cmd->s_command.next,
       (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next->pipeline.first_cmd->cmd
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_pipeline.first_cmd->s_command
                 .next->type,
             COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->cmd.next->cmd.next->pipeline
-                       .first_cmd->cmd.next->cmd.argv,
+  compare_str_list(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_pipeline
+                       .first_cmd->s_command.next->s_command.argv,
                    setup_argv({"cat"}));
-  EXPECT_EQ(cmd->pipeline.first_cmd->cmd.next->cmd.next->pipeline.first_cmd->cmd
-                .next->cmd.next,
+  EXPECT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_pipeline.first_cmd->s_command
+                .next->s_command.next,
             (t_cmd *)NULL);
 }
 
@@ -359,50 +359,50 @@ TEST(ParserPipeline, PipelinesAndParenteses2) {
   t_cmd *cmd = new t_cmd;
   ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
-  EXPECT_EQ(cmd->pipeline.pipe_count, 2);
-  ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
+  EXPECT_EQ(cmd->s_pipeline.pipe_count, 2);
+  ASSERT_NE(cmd->s_pipeline.first_cmd, (t_cmd *)NULL);
 
   // first pipeline
-  ASSERT_EQ(cmd->pipeline.first_cmd->type, PIPELINE);
-  EXPECT_EQ(cmd->pipeline.first_cmd->pipeline.pipe_count, 2);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->type, PIPELINE);
+  EXPECT_EQ(cmd->s_pipeline.first_cmd->s_pipeline.pipe_count, 2);
 
   // first pipeline first command
-  ASSERT_NE(cmd->pipeline.first_cmd->pipeline.first_cmd, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->pipeline.first_cmd->type, COMMAND);
-  compare_str_list(cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.argv,
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_pipeline.first_cmd, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_pipeline.first_cmd->type, COMMAND);
+  compare_str_list(cmd->s_pipeline.first_cmd->s_pipeline.first_cmd->s_command.argv,
                    setup_argv({"ls"}));
   // first pipeline second command
-  ASSERT_NE(cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.next,
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_pipeline.first_cmd->s_command.next,
             (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.next->type,
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_pipeline.first_cmd->s_command.next->type,
             COMMAND);
   compare_str_list(
-      cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.next->cmd.argv,
+      cmd->s_pipeline.first_cmd->s_pipeline.first_cmd->s_command.next->s_command.argv,
       setup_argv({"wc", "-l"}));
-  EXPECT_EQ(cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.next->cmd.next,
+  EXPECT_EQ(cmd->s_pipeline.first_cmd->s_pipeline.first_cmd->s_command.next->s_command.next,
             (t_cmd *)NULL);
 
   // second pipeline
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next, (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->type, PIPELINE);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->pipeline.pipe_count, 2);
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next->pipeline.first_cmd,
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next, (t_cmd *)NULL);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->type, PIPELINE);
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.pipe_count, 2);
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.first_cmd,
             (t_cmd *)NULL);
-  ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->pipeline.first_cmd->type,
+  ASSERT_EQ(cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.first_cmd->type,
             COMMAND);
   compare_str_list(
-      cmd->pipeline.first_cmd->cmd.next->pipeline.first_cmd->cmd.argv,
+      cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.first_cmd->s_command.argv,
       setup_argv({"grep", "a"}));
-  ASSERT_NE(cmd->pipeline.first_cmd->cmd.next->pipeline.first_cmd->cmd.next,
+  ASSERT_NE(cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.first_cmd->s_command.next,
             (t_cmd *)NULL);
   ASSERT_EQ(
-      cmd->pipeline.first_cmd->cmd.next->pipeline.first_cmd->cmd.next->type,
+      cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.first_cmd->s_command.next->type,
       COMMAND);
   compare_str_list(
-      cmd->pipeline.first_cmd->cmd.next->pipeline.first_cmd->cmd.next->cmd.argv,
+      cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.first_cmd->s_command.next->s_command.argv,
       setup_argv({"cat"}));
   EXPECT_EQ(
-      cmd->pipeline.first_cmd->cmd.next->pipeline.first_cmd->cmd.next->cmd.next,
+      cmd->s_pipeline.first_cmd->s_command.next->s_pipeline.first_cmd->s_command.next->s_command.next,
       (t_cmd *)NULL);
 }
 
@@ -418,15 +418,15 @@ TEST(ParserLogic, NoLogic) {
 /*********** parser **********/
 TEST(Parser, EchoHello) {
   t_cmd *cmd = new_cmd(COMMAND);
-  cmd->cmd.argv = setup_argv({"echo", "hello"});
-  cmd->cmd.next = NULL;
+  cmd->s_command.argv = setup_argv({"echo", "hello"});
+  cmd->s_command.next = NULL;
   testParser({"echo", "hello"}, cmd);
 }
 
 TEST(Parser, EchoHelloWorld) {
   t_cmd *cmd = new_cmd(COMMAND);
-  cmd->cmd.argv = setup_argv({"echo", "hello", "world"});
-  cmd->cmd.next = NULL;
+  cmd->s_command.argv = setup_argv({"echo", "hello", "world"});
+  cmd->s_command.next = NULL;
   testParser({"echo", "hello", "world"}, cmd);
 }
 
@@ -452,56 +452,56 @@ TEST(Parser, TrickParenthesise) {
 
 TEST(Parser, EchoPipeCat) {
   t_cmd *cmd = new_cmd(PIPELINE);
-  cmd->pipeline.pipe_count = 2;
-  cmd->pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.argv = setup_argv({"echo", "hello"});
-  cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.next->cmd.argv = setup_argv({"cat"});
-  cmd->pipeline.first_cmd->cmd.next->cmd.next = NULL;
+  cmd->s_pipeline.pipe_count = 2;
+  cmd->s_pipeline.first_cmd = new_cmd(COMMAND);
+  cmd->s_pipeline.first_cmd->s_command.argv = setup_argv({"echo", "hello"});
+  cmd->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"cat"});
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.next = NULL;
   testParser({"echo", "hello", "|", "cat"}, cmd);
 }
 
 TEST(Parser, EchoPipeCatGrep) {
   t_cmd *cmd = new_cmd(PIPELINE);
-  cmd->pipeline.pipe_count = 3;
-  cmd->pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.argv = setup_argv({"echo", "hello"});
-  cmd->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.next->cmd.argv = setup_argv({"cat"});
-  cmd->pipeline.first_cmd->cmd.next->cmd.next = new_cmd(COMMAND);
-  cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.argv =
+  cmd->s_pipeline.pipe_count = 3;
+  cmd->s_pipeline.first_cmd = new_cmd(COMMAND);
+  cmd->s_pipeline.first_cmd->s_command.argv = setup_argv({"echo", "hello"});
+  cmd->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"cat"});
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.next = new_cmd(COMMAND);
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.argv =
       setup_argv({"grep", "hello"});
-  cmd->pipeline.first_cmd->cmd.next->cmd.next->cmd.next = NULL;
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.next = NULL;
   testParser({"echo", "hello", "|", "cat", "|", "grep", "hello"}, cmd);
 }
 
 TEST(Parser, LogicAndPipeline) {
   t_cmd *cmd = new_cmd(LOGIC_AND);
-  cmd->logic.left = new_cmd(PIPELINE);
-  cmd->logic.left->pipeline.pipe_count = 2;
-  cmd->logic.left->pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->logic.left->pipeline.first_cmd->cmd.argv = setup_argv({"echo", "hello"});
-  cmd->logic.left->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
-  cmd->logic.left->pipeline.first_cmd->cmd.next->cmd.argv = setup_argv({"cat"});
-  cmd->logic.left->pipeline.first_cmd->cmd.next->cmd.next = NULL;
-  cmd->logic.right = new_cmd(COMMAND);
-  cmd->logic.right->cmd.argv = setup_argv({"echo", "hello"});
-  cmd->logic.right->cmd.next = NULL;
+  cmd->s_logic.left = new_cmd(PIPELINE);
+  cmd->s_logic.left->s_pipeline.pipe_count = 2;
+  cmd->s_logic.left->s_pipeline.first_cmd = new_cmd(COMMAND);
+  cmd->s_logic.left->s_pipeline.first_cmd->s_command.argv = setup_argv({"echo", "hello"});
+  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
+  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"cat"});
+  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next->s_command.next = NULL;
+  cmd->s_logic.right = new_cmd(COMMAND);
+  cmd->s_logic.right->s_command.argv = setup_argv({"echo", "hello"});
+  cmd->s_logic.right->s_command.next = NULL;
   testParser({"echo", "hello", "|", "cat", "&&", "echo", "hello"}, cmd);
 }
 
 TEST(Parser, LogicAndPipelineInParentheses) {
   t_cmd *cmd = new_cmd(LOGIC_AND);
-  cmd->logic.left = new_cmd(PIPELINE);
-  cmd->logic.left->pipeline.pipe_count = 2;
-  cmd->logic.left->pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->logic.left->pipeline.first_cmd->cmd.argv = setup_argv({"echo", "hello"});
-  cmd->logic.left->pipeline.first_cmd->cmd.next = new_cmd(COMMAND);
-  cmd->logic.left->pipeline.first_cmd->cmd.next->cmd.argv = setup_argv({"cat"});
-  cmd->logic.left->pipeline.first_cmd->cmd.next->cmd.next = NULL;
-  cmd->logic.right = new_cmd(COMMAND);
-  cmd->logic.right->cmd.argv = setup_argv({"echo", "hello"});
-  cmd->logic.right->cmd.next = NULL;
+  cmd->s_logic.left = new_cmd(PIPELINE);
+  cmd->s_logic.left->s_pipeline.pipe_count = 2;
+  cmd->s_logic.left->s_pipeline.first_cmd = new_cmd(COMMAND);
+  cmd->s_logic.left->s_pipeline.first_cmd->s_command.argv = setup_argv({"echo", "hello"});
+  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
+  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"cat"});
+  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next->s_command.next = NULL;
+  cmd->s_logic.right = new_cmd(COMMAND);
+  cmd->s_logic.right->s_command.argv = setup_argv({"echo", "hello"});
+  cmd->s_logic.right->s_command.next = NULL;
   testParser(
       {"(", "echo", "hello", "|", "cat", ")", "&&", "(", "echo", "hello", ")"},
       cmd);
@@ -509,29 +509,29 @@ TEST(Parser, LogicAndPipelineInParentheses) {
 
 TEST(Parser, SimpleOutRedirection) {
   t_cmd *cmd = new_cmd(REDIR_OUT);
-  cmd->redir.cmd = new_cmd(COMMAND);
-  cmd->redir.filename = (char *)"test.txt";
-  cmd->redir.cmd->cmd.argv = setup_argv({"echo", "hello"});
-  cmd->redir.cmd->cmd.next = NULL;
+  cmd->s_redir.cmd = new_cmd(COMMAND);
+  cmd->s_redir.filename = (char *)"test.txt";
+  cmd->s_redir.cmd->s_command.argv = setup_argv({"echo", "hello"});
+  cmd->s_redir.cmd->s_command.next = NULL;
   testParser({"echo", "hello", ">", "test.txt"}, cmd);
 }
 
 TEST(Parser, SimpleInRedirection) {
   t_cmd *cmd = new_cmd(REDIR_IN);
-  cmd->redir.cmd = new_cmd(COMMAND);
-  cmd->redir.filename = (char *)"test.txt";
-  cmd->redir.cmd->cmd.argv = setup_argv({"cat"});
-  cmd->redir.cmd->cmd.next = NULL;
+  cmd->s_redir.cmd = new_cmd(COMMAND);
+  cmd->s_redir.filename = (char *)"test.txt";
+  cmd->s_redir.cmd->s_command.argv = setup_argv({"cat"});
+  cmd->s_redir.cmd->s_command.next = NULL;
   testParser({"cat", "<", "test.txt"}, cmd);
 }
 
 TEST(Parser, SimpleByRedirection) {
   t_cmd *cmd = new_cmd(REDIR_IN);
-  cmd->redir.cmd = new_cmd(REDIR_OUT);
-  cmd->redir.filename = (char *)"test.txt";
-  cmd->redir.cmd->redir.cmd = new_cmd(COMMAND);
-  cmd->redir.cmd->redir.filename = (char *)"test2.txt";
-  cmd->redir.cmd->redir.cmd->cmd.argv = setup_argv({"cat"});
-  cmd->redir.cmd->redir.cmd->cmd.next = NULL;
+  cmd->s_redir.cmd = new_cmd(REDIR_OUT);
+  cmd->s_redir.filename = (char *)"test.txt";
+  cmd->s_redir.cmd->s_redir.cmd = new_cmd(COMMAND);
+  cmd->s_redir.cmd->s_redir.filename = (char *)"test2.txt";
+  cmd->s_redir.cmd->s_redir.cmd->s_command.argv = setup_argv({"cat"});
+  cmd->s_redir.cmd->s_redir.cmd->s_command.next = NULL;
   testParser({"cat", "<", "test.txt", ">", "test2.txt"}, cmd);
 }

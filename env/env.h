@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.h                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/23 20:18:10 by qjungo            #+#    #+#             */
+/*   Updated: 2023/02/23 20:19:30 by qjungo           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef ENV_H
 # define ENV_H
-
-#include "../minishell.h"
+# include "../minishell.h"
 
 char	*find_cmd_path(char *cmd_name, char **env_paths);
 char	**cpy_envp(char **envp);
