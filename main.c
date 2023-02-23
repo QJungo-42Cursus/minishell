@@ -7,6 +7,7 @@
 #include <readline/readline.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <termios.h>
 // nous
 #include "libft/libft.h"
 #include "tokenizer/tokenizer.h"
@@ -17,10 +18,14 @@
 #include "executor/executor.h"
 #include "token_checker/token_checker.h"
 
-void	handler(int num)
+typedef struct s_transmitter_signal {
+	int	exit;
+	int	exit_under_process;
+}	t_transmit_signal;
+
+void	parent_handler(int sig)
 {
-	// TODO avec CAT, ne doit pas quitter le shell (?)
-	if (num == 2)
+	if (sig == 2)
 		exit(0);
 }
 
@@ -70,6 +75,7 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 {
 	t_cmd	*cmd;
 	int		exit_status;
+	int		i;
 	void	**tokens_to_free;
 
 	tokens_to_free = token_free_list(tokens);
@@ -78,8 +84,7 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 		return (ERROR);
 	exit_status = execute(cmd, minishell);
 	free_ast(cmd);
-
-	int i = 0;
+	i = 0;
 	while (tokens_to_free[i] != NULL)
 	{
 		free(tokens_to_free[i]);
@@ -87,8 +92,6 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 		i++;
 	}
 	free(tokens_to_free);
-
-
 	return (exit_status);
 }
 
@@ -120,23 +123,17 @@ int	main_minishell(t_minishell *minishell, t_list *tokens)
 	return (SUCCESS);
 }
 
-#include <termios.h>
-#ifndef TEST
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	minishell;
+	struct termios	old_termios, new_termios;
 
-	struct termios old_termios, new_termios;
-	tcgetattr(0,&old_termios);
-
-	signal(SIGINT, handler);
-
-	new_termios             = old_termios;
-	new_termios.c_cc[VEOF]  = 3; // ^C
+	tcgetattr(0, &old_termios);
+	new_termios = old_termios;
+	new_termios.c_cc[VEOF] = 3; // ^C
 	new_termios.c_cc[VINTR] = 4; // ^D
-								 // TODO add the ctrl C print
-	tcsetattr(0,TCSANOW,&new_termios);
-
+	tcsetattr(0, TCSANOW, &new_termios);
+	signal(SIGINT, parent_handler);
 	if (argc != 1)
 	{
 		errno = EINVAL;
@@ -153,11 +150,6 @@ int	main(int argc, char **argv, char **envp)
 	if (init_minishell(&minishell, envp) == ERROR)
 		return (EXIT_FAILURE);
 	main_loop(&minishell);
-
-
-
-	tcsetattr(0,TCSANOW,&old_termios);
-
+	tcsetattr(0, TCSANOW, &old_termios);
 	return (0);
 }
-#endif
