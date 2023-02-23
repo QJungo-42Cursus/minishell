@@ -1,7 +1,7 @@
 void	unquote(char *str)
 {
-	int i;
-	int j;
+	int		i;
+	int		j;
 
 	i = 0;
 	j = 0;

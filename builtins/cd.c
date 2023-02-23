@@ -14,9 +14,7 @@ static int	check_argv(char **argv)
 		argc++;
 	if (argc > 2)
 	{
-		errno = E2BIG;
-		perror("cd"); // FIXME n'imprime pas la meme chose que bash
-        write(2, "minishell: cd: too many arguments\n", 34);
+		write(2, "minishell: cd: too many arguments\n", 34);
 		return (-1);
 	}
 	return (argc);
@@ -28,7 +26,8 @@ static int	export_pwd(t_minishell *minishell, const char *to_join)
 	char	**splited_export_argv;
 	int		exit_code;
 
-	joined_export_argv = ft_strjoin(to_join, minishell->current_working_directory);
+	joined_export_argv
+		= ft_strjoin(to_join, minishell->current_working_directory);
 	if (joined_export_argv == NULL)
 		return (ERROR);
 	splited_export_argv = ft_split(joined_export_argv, ' ');
@@ -45,13 +44,15 @@ static int	export_pwd(t_minishell *minishell, const char *to_join)
 
 static int	change_directory_in_env(t_minishell *minishell)
 {
-	if (get_env_var_index((const char **)minishell->env_copy, (char *)"OLDPWD=") != -1)
+	if (get_env_var_index((const char **)minishell->env_copy,
+			(char *)"OLDPWD=") != -1)
 	{
 		if (export_pwd(minishell, (char *)"export OLDPWD="))
 			return (ERROR);
 	}
 	getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1);
-	if (get_env_var_index((const char **)minishell->env_copy, (char *)"PWD=") != -1)
+	if (get_env_var_index((const char **)minishell->env_copy,
+			(char *)"PWD=") != -1)
 	{
 		if (export_pwd(minishell, (char *)"export PWD="))
 			return (ERROR);
@@ -59,39 +60,36 @@ static int	change_directory_in_env(t_minishell *minishell)
 	return (SUCCESS);
 }
 
-static int     change_dir(t_minishell *minishell, char *new_path)
+static int	change_dir(t_minishell *minishell, char *new_path)
 {
-    if (chdir(new_path) != 0)
-    {
-        perror("chdir:"); // TODO chdir ? cd ?
-        return (errno);
-    }
-    if (change_directory_in_env(minishell) == ERROR)
-    {
-        // TODO best error handling ?
-        return (ERROR);
-    }
-    if (refresh_prompt(minishell) == ERROR)
-    {
-        // TODO error handling ?
-        // return (ERROR);
-    }
-    return (SUCCESS);
+	if (chdir(new_path) != 0)
+	{
+		perror("chdir:"); // TODO chdir ? cd ?
+		return (errno);
+	}
+	if (change_directory_in_env(minishell) == ERROR)
+	{
+		// TODO best error handling ?
+		return (ERROR);
+	}
+	refresh_prompt(minishell);
+	return (SUCCESS);
 }
 
-static int  go_home(t_minishell *minishell)
+static int	go_home(t_minishell *minishell)
 {
-    char    *home;
+	char	*home;
 
-    home = get_env_var_value((char *)"HOME", (const char **)minishell->env_copy);
-    if (home == NULL)
-        return (ERROR);
-    change_dir(minishell, home);
-    free(home);
-    return (SUCCESS);
+	home
+		= get_env_var_value((char *)"HOME", (const char **)minishell->env_copy);
+	if (home == NULL)
+		return (ERROR);
+	change_dir(minishell, home);
+	free(home);
+	return (SUCCESS);
 }
 
-int		cd(t_minishell *minishell, char **argv)
+int	cd(t_minishell *minishell, char **argv)
 {
 	int		argc;
 
@@ -99,6 +97,6 @@ int		cd(t_minishell *minishell, char **argv)
 	if (argc == -1)
 		return (errno);
 	if (argc == 1)
-        return (go_home(minishell));
-    return change_dir(minishell, argv[1]);
+		return (go_home(minishell));
+	return (change_dir(minishell, argv[1]));
 }

@@ -7,10 +7,10 @@ int number_of_pipe_operator(t_list *cursor)
 	size = 0;
 	while (cursor != NULL)
 	{
-		if (get_token_type((char *)cursor->content) == PIPELINE)
-			size++;
 		if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
 			cursor = skip_parentheses(cursor);
+		if (get_token_type((char *)cursor->content) == PIPELINE)
+			size++;
 		cursor = cursor->next;
 	}
 	return (size);

@@ -23,6 +23,10 @@ SRCS =			main.c \
 				executor/executor.c \
 				executor/executor_utils.c \
 				executor/execute_pipeline.c \
+				executor/execute_pipeline_utils.c \
+				executor/execute_redir.c \
+				executor/execute_command.c \
+				executor/execute_builtin.c \
 				parser/parser_utils.c \
 				parser/parse_command.c \
 				parser/parse_pipeline.c \

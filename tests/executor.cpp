@@ -6,18 +6,20 @@
 
 extern "C" {
 int w_exit_status(int es) { return WEXITSTATUS(es); }
-int	execute(t_cmd *cmd, t_minishell *minishell);
+int execute(t_cmd *cmd, t_minishell *minishell);
+#include "../env/env.h"
 }
+extern char **g_envp;
 
 void test_exec(t_cmd *cmd, std::string stdout_expected,
                std::string stderr_expected, int exit_status_expected) {
   t_minishell *minishell = NULL;
   minishell = (t_minishell *)malloc(sizeof(t_minishell));
-  minishell->env_paths = ft_split(getenv("PATH"), ':');
+  minishell->env_copy = cpy_envp(g_envp);
   testing::internal::CaptureStdout();
   testing::internal::CaptureStderr();
 
-  int exit_status = w_exit_status(execute(cmd, minishell));
+  int exit_status = execute(cmd, minishell);
 
   std::string stdout_res = testing::internal::GetCapturedStdout();
   std::string stderr_res = testing::internal::GetCapturedStderr();

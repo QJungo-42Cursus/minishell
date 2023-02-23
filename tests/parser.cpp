@@ -5,31 +5,28 @@
 #include <vector>
 
 extern "C" {
-int	logic2(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
-{
-	int			tok_type;
-	t_list		*start_left = cursor;
-	t_list		*start_right = cursor;
+int logic2(t_list *cursor, t_cmd *cmd, t_minishell *minishell) {
+  int tok_type;
+  t_list *start_left = cursor;
+  t_list *start_right = cursor;
 
-	while (cursor->next != NULL)
-	{
-		tok_type = get_token_type((char *)cursor->next->content);
-		if (tok_type == LOGIC_OR || tok_type == LOGIC_AND)
-		{
-			start_right = cursor->next->next;
-			free(cursor->next->content);
-			cursor->next = NULL;
+  while (cursor->next != NULL) {
+    tok_type = get_token_type((char *)cursor->next->content);
+    if (tok_type == LOGIC_OR || tok_type == LOGIC_AND) {
+      start_right = cursor->next->next;
+      free(cursor->next->content);
+      cursor->next = NULL;
 
-			cmd->type = (t_cmd_type)tok_type;
-			cmd->logic.left = (t_cmd *)malloc(sizeof(t_cmd));
-			cmd->logic.right = (t_cmd *)malloc(sizeof(t_cmd));
-			set_command(start_left, cmd->logic.left, minishell);
-			set_command(start_right, cmd->logic.right, minishell);
-			return (USED);
-		}
-		cursor = cursor->next;
-	}
-	return (FALSE);
+      cmd->type = (t_cmd_type)tok_type;
+      cmd->logic.left = (t_cmd *)malloc(sizeof(t_cmd));
+      cmd->logic.right = (t_cmd *)malloc(sizeof(t_cmd));
+      set_command(start_left, cmd->logic.left, minishell);
+      set_command(start_right, cmd->logic.right, minishell);
+      return (USED);
+    }
+    cursor = cursor->next;
+  }
+  return (FALSE);
 }
 }
 void print_token_type(int token_type) {
@@ -111,7 +108,6 @@ void testParser(std::vector<std::string> tokens, t_cmd *expected,
 
   t_minishell *minishell = NULL;
   minishell = (t_minishell *)malloc(sizeof(t_minishell));
-  minishell->env_paths = ft_split(getenv("PATH"), ':');
 
   t_cmd *cmd = parser(generate_tokens(tokens), minishell);
   if (error_exp != "") {
@@ -218,7 +214,6 @@ t_minishell *g_minishell = NULL;
 
 TEST(ParserCmd, Simple) {
   g_minishell = (t_minishell *)malloc(sizeof(t_minishell));
-  g_minishell->env_paths = ft_split(getenv("PATH"), ':');
   t_list *tokens = generate_tokens({"ls"});
   t_cmd *cmd = new t_cmd;
   parse_command(tokens, cmd, g_minishell);
@@ -364,15 +359,19 @@ TEST(ParserPipeline, PipelinesAndParenteses2) {
   t_cmd *cmd = new t_cmd;
   ASSERT_TRUE(pipeline(tokens, cmd, g_minishell));
   ASSERT_EQ(cmd->type, PIPELINE);
-  ASSERT_EQ(cmd->pipeline.pipe_count, 2);
+  EXPECT_EQ(cmd->pipeline.pipe_count, 2);
   ASSERT_NE(cmd->pipeline.first_cmd, (t_cmd *)NULL);
 
+  // first pipeline
   ASSERT_EQ(cmd->pipeline.first_cmd->type, PIPELINE);
-  ASSERT_EQ(cmd->pipeline.first_cmd->pipeline.pipe_count, 2);
+  EXPECT_EQ(cmd->pipeline.first_cmd->pipeline.pipe_count, 2);
+
+  // first pipeline first command
   ASSERT_NE(cmd->pipeline.first_cmd->pipeline.first_cmd, (t_cmd *)NULL);
   ASSERT_EQ(cmd->pipeline.first_cmd->pipeline.first_cmd->type, COMMAND);
   compare_str_list(cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.argv,
                    setup_argv({"ls"}));
+  // first pipeline second command
   ASSERT_NE(cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.next,
             (t_cmd *)NULL);
   ASSERT_EQ(cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.next->type,
@@ -383,6 +382,7 @@ TEST(ParserPipeline, PipelinesAndParenteses2) {
   EXPECT_EQ(cmd->pipeline.first_cmd->pipeline.first_cmd->cmd.next->cmd.next,
             (t_cmd *)NULL);
 
+  // second pipeline
   ASSERT_NE(cmd->pipeline.first_cmd->cmd.next, (t_cmd *)NULL);
   ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->type, PIPELINE);
   ASSERT_EQ(cmd->pipeline.first_cmd->cmd.next->pipeline.pipe_count, 2);

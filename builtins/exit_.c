@@ -11,9 +11,12 @@ void	free_minishell(t_minishell *minishell)
 
 int	exit_(t_minishell *minishell, char **argv, int exit_status)
 {
-	(void)argv; // TODO check args
-	(void)minishell;
-
+	if (argv[1] != NULL)
+	{
+		// TODO same behavior in the main
+		write(2, "minishell: pwd: too many arguments\n", 35);
+		return (ERROR);
+	}
 	free_minishell(minishell);
 	exit(exit_status);
 	return (SUCCESS);

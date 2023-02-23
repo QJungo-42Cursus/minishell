@@ -5,7 +5,24 @@
 #include <stdio.h>
 #include "expansion.h"
 
-char	*get_expanded_dollars(const char *token, t_minishell *minishell)
+static char	*get_all(t_position index,
+		char *new_token_tmp, char *new_token, t_minishell *minishell)
+{
+	while (get_var_position(index.end, new_token_tmp, &index.start, &index.end))
+	{
+		new_token = expand_dollar(new_token_tmp, minishell, index);
+		free(new_token_tmp);
+		if (new_token == NULL)
+		{
+			free(new_token);
+			return (NULL);
+		}
+		new_token_tmp = new_token;
+	}
+	return (new_token);
+}
+
+static char	*get_expanded_dollars(const char *token, t_minishell *minishell)
 {
 	t_position	index;
 	char		*new_token;
@@ -22,18 +39,7 @@ char	*get_expanded_dollars(const char *token, t_minishell *minishell)
 	}
 	index.start = 0;
 	index.end = 0;
-	while (get_var_position(index.end, new_token_tmp, &index.start, &index.end) == TRUE)
-	{
-		new_token = expand_dollar(new_token_tmp, minishell, index);
-		free(new_token_tmp);
-		if (new_token == NULL)
-		{
-			free(new_token);
-			return (NULL);
-		}
-		new_token_tmp = new_token;
-	}
-	return (new_token);
+	return (get_all(index, new_token_tmp, new_token, minishell));
 }
 
 char	*expand(const char *token, t_minishell *minishell)
@@ -43,7 +49,6 @@ char	*expand(const char *token, t_minishell *minishell)
 	expanded = get_expanded_dollars(token, minishell);
 	if (expanded == NULL)
 	{
-		// TODO
 		expanded = ft_strdup((char *)token);
 		if (expanded == NULL)
 			return (NULL);

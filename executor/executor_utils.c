@@ -5,9 +5,11 @@
 #include "../minishell.h"
 #include "../env/env.h"
 
-int	fork1()
+int	fork1(void)
 {
-	int pid = fork();
+	int		pid;
+
+	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
@@ -18,7 +20,9 @@ int	fork1()
 
 void	close_all_pipes(int *fds, int pipe_count)
 {
-	int i = 0;
+	int		i;
+
+	i = 0;
 	while (i < pipe_count * 2)
 	{
 		close(fds[i]);
@@ -26,7 +30,7 @@ void	close_all_pipes(int *fds, int pipe_count)
 	}
 }
 
-int pipe_index(int i, int read)
+int	pipe_index(int i, int read)
 {
 	return (i * 2 + read);
 }
@@ -37,11 +41,13 @@ void	replace_argv0_with_full_path(t_cmd *cmd, t_minishell *minishell)
 	char	**env_paths;
 
 	env_paths = get_paths_in_env(minishell->env_copy);
+	// TODO error handling
 	if (env_paths == NULL)
-		return ; // TODO error handling
+		return ;
 	path = find_cmd_path(cmd->cmd.argv[0], env_paths);
+	// TODO error handling
 	if (path == NULL)
-		return ; // TODO error handling
+		return ;
 	split_free(env_paths);
 	free(cmd->cmd.argv[0]);
 	cmd->cmd.argv[0] = path;

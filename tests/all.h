@@ -2,6 +2,11 @@
 #define ALL_H
 
 extern "C" {
+#ifndef TEST
+#define TEST
+#endif
+
+
 #include "../main.c"
 #include "../minishell_utils.c"
 #include "../token_checker/token_checker_main.c"
@@ -24,10 +29,12 @@ extern "C" {
 #include "../executor/execute_pipeline.c"
 #include "../executor/executor.c"
 #include "../executor/executor_utils.c"
+#include "../executor/executor_redir.c"
 
 #include "../parser/parse_command.c"
 #include "../parser/parse_pipeline.c"
 #include "../parser/parser.c"
+#include "../parser/free_ast.c"
 #include "../parser/parser_utils.c"
 
 #include "../tokenizer/set_next_token_position.c"

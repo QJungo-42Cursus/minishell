@@ -2,28 +2,33 @@
 #include "expansion.h"
 #include "../env/env.h"
 
-static char *get_var_value(const char *token, t_minishell *minishell, t_position position)
+static char	*get_var_value(const char *token,
+		t_minishell *minishell, t_position position)
 {
 	char		*var_name;
 	char		*var_value;
 
-	var_name = ft_substr(token, position.start + 1, position.end - position.start);
+	var_name
+		= ft_substr(token, position.start + 1, position.end - position.start);
 	if (var_name == NULL)
 		return (NULL);
 	if (ft_strncmp(var_name, "?", 2) == 0)
 		var_value = ft_itoa(minishell->last_exit_status);
 	else
 	{
-		if (get_env_var_index((const char **)minishell->env_copy, var_name) == -1)
+		if (get_env_var_index((const char **)minishell->env_copy,
+				var_name) == -1)
 			var_value = ft_strdup((char *)"");
 		else
-			var_value = get_env_var_value(var_name, (const char **)minishell->env_copy);
+			var_value = get_env_var_value(var_name,
+					(const char **)minishell->env_copy);
 	}
 	free(var_name);
 	return (var_value);
 }
 
-static int	set_sides(const char *token, t_position position, char **a, char **b)
+static int	set_sides(const char *token,
+		t_position position, char **a, char **b)
 {
 	if (position.start == 0)
 		*a = ft_strdup((char *)"");
@@ -40,7 +45,8 @@ static int	set_sides(const char *token, t_position position, char **a, char **b)
 	return (SUCCESS);
 }
 
-char	*expand_dollar(const char *token, t_minishell *minishell, t_position position)
+char	*expand_dollar(const char *token,
+			t_minishell *minishell, t_position position)
 {
 	char	*var_value;
 	char	*a;

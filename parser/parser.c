@@ -67,10 +67,10 @@ void	print_rest(t_list *cursor)
 int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
-	//print_rest(tokens);
 
 	if (are_we_in_parentheses(tokens))
 	{
+		//printf("in parentheses : "); print_rest(tokens);
 		if (ft_strncmp((char *)tokens->next->content, ")", 2) == 0)
 		{
 			// TODO
@@ -91,18 +91,6 @@ int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	exit_status = parse_command(tokens, cmd, minishell);
 	return (exit_status);
 }
-
-/* TODO libft
-t_list	*get_last(t_list *list, t_list *current)
-{
-	t_list	*ptr;
-
-	ptr = list;
-	while (ptr->next != current && ptr->next != NULL)
-		ptr = ptr->next;
-	return (ptr);
-}
-*/
 
 t_cmd *parser(t_list *tokens, t_minishell *minishell) 
 {
