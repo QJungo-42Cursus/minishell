@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:12:02 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 11:49:02 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,8 @@ t_cmd	*parser(t_list *tokens, t_minishell *minishell)
 		malloc_error(minishell);
 	if (set_command(tokens, cmd, minishell) == ERROR)
 	{
-		free_ast(cmd);
+		//free_ast(cmd);
+		//free(cmd);
 		return (NULL);
 	}
 	return (cmd);

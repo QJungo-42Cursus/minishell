@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:47:24 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 12:02:30 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ void free_token_list(void **tokens_to_free)
 }
 
 // free TODO
+/// If an error occurs, the function will quit by itself
 static int	run_minishell(t_minishell *minishell, t_list *tokens)
 {
 	t_cmd	*cmd;
@@ -159,8 +160,9 @@ static int	main_loop(t_minishell *minishell)
 		if (tokens == NULL)
 			continue ;
 		if (check_valid_tokens(tokens) == SUCCESS)
-			if (run_minishell(minishell, tokens) == ERROR)
-				return (ERROR);
+		{
+			run_minishell(minishell, tokens);
+		}
 	}
 	return (SUCCESS);
 }
