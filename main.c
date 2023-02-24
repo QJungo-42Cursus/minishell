@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 12:02:30 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 18:12:01 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ void free_token_list(void **tokens_to_free)
 	while (tokens_to_free[i] != NULL)
 	{
 		free(tokens_to_free[i]);
-		//free(((t_list *)tokens_to_free[i])->content);
 		i++;
 	}
 	free(tokens_to_free);
