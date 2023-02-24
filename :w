@@ -17,9 +17,9 @@
 int g_EOF;
 void	signal_handler(int sig)
 {
-	//printf("signal_handler: %d\n", sig);
-	rl_replace_line("minishell", 0);
-	//rl_on_new_line();
+	printf("signal_handler: %d\n", sig);
+	rl_replace_line("", 0);
+	rl_on_new_line();
 	g_EOF = 1;
 }
 
