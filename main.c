@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 19:25:50 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 19:47:00 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,10 @@ int		g_is_executing = FALSE;
 
 void	signal_handler(int sig)
 {
+	(void) sig;
+	ft_putstr_fd("\n", 1);
 	if (g_is_executing)
 		return ;
-	ft_putstr_fd("\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
@@ -109,15 +110,23 @@ static int	main_loop(t_minishell *minishell)
 	t_list				*tokens;
 	char				*cmd_input;
 	struct sigaction	prompt_sa;
+	struct sigaction	exec_sa;
 
+	minishell->m_exec_sa = &exec_sa;
 	prompt_sa.sa_handler = signal_handler;
-	sigaction(SIGINT, &prompt_sa, NULL);
+	sigaction(SIGINT, &prompt_sa, minishell->m_exec_sa);
 	while (!minishell->should_exit)
 	{
 		tokens = NULL;
 		cmd_input = readline(minishell->prompt_msg);
-		if (cmd_input == NULL || ft_strlen(cmd_input) == 0)
-			continue ;
+		if (cmd_input == NULL)
+		{
+			printf("exit\n");
+			free(cmd_input);
+			exit_(minishell, NULL, 0);
+		}
+		if (ft_strlen(cmd_input) == 0)
+			continue ; 
 		add_history(cmd_input);
 		if (tokenizer(cmd_input, &tokens, FALSE) == ERROR)
 		{
@@ -131,11 +140,10 @@ static int	main_loop(t_minishell *minishell)
 		if (check_valid_tokens(tokens) == SUCCESS)
 		{
 			// TODO a chque exec, (dans t_minishell) 
-			// sigaction(SIGINT, &exec_sa, NULL);
 			run_minishell(minishell, tokens);
 		}
-		sigaction(SIGINT, &prompt_sa, NULL);
 		g_is_executing = 0;
+		sigaction(SIGINT, &prompt_sa, minishell->m_exec_sa);
 	}
 	return (SUCCESS);
 }
