@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:42:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 14:35:42 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 19:25:19 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 # define MAX_PATH_LEN 4096
 # include "parser/parser.h"
+# include <signal.h>
 
 typedef struct s_cmd	t_cmd;
 
@@ -24,6 +25,7 @@ typedef struct s_minishell {
 	int		last_exit_status;
 	int		should_exit;
 	t_cmd	*current_ast;
+	struct sigaction	exec_sa;
 }	t_minishell;
 
 typedef struct s_position

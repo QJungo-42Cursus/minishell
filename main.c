@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 18:12:01 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 19:25:50 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,54 +26,21 @@
 #include "token_checker/token_checker.h"
 #include "builtins/builtins.h"
 
-/************************************ TERMIOS && SIGNALS ************************************/
-typedef struct s_transmitter_signal {
-	int	exit;
-	int	exit_under_process;
-}	t_transmit_signal;
+/********************** TERMIOS && SIGNALS ************************************/
 
-void	parent_handler(int sig)
+int		g_is_executing = FALSE;
+
+void	signal_handler(int sig)
 {
-	/*
-	if (sig == 2)
-		exit(0);
-		*/
-	(void) sig;
-	printf("Coucou\n");
+	if (g_is_executing)
+		return ;
+	ft_putstr_fd("\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
-void	set_termios(void)
-{
-	struct sigaction	new_sigaction;
-	struct sigaction	old_sigaction;
-	struct termios		old_termios;
-	struct termios		new_termios;
-
-	tcgetattr(0, &old_termios);
-	new_termios = old_termios;
-	new_termios.c_cc[VEOF] = 3;
-	new_termios.c_cc[VINTR] = 4;
-	tcsetattr(0, TCSANOW, &new_termios);
-	new_sigaction.sa_handler = parent_handler;
-	sigaction(SIGINT, &new_sigaction, &old_sigaction);
-
-	if (!isatty(0) || !isatty(1) || !isatty(2))
-	{
-		// TODO: ca va ici ? return (ERROR) ?
-		errno = EINVAL;
-		perror("./minishell error with stream");
-		exit (-1);
-	}
-}
-// new_termios.c_cc[VEOF] = 3; // ^C
-// new_termios.c_cc[VINTR] = 4; // ^D
-
-static void unset_termios(void)
-{
-	// TODO
-}
-
-/************************************ MINISHELL ************************************/
+/******************************* MINISHELL ************************************/
 
 /// ownership return in run_minishell()
 // free TODO
@@ -139,9 +106,12 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 /// give ownership of tokens at each while iteration (it to free)
 static int	main_loop(t_minishell *minishell)
 {
-	t_list	*tokens;
-	char	*cmd_input;
+	t_list				*tokens;
+	char				*cmd_input;
+	struct sigaction	prompt_sa;
 
+	prompt_sa.sa_handler = signal_handler;
+	sigaction(SIGINT, &prompt_sa, NULL);
 	while (!minishell->should_exit)
 	{
 		tokens = NULL;
@@ -160,8 +130,12 @@ static int	main_loop(t_minishell *minishell)
 			continue ;
 		if (check_valid_tokens(tokens) == SUCCESS)
 		{
+			// TODO a chque exec, (dans t_minishell) 
+			// sigaction(SIGINT, &exec_sa, NULL);
 			run_minishell(minishell, tokens);
 		}
+		sigaction(SIGINT, &prompt_sa, NULL);
+		g_is_executing = 0;
 	}
 	return (SUCCESS);
 }
@@ -178,12 +152,17 @@ int	main(int argc, char **argv, char **envp)
 	if (argc != 1)
 	{
 		write(2, "Usage: ./minishell {don't use any arguments}\n", 45);
-		unset_termios();
+		exit (1);
+	}
+	if (!isatty(0) || !isatty(1) || !isatty(2))
+	{
+		// TODO: ca va ici ? return (ERROR) ?
+		errno = EINVAL;
+		perror("./minishell error with stream");
 		exit (1);
 	}
 	if (init_minishell(&minishell, envp) == ERROR)
 	{
-		unset_termios();
 		exit (1);
 	}
 	return (main_loop(&minishell));
