@@ -12,9 +12,10 @@
 
 #ifndef PARSER_H
 # define PARSER_H
+# define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
+# include "../minishell.h"
 # include "../minishell.h"
 # include "../libft/libft.h"
-# define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
 
 typedef enum e_cmd_type {
 	PIPELINE,
@@ -45,10 +46,6 @@ typedef struct s_cmd {
 			struct s_cmd	*right;
 		} s_logic;
 		struct {
-			struct s_cmd	*left;
-			struct s_cmd	*right;
-		} s_pipe;
-		struct {
 			char			**argv;
 			char			*heredoc;
 			struct s_cmd	*next;
@@ -67,6 +64,9 @@ typedef struct s_cmd {
 	};
 }	t_cmd;
 
+typedef struct s_cmd t_cmd;
+typedef struct s_minishell t_minishell;
+
 t_list		*skip_parentheses(t_list *cursor);
 int			get_token_type(char *token);
 t_bool		are_we_in_parentheses(t_list *tokens);
@@ -80,6 +80,6 @@ t_cmd		*parser(t_list *tokens, t_minishell *minishell);
 void		free_ast(t_cmd *cmd);
 
 int			is_heredoc_valid(t_list *cursor, t_cmd *cmd);
-int			get_heredoc(t_list **cursor, t_cmd *cmd);
+int			get_heredoc(t_list **token_cursor, t_cmd *cmd);
 
 #endif /* PARSER_H */

@@ -32,7 +32,11 @@ int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 			cursor->next = NULL;
 			cmd->type = (t_cmd_type)tok_type;
 			cmd->s_logic.left = (t_cmd *)malloc(sizeof(t_cmd));
+			if (cmd->s_logic.left == NULL)
+				return (ERROR);
 			cmd->s_logic.right = (t_cmd *)malloc(sizeof(t_cmd));
+			if (cmd->s_logic.right == NULL)
+				return (ERROR);
 			set_command(start_left, cmd->s_logic.left, minishell);
 			set_command(start_right, cmd->s_logic.right, minishell);
 			return (USED);

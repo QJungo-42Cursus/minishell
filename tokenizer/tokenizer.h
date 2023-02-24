@@ -15,7 +15,7 @@
 # include "../libft/libft.h"
 # include "../minishell.h"
 
-t_list		*tokenizer(const char *cmd, t_bool is_expand_mode);
+int			tokenizer(const char *cmd, t_list **tokens, t_bool is_expand_mode);
 void		set_next_token_position(const char *cmd,
 				int cursor_index,
 				t_position *token_position,

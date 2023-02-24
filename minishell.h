@@ -13,6 +13,9 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 # define MAX_PATH_LEN 4096
+# include "parser/parser.h"
+
+typedef struct s_cmd t_cmd;
 
 typedef struct s_minishell {
 	char	*prompt_msg;
@@ -20,7 +23,9 @@ typedef struct s_minishell {
 	char	**env_copy;
 	int		last_exit_status;
 	int		should_exit;
+	t_cmd	*current_ast;
 }	t_minishell;
+
 
 typedef struct s_position
 {
@@ -30,5 +35,6 @@ typedef struct s_position
 
 int		init_minishell(t_minishell *minishell, char **envp);
 int		refresh_prompt(t_minishell *minishell);
+void	malloc_error(t_minishell *minishell);
 
 #endif /* MINISHELL_H */

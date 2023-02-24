@@ -60,9 +60,15 @@ static t_bool	are_two_pipe_consecutive(t_list *current)
 	char	*next_token;
 
 	current_token = (char *)current->content;
-	next_token = (char *)current->next->content;
-	return ((t_bool)(ft_strncmp(current_token, (char *)"|", 2) == 0
-		&& ft_strncmp(next_token, (char *)"|", 2) == 0));
+	if  (ft_strncmp(current_token, (char *)"|", 2) != 0)
+		current_token = NULL;
+	if (current->next == NULL)
+		next_token = NULL;
+	else
+		next_token = (char *)current->next->content;
+	if (next_token && ft_strncmp(next_token, (char *)"|", 2) != 0)
+		next_token = NULL;
+	return (current_token && next_token);
 }
 
 // Cette fonction a deux roles:

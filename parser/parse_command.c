@@ -13,9 +13,6 @@
 #include <stdio.h>
 #include "parser.h"
 #include <unistd.h>
-#include "../libft/libft.h"
-#include "../expansion/expansion.h"
-#include "../tokenizer/tokenizer.h"
 #include "../expansion/expansion.h"
 
 static int	is_token_valid(char *token, t_list *cursor, t_cmd *cmd)

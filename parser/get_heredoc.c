@@ -13,10 +13,6 @@
 #include <stdio.h>
 #include "parser.h"
 #include <unistd.h>
-#include "../libft/libft.h"
-#include "../expansion/expansion.h"
-#include "../tokenizer/tokenizer.h"
-#include "../expansion/expansion.h"
 
 int	is_heredoc_valid(t_list *cursor, t_cmd *cmd)
 {
@@ -75,14 +71,14 @@ static char	*get_heredoc_input(char *delimiter)
 	return (input);
 }
 
-int	get_heredoc(t_list **cursor, t_cmd *cmd)
+int	get_heredoc(t_list **token_cursor, t_cmd *cmd)
 {
-	if (ft_strncmp((char *)(*cursor)->content, "<<", 3) != 0)
+	if (ft_strncmp((char *)(*token_cursor)->content, "<<", 3) != 0)
 		return (SUCCESS);
 	cmd->s_command.heredoc
-		= get_heredoc_input((char *)(*cursor)->next->content);
+		= get_heredoc_input((char *)(*token_cursor)->next->content);
 	if (cmd->s_command.heredoc == NULL)
 		return (ERROR);
-	*cursor = (*cursor)->next->next;
+	*token_cursor = (*token_cursor)->next->next;
 	return (USED);
 }

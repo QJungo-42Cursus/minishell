@@ -67,7 +67,7 @@ fclean: clean
 
 re: fclean all
 
-#### TESTS ####
+################################################ TESTS #########################
 lldb: all
 	lldb ./$(NAME)
 

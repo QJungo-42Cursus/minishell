@@ -17,19 +17,16 @@
 #include <errno.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-#include <fcntl.h>
-#include <sys/wait.h>
 #include <termios.h>
 // nous
 #include "libft/libft.h"
 #include "tokenizer/tokenizer.h"
-#include "env/env.h"
-#include "builtins/builtins.h"
-#include "tests/debug_helper.hpp"
 #include "minishell.h"
 #include "executor/executor.h"
 #include "token_checker/token_checker.h"
+#include "builtins/builtins.h"
 
+/************************************ TERMIOS && SIGNALS ************************************/
 typedef struct s_transmitter_signal {
 	int	exit;
 	int	exit_under_process;
@@ -45,12 +42,42 @@ void	parent_handler(int sig)
 	printf("Coucou\n");
 }
 
-enum e_cmd_code {
-	NONE = 1,
-	EXIT = 2,
-};
+void	set_termios(void)
+{
+	struct sigaction	new_sigaction;
+	struct sigaction	old_sigaction;
+	struct termios		old_termios;
+	struct termios		new_termios;
 
-void	**token_free_list(t_list *tokens)
+	tcgetattr(0, &old_termios);
+	new_termios = old_termios;
+	new_termios.c_cc[VEOF] = 3;
+	new_termios.c_cc[VINTR] = 4;
+	tcsetattr(0, TCSANOW, &new_termios);
+	new_sigaction.sa_handler = parent_handler;
+	sigaction(SIGINT, &new_sigaction, &old_sigaction);
+
+	if (!isatty(0) || !isatty(1) || !isatty(2))
+	{
+		// TODO: ca va ici ? return (ERROR) ?
+		errno = EINVAL;
+		perror("./minishell error with stream");
+		exit (-1);
+	}
+}
+// new_termios.c_cc[VEOF] = 3; // ^C
+// new_termios.c_cc[VINTR] = 4; // ^D
+
+static void unset_termios(void)
+{
+	// TODO
+}
+
+/************************************ MINISHELL ************************************/
+
+/// ownership return in run_minishell()
+// free TODO
+void	**get_token_to_free_list(t_list *tokens)
 {
 	t_list	*tmp;
 	void	**result;
@@ -71,92 +98,93 @@ void	**token_free_list(t_list *tokens)
 	return (result);
 }
 
-int	main_minishell(t_minishell *minishell, t_list *tokens)
+void free_token_list(void **tokens_to_free)
 {
-	t_cmd	*cmd;
-	int		exit_status;
 	int		i;
-	void	**tokens_to_free;
 
-	tokens_to_free = token_free_list(tokens);
-	cmd = parser(tokens, minishell);
-	if (cmd == NULL)
-		return (ERROR);
-	exit_status = execute(cmd, minishell);
-	free_ast(cmd);
 	i = 0;
 	while (tokens_to_free[i] != NULL)
 	{
 		free(tokens_to_free[i]);
-		//free(((t_list *)tokens_to_free[i])->content); // TODO
+		//free(((t_list *)tokens_to_free[i])->content);
 		i++;
 	}
 	free(tokens_to_free);
-	return (exit_status);
 }
 
-int	main_loop(t_minishell *minishell)
+// free TODO
+static int	run_minishell(t_minishell *minishell, t_list *tokens)
+{
+	t_cmd	*cmd;
+	void	**tokens_to_free;
+
+	tokens_to_free = get_token_to_free_list(tokens);
+	if (tokens_to_free == NULL)
+		return (ERROR);
+	cmd = parser(tokens, minishell);
+	if (cmd == NULL)
+	{
+		free_token_list(tokens_to_free);
+		return (ERROR);
+	}
+	minishell->current_ast = cmd;
+	execute(cmd, minishell);
+	free_ast(cmd);
+	free_token_list(tokens_to_free);
+	return (SUCCESS);
+}
+
+// free OK !
+/// give ownership of tokens at each while iteration (it to free)
+static int	main_loop(t_minishell *minishell)
 {
 	t_list	*tokens;
 	char	*cmd_input;
 
 	while (!minishell->should_exit)
 	{
+		tokens = NULL;
 		cmd_input = readline(minishell->prompt_msg);
 		if (cmd_input == NULL || ft_strlen(cmd_input) == 0)
 			continue ;
 		add_history(cmd_input);
-		tokens = tokenizer(cmd_input, FALSE);
-		if (tokens == NULL)
+		if (tokenizer(cmd_input, &tokens, FALSE) == ERROR)
+		{
+			free(cmd_input);
+			exit_(minishell, NULL, 1);
 			return (ERROR);
-		if (check_valid_tokens(tokens) == SUCCESS)
-			main_minishell(minishell, tokens);
+		}
 		free(cmd_input);
+		if (tokens == NULL)
+			continue ;
+		if (check_valid_tokens(tokens) == SUCCESS)
+			if (run_minishell(minishell, tokens) == ERROR)
+				return (ERROR);
 	}
 	return (SUCCESS);
 }
 
-static void	set_termios(void)
-{
-	struct sigaction	new_sigaction;
-	struct sigaction	old_sigaction;
-	struct termios		old_termios;
-	struct termios		new_termios;
-
-	tcgetattr(0, &old_termios);
-	new_termios = old_termios;
-	new_termios.c_cc[VEOF] = 3;
-	new_termios.c_cc[VINTR] = 4;
-	tcsetattr(0, TCSANOW, &new_termios);
-	new_sigaction.sa_handler = parent_handler;
-	sigaction(SIGINT, &new_sigaction, &old_sigaction);
-}
-// new_termios.c_cc[VEOF] = 3; // ^C
-// new_termios.c_cc[VINTR] = 4; // ^D
-
 #ifndef TEST
+/// no keep the ownership of minishell
+// free OK !
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell		minishell;
 
-	set_termios();
+	(void) argv;
+	//set_termios();
 	if (argc != 1)
 	{
-		errno = EINVAL;
-		perror("./minishell error");
-		exit (-1);
-	}
-	(void) argv;
-	if (!isatty(0) || !isatty(1) || !isatty(2))
-	{
-		errno = EINVAL;
-		perror("./minishell error with stream");
-		exit (-1);
+		write(2, "Usage: ./minishell {don't use any arguments}\n", 45);
+		unset_termios();
+		exit (1);
 	}
 	if (init_minishell(&minishell, envp) == ERROR)
-		return (EXIT_FAILURE);
-	main_loop(&minishell);
+	{
+		unset_termios();
+		exit (1);
+	}
+	return (main_loop(&minishell));
 	// tcsetattr(0, TCSANOW, &old_termios); // TODO -> dans le exit !
-	return (0);
 }
 #endif

@@ -13,6 +13,14 @@
 #include <stdlib.h>
 #include "../libft/libft.h"
 
+static char	**free_fail(char **env_copy, int i)
+{
+	while (i >= 0)
+		free(env_copy[i--]);
+	free(env_copy);
+	return (NULL);
+}
+
 char	**cpy_envp(char **envp)
 {
 	int		i;
@@ -29,13 +37,7 @@ char	**cpy_envp(char **envp)
 	{
 		env_copy[i] = ft_strdup(envp[i]);
 		if (env_copy[i] == NULL)
-		{
-			i--;
-			while (i >= 0)
-				free(env_copy[i--]);
-			free(env_copy);
-			return (NULL);
-		}
+			return (free_fail(env_copy, i - 1));
 		i++;
 	}
 	env_copy[i] = NULL;

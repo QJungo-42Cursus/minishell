@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
 #include "parser.h"
+#include "../builtins/builtins.h"
 
 int	number_of_pipe_operator(t_list *cursor)
 {
@@ -63,6 +65,8 @@ static void	set_pipeline_and_args(t_list *cursor,
 		if (cursor == NULL)
 			break ;
 		new_cmd = (t_cmd *)malloc(sizeof(t_cmd));
+		if (new_cmd == NULL)
+			malloc_error(minishell);
 		set_command(start, new_cmd, minishell);
 		if (cmd_cursor->type == PIPELINE)
 			cmd_cursor->s_pipeline.first_cmd = new_cmd;
@@ -72,6 +76,8 @@ static void	set_pipeline_and_args(t_list *cursor,
 		start = cursor;
 	}
 	cmd_cursor->s_command.next = (t_cmd *)malloc(sizeof(t_cmd));
+	if (cmd_cursor->s_command.next == NULL)
+		malloc_error(minishell);
 	set_command(start, cmd_cursor->s_command.next, minishell);
 	cmd_cursor = cmd_cursor->s_command.next;
 }

@@ -1,7 +1,5 @@
-#include <stdio.h>
 #include "../parser/parser.h"
 #include <unistd.h>
-#include "../libft/libft.h"
 #include "../tokenizer/tokenizer.h"
 #include "../expansion/expansion.h"
 
@@ -29,7 +27,11 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 		free(initial_token);
 
 		// retokenize and replace
-		new_tokens = tokenizer(new_token, TRUE);
+		if (tokenizer(new_token, &new_tokens, TRUE) == ERROR)
+		{
+			// TODO
+
+		}
 		if (new_tokens == NULL)
 		{
 			tokens_ptr = tokens_ptr->next;
