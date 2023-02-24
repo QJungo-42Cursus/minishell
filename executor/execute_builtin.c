@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:20:27 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 19:33:24 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	execute_builtin(t_cmd *cmd, t_minishell *minishell, int *exit_status)
 	else if (ft_strncmp(cmd_name, "env", 4) == 0)
 		*exit_status = env(minishell, cmd->s_command.argv);
 	else if (ft_strncmp(cmd_name, "exit", 5) == 0)
-		*exit_status = exit_(minishell, cmd->s_command.argv, SUCCESS);
+		*exit_status = exit_(minishell, cmd->s_command.argv, 130);
 	else
 		return (FALSE);
 	return (TRUE);

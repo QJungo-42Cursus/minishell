@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:57 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 17:31:30 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 19:59:35 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,40 +46,49 @@ static t_bool	is_delimiter(char *line, char *delimiter)
 		&& ft_strlen(line) == delimiter_len + 1));
 }
 
+static t_bool	stop(char *line, char *delimiter)
+{
+	char	*msg;
+
+	if (line == NULL)
+	{
+		msg = ft_sprintf("\nminishell: warning: here-document delimited by "
+				"end-of-file (wanted `%s')\n", delimiter);
+		ft_putstr_fd(msg, STDERR_FILENO);
+		free(msg);
+		return (TRUE);
+	}
+	if (is_delimiter(line, delimiter))
+	{
+		free(line);
+		return (TRUE);
+	}
+	return (FALSE);
+}
+
+extern int	g_is_executing;
+
 static char	*get_heredoc_input(char *delimiter)
 {
 	char	*line;
 	char	*input;
 	char	*to_free;
-	char	*msg;
-	int		n_line;
+
+	g_is_executing = TRUE;
 
 	input = ft_strdup((char *)"");
 	if (input == NULL)
 		return (NULL);
-	n_line = 1;
 	while (TRUE)
 	{
 		write(1, "> ", 2);
 		line = get_next_line(STDIN_FILENO);
-		if (line == NULL)
-		{
-			msg = ft_sprintf("\nminishell: warning: here-document at line %d delimited by "
-				"end-of-file (wanted `%s')\n", n_line, delimiter);
-			ft_putstr_fd(msg, STDERR_FILENO);
-			free(msg);
+		if (stop(line, delimiter))
 			break ;
-		}
-		if (is_delimiter(line, delimiter))
-		{
-			free(line);
-			break ;
-		}
 		to_free = input;
 		input = ft_strjoin(input, line);
 		free(to_free);
 		free(line);
-		n_line++;
 	}
 	return (input);
 }

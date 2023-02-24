@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:30 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 19:43:20 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/02/24 19:51:27 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@
 #include "../builtins/builtins.h"
 #include "../env/env.h"
 
+extern int	g_is_executing;
 
-extern int g_is_executing;
 // LATER refactoriser pour que pipeline ai la meme chose !
 void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
 {
-	sigaction(SIGINT, minishell->m_exec_sa , NULL);
+	sigaction(SIGINT, minishell->m_exec_sa, NULL);
 	replace_argv0_with_full_path(cmd, minishell);
 	if (cmd->s_command.heredoc != NULL)
 	{
