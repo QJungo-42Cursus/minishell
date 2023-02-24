@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:57 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 16:17:30 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:40:03 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	is_heredoc_valid(t_list *cursor, t_cmd *cmd)
 static t_bool	is_delimiter(char *line, char *delimiter)
 {
 	int		delimiter_len;
+	// TODO add if ctrl D is pressed !! (NULL ?)
 
 	delimiter_len = ft_strlen(delimiter);
 	return ((t_bool)(ft_strncmp(line, delimiter, delimiter_len) == 0

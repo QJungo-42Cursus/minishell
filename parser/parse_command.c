@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:01 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 16:31:31 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:40:59 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,11 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	unquote_and_expand(&tokens, cmd, minishell);
 	cursor = tokens;
 	i = 0;
+	cmd->s_command.heredoc = NULL;
 	while (cursor != NULL)
 		if (parse(&cursor, cmd, &i, minishell) == ERROR)
 			return (ERROR);
 	cmd->s_command.argv[i] = NULL;
 	cmd->s_command.next = NULL;
-	cmd->s_command.heredoc = NULL;
 	return (SUCCESS);
 }
