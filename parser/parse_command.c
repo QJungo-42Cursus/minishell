@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:01 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 14:31:51 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:31:31 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,18 +61,19 @@ static int	unquote_and_expand(t_list **tokens,
 	return (SUCCESS);
 }
 
-static int	parse(t_list **cursor, t_cmd *cmd, int *i, t_minishell *minishell)
+static int	parse(t_list **tokens_cursor,
+		t_cmd *cmd, int *i, t_minishell *minishell)
 {
 	char	*token;
 	int		get_heredoc_res;
 
-	token = (char *)(*cursor)->content;
-	if (!is_token_valid(token, *cursor, cmd))
+	token = (char *)(*tokens_cursor)->content;
+	if (!is_token_valid(token, *tokens_cursor, cmd))
 	{
 		free(cmd->s_command.argv);
 		return (ERROR);
 	}
-	get_heredoc_res = get_heredoc(cursor, cmd);
+	get_heredoc_res = get_heredoc(tokens_cursor, cmd);
 	if (get_heredoc_res == ERROR)
 	{
 		free(cmd->s_command.argv);
@@ -80,8 +81,8 @@ static int	parse(t_list **cursor, t_cmd *cmd, int *i, t_minishell *minishell)
 	}
 	if (get_heredoc_res == USED)
 		return (SUCCESS);
-	cmd->s_command.argv[*i] = (char *)(*cursor)->content;
-	*cursor = (*cursor)->next;
+	cmd->s_command.argv[*i] = (char *)(*tokens_cursor)->content;
+	*tokens_cursor = (*tokens_cursor)->next;
 	(*i)++;
 	return (SUCCESS);
 }

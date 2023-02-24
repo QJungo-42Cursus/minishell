@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:30 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 14:08:55 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:14:00 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 	exit_status = 0;
 	if (fork1() == 0)
 		child(minishell, cmd, pipes);
+	printf("heredoc: %s\n", cmd->s_command.heredoc);
 	if (cmd->s_command.heredoc != NULL)
 	{
 		write(pipes[1], cmd->s_command.heredoc,

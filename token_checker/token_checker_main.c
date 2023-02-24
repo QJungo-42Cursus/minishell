@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:52:31 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:52:32 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 16:30:51 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,11 +102,43 @@ static int	check_pipe_position(t_list *lst_token)
 	return (SUCCESS);
 }
 
+static int	check_heredoc_alone(t_list *input_token)
+{
+	t_list	*tmp;
+	int		is_first;
+
+	is_first = TRUE;
+	tmp = input_token;
+	while (tmp)
+	{
+		if (ft_strncmp((char *)tmp->content, (char *)"<<", 3) == 0)
+		{
+			if (is_first && (tmp->next == NULL || tmp->next->next == NULL))
+			{
+				ft_putstr_fd("syntax error near unexpected tooken '", 2);
+				ft_putstr_fd((char *)tmp->next->content, 2);
+				ft_putstr_fd("'\n", 2);
+				return (ERROR);
+			}
+			if (ft_strncmp((char *)tmp->next->content, (char *)"<<", 3) == 0)
+			{
+				ft_putendl_fd("syntax error near unexpected tooken '<<'", 2);
+				return (ERROR);
+			}
+		}
+		is_first = FALSE;
+		tmp = tmp->next;
+	}
+	return (SUCCESS);
+}
+
 int	check_valid_tokens(t_list *input_tooken)
 {
 	if (check_parenthesis(input_tooken) == ERROR)
 		return (ERROR);
 	if (check_pipe_position(input_tooken) == ERROR)
+		return (ERROR);
+	if (check_heredoc_alone(input_tooken) == ERROR)
 		return (ERROR);
 	return (SUCCESS);
 	// TODO -> c'est token, pas tooken
