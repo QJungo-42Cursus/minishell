@@ -14,13 +14,12 @@
 #include "token_checker/token_checker.h"
 #include "builtins/builtins.h"
 
-int g_EOF;
 void	signal_handler(int sig)
 {
-	//printf("signal_handler: %d\n", sig);
-	rl_replace_line("minishell", 0);
-	//rl_on_new_line();
-	g_EOF = 1;
+	ft_putstr_fd("\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 int main(int argc, char **argv, char **envp)
@@ -30,13 +29,12 @@ int main(int argc, char **argv, char **envp)
 	struct sigaction	prompt_sa;
 	struct sigaction	exec_sa;
 
-	g_EOF = 0;
-
 	prompt_sa.sa_handler = signal_handler;
 	sigaction(SIGINT, &prompt_sa, &exec_sa);
 	while (TRUE)
 	{
 		cmd_input = readline("minishell$ ");
+		printf("cmd_input: %s\n", cmd_input);
 		if (cmd_input == NULL)
 		{
 			write(1, "exit\n", 5);
@@ -48,7 +46,7 @@ int main(int argc, char **argv, char **envp)
 		free(cmd_input);
 		sigaction(SIGINT, &exec_sa, &prompt_sa);
 		printf("start\n");
-		usleep(1000000000); // EXEC
+		sleep(1); // EXEC
 		printf("end\n");
 		sigaction(SIGINT, &prompt_sa, &exec_sa);
 	}
