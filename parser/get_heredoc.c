@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:57 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 16:40:03 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 17:31:30 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,25 @@ static char	*get_heredoc_input(char *delimiter)
 	char	*line;
 	char	*input;
 	char	*to_free;
+	char	*msg;
+	int		n_line;
 
 	input = ft_strdup((char *)"");
 	if (input == NULL)
 		return (NULL);
+	n_line = 1;
 	while (TRUE)
 	{
 		write(1, "> ", 2);
 		line = get_next_line(STDIN_FILENO);
 		if (line == NULL)
-			return (NULL);
+		{
+			msg = ft_sprintf("\nminishell: warning: here-document at line %d delimited by "
+				"end-of-file (wanted `%s')\n", n_line, delimiter);
+			ft_putstr_fd(msg, STDERR_FILENO);
+			free(msg);
+			break ;
+		}
 		if (is_delimiter(line, delimiter))
 		{
 			free(line);
@@ -70,6 +79,7 @@ static char	*get_heredoc_input(char *delimiter)
 		input = ft_strjoin(input, line);
 		free(to_free);
 		free(line);
+		n_line++;
 	}
 	return (input);
 }
