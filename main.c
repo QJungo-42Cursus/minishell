@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 20:41:50 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/02/24 22:28:38 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,28 @@
 #include "executor/executor.h"
 #include "token_checker/token_checker.h"
 #include "builtins/builtins.h"
+#include "minishell.h"
 
 /********************** TERMIOS && SIGNALS ************************************/
 
-int		g_is_executing = FALSE;
+t_minishell_status	g_minishell_status = S_PROMPT;
 
 void	signal_handler(int sig)
 {
 	(void) sig;
-	ft_putstr_fd("\n", 1);
-	if (g_is_executing)
-		return ;
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+
+	if (g_minishell_status == S_PROMPT || g_minishell_status == S_EXEC)
+		ft_putstr_fd("\n", 1);
+	if (g_minishell_status == S_PROMPT)
+	{
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+	if (g_minishell_status == S_HEREDOC)
+	{
+		g_minishell_status = S_HEREDOC_ABORT;
+	}
 }
 
 /******************************* MINISHELL ************************************/
@@ -97,7 +105,11 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 		return (ERROR);
 	}
 	minishell->current_ast = cmd;
-	execute(cmd, minishell);
+	if (g_minishell_status != S_HEREDOC_ABORT)
+	{
+		execute(cmd, minishell);
+		g_minishell_status = S_PROMPT;
+	}
 	free_ast(cmd);
 	free_token_list(tokens_to_free);
 	return (SUCCESS);
@@ -110,8 +122,10 @@ static int	main_loop(t_minishell *minishell, struct sigaction *prompt_sa)
 	t_list				*tokens;
 	char				*cmd_input;
 
+	(void) prompt_sa;
 	while (!minishell->should_exit)
 	{
+		sigaction(SIGINT, prompt_sa, minishell->m_exec_sa);
 		cmd_input = readline(minishell->prompt_msg);
 		if (cmd_input == NULL)
 		{
@@ -128,8 +142,6 @@ static int	main_loop(t_minishell *minishell, struct sigaction *prompt_sa)
 			continue ;
 		if (check_valid_tokens(tokens) == SUCCESS)
 			run_minishell(minishell, tokens);
-		g_is_executing = FALSE;
-		sigaction(SIGINT, prompt_sa, minishell->m_exec_sa);
 	}
 	return (SUCCESS);
 }

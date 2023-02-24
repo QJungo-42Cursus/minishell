@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:30 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 19:51:27 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 22:22:04 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include "../builtins/builtins.h"
 #include "../env/env.h"
 
-extern int	g_is_executing;
+extern int	g_minishell_status;
 
 // LATER refactoriser pour que pipeline ai la meme chose !
 void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
@@ -51,7 +51,6 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 	int		exit_status;
 	int		pipes[2];
 
-	g_is_executing = TRUE;
 	if (cmd->s_command.heredoc != NULL)
 	{
 		if (pipe(pipes) == -1)
@@ -60,6 +59,7 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 	if (execute_builtin(cmd, minishell, &exit_status))
 		return (exit_status);
 	exit_status = 0;
+	g_minishell_status = S_EXEC;
 	if (fork1() == 0)
 		child(minishell, cmd, pipes);
 	if (cmd->s_command.heredoc != NULL)
@@ -70,5 +70,6 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 		close(pipes[1]);
 	}
 	wait(&exit_status);
+	g_minishell_status = S_PROMPT;
 	return (WEXITSTATUS(exit_status));
 }

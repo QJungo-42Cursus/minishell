@@ -6,13 +6,21 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 17:19:48 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 20:57:24 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "parser.h"
 #include <unistd.h>
+#include "../minishell.h"
+
+static void	first_logic(t_list **start_right, t_list **cursor)
+{
+	*start_right = (*cursor)->next->next;
+	free((*cursor)->next->content);
+	(*cursor)->next = NULL;
+}
 
 int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 {
@@ -26,9 +34,7 @@ int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 		tok_type = get_token_type((char *)cursor->next->content);
 		if (tok_type == LOGIC_OR || tok_type == LOGIC_AND)
 		{
-			start_right = cursor->next->next;
-			free(cursor->next->content);
-			cursor->next = NULL;
+			first_logic(&start_right, &cursor);
 			cmd->type = (t_cmd_type)tok_type;
 			cmd->s_logic.left = (t_cmd *)malloc(sizeof(t_cmd));
 			if (cmd->s_logic.left == NULL)
@@ -51,18 +57,8 @@ int	redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	int		tok_type;
 
 	cursor = tokens;
-	tok_type = get_token_type((char *)cursor->content);
-	if (tok_type == REDIR_IN || tok_type == REDIR_OUT
-		|| tok_type == REDIR_APPEND)
-	{
-		cmd->type = (t_cmd_type)tok_type;
-		cmd->s_redir.filename = (char *)cursor->next->content;
-		cmd->s_redir.cmd = (t_cmd *)malloc(sizeof(t_cmd));
-		if (cmd->s_redir.cmd == NULL)
-			malloc_error(minishell);
-		set_command(tokens->next->next, cmd->s_redir.cmd, minishell);
+	if (first_token_redir(&cursor, cmd, minishell) == USED)
 		return (USED);
-	}
 	while (cursor->next != NULL)
 	{
 		tok_type = get_token_type((char *)cursor->next->content);

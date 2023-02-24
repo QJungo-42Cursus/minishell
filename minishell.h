@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:42:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 19:39:56 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/02/24 22:25:36 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,20 @@
 
 typedef struct s_cmd	t_cmd;
 
+typedef enum e_minishell_status {
+	S_EXEC,
+	S_PROMPT,
+	S_HEREDOC,
+	S_HEREDOC_ABORT,
+}	t_minishell_status;
+
 typedef struct s_minishell {
-	char	*prompt_msg;
-	char	current_working_directory[MAX_PATH_LEN];
-	char	**env_copy;
-	int		last_exit_status;
-	int		should_exit;
-	t_cmd	*current_ast;
+	char				*prompt_msg;
+	char				current_working_directory[MAX_PATH_LEN];
+	char				**env_copy;
+	int					last_exit_status;
+	int					should_exit;
+	t_cmd				*current_ast;
 	struct sigaction	*m_exec_sa;
 }	t_minishell;
 

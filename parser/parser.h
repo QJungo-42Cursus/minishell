@@ -6,14 +6,13 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:50 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 14:33:34 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 22:30:45 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
 # define PARSER_H
 # define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
-# include "../minishell.h"
 # include "../libft/libft.h"
 
 typedef enum e_cmd_type {
@@ -70,6 +69,8 @@ t_list		*skip_parentheses(t_list *cursor);
 int			get_token_type(char *token);
 t_bool		are_we_in_parentheses(t_list *tokens);
 t_list		*lst_cut_first_and_last(t_list *tokens);
+int			first_token_redir(t_list **tokens, t_cmd *cmd,
+				t_minishell *minishell);
 
 int			parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
 int			pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell);

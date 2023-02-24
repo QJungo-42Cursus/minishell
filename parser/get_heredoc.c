@@ -6,13 +6,16 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:57 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 19:59:35 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 22:30:18 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "parser.h"
+#include "../minishell.h"
 #include <unistd.h>
+
+extern int	g_minishell_status;
 
 int	is_heredoc_valid(t_list *cursor, t_cmd *cmd)
 {
@@ -38,7 +41,6 @@ int	is_heredoc_valid(t_list *cursor, t_cmd *cmd)
 static t_bool	is_delimiter(char *line, char *delimiter)
 {
 	int		delimiter_len;
-	// TODO add if ctrl D is pressed !! (NULL ?)
 
 	delimiter_len = ft_strlen(delimiter);
 	return ((t_bool)(ft_strncmp(line, delimiter, delimiter_len) == 0
@@ -52,7 +54,8 @@ static t_bool	stop(char *line, char *delimiter)
 
 	if (line == NULL)
 	{
-		msg = ft_sprintf("\nminishell: warning: here-document delimited by "
+		if (g_minishell_status != S_HEREDOC_ABORT)
+			msg = ft_sprintf("\nminishell: warning: here-document delimited by "
 				"end-of-file (wanted `%s')\n", delimiter);
 		ft_putstr_fd(msg, STDERR_FILENO);
 		free(msg);
@@ -66,15 +69,11 @@ static t_bool	stop(char *line, char *delimiter)
 	return (FALSE);
 }
 
-extern int	g_is_executing;
-
 static char	*get_heredoc_input(char *delimiter)
 {
 	char	*line;
 	char	*input;
 	char	*to_free;
-
-	g_is_executing = TRUE;
 
 	input = ft_strdup((char *)"");
 	if (input == NULL)
@@ -97,10 +96,16 @@ int	get_heredoc(t_list **token_cursor, t_cmd *cmd)
 {
 	if (ft_strncmp((char *)(*token_cursor)->content, "<<", 3) != 0)
 		return (SUCCESS);
+	g_minishell_status = S_HEREDOC;
 	cmd->s_command.heredoc
 		= get_heredoc_input((char *)(*token_cursor)->next->content);
 	if (cmd->s_command.heredoc == NULL)
 		return (ERROR);
+	if (g_minishell_status == S_HEREDOC_ABORT)
+	{
+		free(cmd->s_command.heredoc);
+		cmd->s_command.heredoc = NULL;
+	}
 	*token_cursor = (*token_cursor)->next->next;
 	return (USED);
 }

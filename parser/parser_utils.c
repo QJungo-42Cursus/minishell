@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:11 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:02:11 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 20:56:59 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,3 +97,26 @@ t_list	*lst_cut_first_and_last(t_list *tokens)
 	cursor = tokens->next;
 	return (cursor);
 }
+
+# include "../minishell.h"
+int	first_token_redir(t_list **tokens, t_cmd *cmd, t_minishell *minishell)
+{
+	t_list		*cursor;
+	int			tok_type;
+
+	cursor = *tokens;
+	tok_type = get_token_type((char *)cursor->content);
+	if (tok_type == REDIR_IN || tok_type == REDIR_OUT
+		|| tok_type == REDIR_APPEND)
+	{
+		cmd->type = (t_cmd_type)tok_type;
+		cmd->s_redir.filename = (char *)cursor->next->content;
+		cmd->s_redir.cmd = (t_cmd *)malloc(sizeof(t_cmd));
+		if (cmd->s_redir.cmd == NULL)
+			malloc_error(minishell);
+		set_command((*tokens)->next->next, cmd->s_redir.cmd, minishell);
+		return (USED);
+	}
+	return (FALSE);
+}
+
