@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:40 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:25:39 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:35:54 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,3 @@ void	malloc_error(t_minishell *minishell)
 	free_ast(minishell->current_ast);
 	exit_(minishell, NULL, 1);
 }
-

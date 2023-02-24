@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:22 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:20:23 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:28:58 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int			execute_builtin(t_cmd *cmd,
 
 // execute_pipeline_utils.c
 void		wait_all(t_cmd *pipeline_cmd, int *exit_status);
-int			init_pipes(t_cmd *cmd, int *shitty_pipe);
+int			init_pipes(t_cmd *cmd, int *shitty_pipe, t_minishell *minishell);
 t_bool		is_last_cmd(t_cmd *pipeline_cmd, int index);
 t_bool		has_next_cmd_heredoc(t_cmd *cmd_cursor);
 

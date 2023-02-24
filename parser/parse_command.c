@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:01 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:03:20 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:31:51 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static int	unquote_and_expand(t_list **tokens,
 	cmd->s_command.argv
 		= (char **)malloc(sizeof(char *) * (ft_lstsize(*tokens) + 1));
 	if (cmd->s_command.argv == NULL)
-		return (ERROR); // TODO
+		malloc_error(minishell);
 	return (SUCCESS);
 }
 

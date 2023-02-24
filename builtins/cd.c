@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:47 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:16:07 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:36:43 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,15 @@ static int	export_pwd(t_minishell *minishell, const char *to_join)
 
 static int	change_directory_in_env(t_minishell *minishell)
 {
-	if (get_env_var_index((const char **)minishell->env_copy,
-			(char *)"OLDPWD=") != -1)
-	{
-		if (export_pwd(minishell, (char *)"export OLDPWD="))
-			return (ERROR);
-	}
+	if ((get_env_var_index((const char **)minishell->env_copy,
+				(char *)"OLDPWD=") != -1)
+		&& (export_pwd(minishell, (char *)"export OLDPWD=")))
+		return (ERROR);
 	getcwd(minishell->current_working_directory, MAX_PATH_LEN + 1);
-	if (get_env_var_index((const char **)minishell->env_copy,
-			(char *)"PWD=") != -1)
-	{
-		if (export_pwd(minishell, (char *)"export PWD="))
-			return (ERROR);
-	}
+	if ((get_env_var_index((const char **)minishell->env_copy,
+				(char *)"PWD=") != -1)
+		&& (export_pwd(minishell, (char *)"export PWD=")))
+		return (ERROR);
 	return (SUCCESS);
 }
 
@@ -61,13 +57,12 @@ static int	change_dir(t_minishell *minishell, char *new_path)
 {
 	if (chdir(new_path) != 0)
 	{
-		// TODO chdir ? cd ?
-		perror("chdir:");
+		perror("chdir");
 		return (errno);
 	}
 	if (change_directory_in_env(minishell) == ERROR)
 	{
-		// TODO best error handling ?
+		perror("chdir");
 		return (ERROR);
 	}
 	refresh_prompt(minishell);

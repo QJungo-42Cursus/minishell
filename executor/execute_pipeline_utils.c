@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:35 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:53:51 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:31:26 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	wait_all(t_cmd *pipeline_cmd, int *exit_status)
 }
 
 // malloc OK !
-static int	init_(t_cmd *cmd, int *shitty_pipe)
+static int	init_(t_cmd *cmd, int *shitty_pipe, t_minishell *minishell)
 {
 	if (pipe(shitty_pipe) == -1)
 	{
@@ -40,20 +40,16 @@ static int	init_(t_cmd *cmd, int *shitty_pipe)
 	cmd->s_pipeline.pipes
 		= (int *)malloc(sizeof(int) * cmd->s_pipeline.pipe_count * 2);
 	if (cmd->s_pipeline.pipes == NULL)
-	{
-		// TODO
-		printf("malloc error in %s(...) \n", __func__);
-		return (ERROR);
-	}
+		malloc_error(minishell);
 	return (SUCCESS);
 }
 
 // malloc OK !
-int	init_pipes(t_cmd *cmd, int *shitty_pipe)
+int	init_pipes(t_cmd *cmd, int *shitty_pipe, t_minishell *minishell)
 {
 	int		i;
 
-	if (init_(cmd, shitty_pipe) == ERROR)
+	if (init_(cmd, shitty_pipe, minishell) == ERROR)
 		return (ERROR);
 	i = 0;
 	while (i < cmd->s_pipeline.pipe_count)
@@ -68,7 +64,7 @@ int	init_pipes(t_cmd *cmd, int *shitty_pipe)
 	cmd->s_pipeline.pids
 		= (int *)malloc(sizeof(int) * cmd->s_pipeline.pipe_count);
 	if (cmd->s_pipeline.pids == NULL)
-		return (ERROR); // TODO
+		malloc_error(minishell);
 	return (SUCCESS);
 }
 

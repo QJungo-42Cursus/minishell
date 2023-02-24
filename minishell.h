@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:42:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:42:46 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:35:42 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 # define MAX_PATH_LEN 4096
 # include "parser/parser.h"
 
-typedef struct s_cmd t_cmd;
+typedef struct s_cmd	t_cmd;
 
 typedef struct s_minishell {
 	char	*prompt_msg;
@@ -25,7 +25,6 @@ typedef struct s_minishell {
 	int		should_exit;
 	t_cmd	*current_ast;
 }	t_minishell;
-
 
 typedef struct s_position
 {

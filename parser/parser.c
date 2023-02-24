@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 11:49:02 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:34:58 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,9 @@ int	redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	while (cursor->next != NULL)
 	{
 		tok_type = get_token_type((char *)cursor->next->content);
-		if (tok_type == REDIR_IN || tok_type == REDIR_OUT)
+		if (tok_type == REDIR_IN
+			|| tok_type == REDIR_OUT
+			|| tok_type == REDIR_APPEND)
 		{
 			cmd->type = (t_cmd_type)tok_type;
 			cmd->s_redir.filename = (char *)cursor->next->next->content;
@@ -78,9 +80,8 @@ int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	{
 		if (ft_strncmp((char *)tokens->next->content, ")", 2) == 0)
 		{
-			// TODO
 			write(2, "minishell: syntax error near unexpected token `)'\n", 50);
-			return (EXIT_FAILURE);
+			return (ERROR);
 		}
 		tokens = lst_cut_first_and_last(tokens);
 	}
@@ -105,10 +106,6 @@ t_cmd	*parser(t_list *tokens, t_minishell *minishell)
 	if (cmd == NULL)
 		malloc_error(minishell);
 	if (set_command(tokens, cmd, minishell) == ERROR)
-	{
-		//free_ast(cmd);
-		//free(cmd);
 		return (NULL);
-	}
 	return (cmd);
 }

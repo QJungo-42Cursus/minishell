@@ -6,14 +6,13 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:50 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:11:11 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:33:34 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
 # define PARSER_H
 # define UNEXPECTED_TOKEN "minishell: syntax error near unexpected token `"
-# include "../minishell.h"
 # include "../minishell.h"
 # include "../libft/libft.h"
 
@@ -64,8 +63,8 @@ typedef struct s_cmd {
 	};
 }	t_cmd;
 
-typedef struct s_cmd t_cmd;
-typedef struct s_minishell t_minishell;
+typedef struct s_cmd		t_cmd;
+typedef struct s_minishell	t_minishell;
 
 t_list		*skip_parentheses(t_list *cursor);
 int			get_token_type(char *token);

@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:00 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:16:17 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 13:39:19 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	exit_(t_minishell *minishell, char **argv, int exit_status)
 {
 	if (argv[1] != NULL)
 	{
-		write(2, "minishell: pwd: too many arguments\n", 35);
+		ft_putendl_fd("minishell: exit: too many arguments", 2);
 		return (ERROR);
 	}
 	free_minishell(minishell);

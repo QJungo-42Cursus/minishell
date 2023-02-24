@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:30 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:23:33 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:08:55 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 #include "../builtins/builtins.h"
 #include "../env/env.h"
 
+// LATER refactoriser pour que pipeline ai la meme chose !
 void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
 {
-	// TODO refactoriser pour que pipeline ai la meme chose !
 	replace_argv0_with_full_path(cmd, minishell);
 	if (cmd->s_command.heredoc != NULL)
 	{
@@ -39,8 +39,7 @@ void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
 		exit(127);
 	}
 	execve(cmd->s_command.argv[0], cmd->s_command.argv, minishell->env_copy);
-	// TODO
-	perror("execv");
+	perror("minishell: execution");
 	exit(errno);
 }
 

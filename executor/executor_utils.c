@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:46 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:20:47 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:27:22 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,16 @@ void	replace_argv0_with_full_path(t_cmd *cmd, t_minishell *minishell)
 	char	**env_paths;
 
 	env_paths = get_paths_in_env(minishell->env_copy);
-	// TODO error handling
 	if (env_paths == NULL)
-		return ;
+	{
+		malloc_error(minishell);
+	}
 	path = find_cmd_path(cmd->s_command.argv[0], env_paths);
-	// TODO error handling
 	if (path == NULL)
-		return ;
-	split_free(env_paths);
+	{
+		split_free(env_paths);
+		malloc_error(minishell);
+	}
 	free(cmd->s_command.argv[0]);
 	cmd->s_command.argv[0] = path;
 }

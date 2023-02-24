@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:33 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:41:07 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:29:16 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,8 @@ int	execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 	int		exit_status;
 	int		shitty_pipe[2];
 
-	if (init_pipes(pipeline_cmd, shitty_pipe) == ERROR)
-	{
-		// TODO
-		return (ERROR);
-	}
+	if (init_pipes(pipeline_cmd, shitty_pipe, minishell) == ERROR)
+		malloc_error(minishell);
 	exit_status = 0;
 	m(pipeline_cmd, minishell, shitty_pipe, &exit_status);
 	close_all_pipes(pipeline_cmd->s_pipeline.pipes,

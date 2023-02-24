@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:41 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:20:47 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 14:21:48 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,7 @@ static int	open_file(t_cmd *cmd)
 		cmd->s_redir.fd = open(cmd->s_redir.filename, O_RDONLY);
 	if (cmd->s_redir.fd == -1)
 	{
-		// TODO nom d'erreur complet
-		perror("open");
-		exit(EXIT_FAILURE);
+		perror("minishell: open");
 		return (ERROR);
 	}
 	return (SUCCESS);
