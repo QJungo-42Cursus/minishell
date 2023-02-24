@@ -77,6 +77,7 @@ static void unset_termios(void)
 
 /// ownership return in run_minishell()
 // free TODO
+// malloc OK !
 void	**get_token_to_free_list(t_list *tokens)
 {
 	t_list	*tmp;

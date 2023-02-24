@@ -40,6 +40,7 @@ t_list	*set_pipeline_to_null_and_return_next(t_list *cursor)
 		{
 			next_node_is_null = cursor;
 			cursor = cursor->next->next;
+			free(next_node_is_null->next->content);
 			next_node_is_null->next = NULL;
 			return (cursor);
 		}
@@ -48,6 +49,7 @@ t_list	*set_pipeline_to_null_and_return_next(t_list *cursor)
 	return (NULL);
 }
 
+// malloc OK !
 static void	set_pipeline_and_args(t_list *cursor,
 	t_cmd *cmd, t_minishell *minishell)
 {
@@ -79,7 +81,6 @@ static void	set_pipeline_and_args(t_list *cursor,
 	if (cmd_cursor->s_command.next == NULL)
 		malloc_error(minishell);
 	set_command(start, cmd_cursor->s_command.next, minishell);
-	cmd_cursor = cmd_cursor->s_command.next;
 }
 
 int	pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell)

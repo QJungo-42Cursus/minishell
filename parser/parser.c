@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include "parser.h"
 #include <unistd.h>
-#include "../libft/libft.h"
 
 int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 {
@@ -33,10 +32,10 @@ int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
 			cmd->type = (t_cmd_type)tok_type;
 			cmd->s_logic.left = (t_cmd *)malloc(sizeof(t_cmd));
 			if (cmd->s_logic.left == NULL)
-				return (ERROR);
+				malloc_error(minishell);
 			cmd->s_logic.right = (t_cmd *)malloc(sizeof(t_cmd));
 			if (cmd->s_logic.right == NULL)
-				return (ERROR);
+				malloc_error(minishell);
 			set_command(start_left, cmd->s_logic.left, minishell);
 			set_command(start_right, cmd->s_logic.right, minishell);
 			return (USED);
@@ -61,6 +60,8 @@ int	redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 			cmd->s_redir.filename = (char *)cursor->next->next->content;
 			cursor->next = cursor->next->next->next;
 			cmd->s_redir.cmd = (t_cmd *)malloc(sizeof(t_cmd));
+			if (cmd->s_redir.cmd == NULL)
+				malloc_error(minishell);
 			set_command(tokens, cmd->s_redir.cmd, minishell);
 			return (USED);
 		}
@@ -84,13 +85,13 @@ int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 		tokens = lst_cut_first_and_last(tokens);
 	}
 	exit_status = logic(tokens, cmd, minishell);
-	if (exit_status == ERROR || exit_status == USED)
+	if (exit_status == USED)
 		return (exit_status);
 	exit_status = redir(tokens, cmd, minishell);
-	if (exit_status == ERROR || exit_status == USED)
+	if (exit_status == USED)
 		return (exit_status);
 	exit_status = pipeline(tokens, cmd, minishell);
-	if (exit_status == ERROR || exit_status == USED)
+	if (exit_status == USED)
 		return (exit_status);
 	exit_status = parse_command(tokens, cmd, minishell);
 	return (exit_status);
@@ -101,10 +102,11 @@ t_cmd	*parser(t_list *tokens, t_minishell *minishell)
 	t_cmd	*cmd;
 
 	cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	if (cmd == NULL)
+		malloc_error(minishell);
 	if (set_command(tokens, cmd, minishell) == ERROR)
 	{
-		// TODO
-		free(cmd);
+		free_ast(cmd);
 		return (NULL);
 	}
 	return (cmd);

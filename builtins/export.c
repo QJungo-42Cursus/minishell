@@ -26,6 +26,7 @@ static int	list_len(char **list)
 	return (i);
 }
 
+// malloc OK !
 static int	add_env_var(t_minishell *mini, char *var)
 {
 	char	**new_env_copy;

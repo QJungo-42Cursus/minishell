@@ -40,6 +40,7 @@ static int	is_token_valid(char *token, t_list *cursor, t_cmd *cmd)
 	return (TRUE);
 }
 
+// malloc OK !
 static int	unquote_and_expand(t_list **tokens,
 		t_cmd *cmd, t_minishell *minishell)
 {
@@ -55,10 +56,12 @@ static int	unquote_and_expand(t_list **tokens,
 	cmd->type = COMMAND;
 	cmd->s_command.argv
 		= (char **)malloc(sizeof(char *) * (ft_lstsize(*tokens) + 1));
+	if (cmd->s_command.argv == NULL)
+		return (ERROR); // TODO
 	return (SUCCESS);
 }
 
-static int	parse(t_list **cursor, t_cmd *cmd, int *i)
+static int	parse(t_list **cursor, t_cmd *cmd, int *i, t_minishell *minishell)
 {
 	char	*token;
 	int		get_heredoc_res;
@@ -72,9 +75,8 @@ static int	parse(t_list **cursor, t_cmd *cmd, int *i)
 	get_heredoc_res = get_heredoc(cursor, cmd);
 	if (get_heredoc_res == ERROR)
 	{
-		// TODO
 		free(cmd->s_command.argv);
-		return (ERROR);
+		malloc_error(minishell);
 	}
 	if (get_heredoc_res == USED)
 		return (SUCCESS);
@@ -93,7 +95,7 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	cursor = tokens;
 	i = 0;
 	while (cursor != NULL)
-		if (parse(&cursor, cmd, &i) == ERROR)
+		if (parse(&cursor, cmd, &i, minishell) == ERROR)
 			return (ERROR);
 	cmd->s_command.argv[i] = NULL;
 	cmd->s_command.next = NULL;

@@ -28,6 +28,7 @@ void	wait_all(t_cmd *pipeline_cmd, int *exit_status)
 	}
 }
 
+// malloc OK !
 static int	init_(t_cmd *cmd, int *shitty_pipe)
 {
 	if (pipe(shitty_pipe) == -1)
@@ -40,12 +41,14 @@ static int	init_(t_cmd *cmd, int *shitty_pipe)
 		= (int *)malloc(sizeof(int) * cmd->s_pipeline.pipe_count * 2);
 	if (cmd->s_pipeline.pipes == NULL)
 	{
+		// TODO
 		printf("malloc error in %s(...) \n", __func__);
 		return (ERROR);
 	}
 	return (SUCCESS);
 }
 
+// malloc OK !
 int	init_pipes(t_cmd *cmd, int *shitty_pipe)
 {
 	int		i;
@@ -64,6 +67,8 @@ int	init_pipes(t_cmd *cmd, int *shitty_pipe)
 	}
 	cmd->s_pipeline.pids
 		= (int *)malloc(sizeof(int) * cmd->s_pipeline.pipe_count);
+	if (cmd->s_pipeline.pids == NULL)
+		return (ERROR); // TODO
 	return (SUCCESS);
 }
 

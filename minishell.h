@@ -34,7 +34,7 @@ typedef struct s_position
 }	t_position;
 
 int		init_minishell(t_minishell *minishell, char **envp);
-int		refresh_prompt(t_minishell *minishell);
+void	refresh_prompt(t_minishell *minishell);
 void	malloc_error(t_minishell *minishell);
 
 #endif /* MINISHELL_H */

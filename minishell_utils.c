@@ -17,18 +17,14 @@
 #include "env/env.h"
 #include "builtins/builtins.h"
 
-int	refresh_prompt(t_minishell *minishell)
+void	refresh_prompt(t_minishell *minishell)
 {
 	if (minishell->prompt_msg != NULL)
 		free(minishell->prompt_msg);
 	minishell->prompt_msg = ft_sprintf("[msh %s]$ ",
 			minishell->current_working_directory);
 	if (minishell->prompt_msg == NULL)
-	{
-		// TODO exit -> si ca foire, c'est casse de toute facon
-		return (ERROR);
-	}
-	return (SUCCESS);
+		malloc_error(minishell);
 }
 
 int	init_minishell(t_minishell *minishell, char **envp)

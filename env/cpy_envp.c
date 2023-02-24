@@ -21,6 +21,7 @@ static char	**free_fail(char **env_copy, int i)
 	return (NULL);
 }
 
+// malloc OK !
 char	**cpy_envp(char **envp)
 {
 	int		i;

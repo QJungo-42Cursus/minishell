@@ -52,6 +52,8 @@ static char	*get_heredoc_input(char *delimiter)
 	char	*to_free;
 
 	input = ft_strdup((char *)"");
+	if (input == NULL)
+		return (NULL);
 	while (TRUE)
 	{
 		write(1, "> ", 2);
