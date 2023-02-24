@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 20:11:29 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 20:41:50 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	**get_token_to_free_list(t_list *tokens)
 	return (result);
 }
 
-void free_token_list(void **tokens_to_free)
+void	free_token_list(void **tokens_to_free)
 {
 	int		i;
 
@@ -105,19 +105,13 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 
 // free OK !
 /// give ownership of tokens at each while iteration (it to free)
-static int	main_loop(t_minishell *minishell)
+static int	main_loop(t_minishell *minishell, struct sigaction *prompt_sa)
 {
 	t_list				*tokens;
 	char				*cmd_input;
-	struct sigaction	prompt_sa;
 
-	sigaction(SIGINT, NULL, &prompt_sa);
-	prompt_sa.sa_handler = signal_handler;
-	sigaction(SIGINT, &prompt_sa, minishell->m_exec_sa);
-	//(void)prompt_sa;
 	while (!minishell->should_exit)
 	{
-		tokens = NULL;
 		cmd_input = readline(minishell->prompt_msg);
 		if (cmd_input == NULL)
 		{
@@ -126,24 +120,16 @@ static int	main_loop(t_minishell *minishell)
 			exit(0);
 		}
 		if (ft_strlen(cmd_input) == 0)
-			continue ; 
+			continue ;
 		add_history(cmd_input);
-		if (tokenizer(cmd_input, &tokens, FALSE) == ERROR)
-		{
-			free(cmd_input);
-			exit_(minishell, NULL, 1);
-			return (ERROR);
-		}
+		tokenizer(cmd_input, &tokens, FALSE, minishell);
 		free(cmd_input);
 		if (tokens == NULL)
 			continue ;
 		if (check_valid_tokens(tokens) == SUCCESS)
-		{
-			// TODO a chque exec, (dans t_minishell) 
 			run_minishell(minishell, tokens);
-		}
 		g_is_executing = FALSE;
-		sigaction(SIGINT, &prompt_sa, minishell->m_exec_sa);
+		sigaction(SIGINT, prompt_sa, minishell->m_exec_sa);
 	}
 	return (SUCCESS);
 }
@@ -153,29 +139,29 @@ static int	main_loop(t_minishell *minishell)
 // free OK !
 int	main(int argc, char **argv, char **envp)
 {
-	t_minishell		minishell;
+	t_minishell			minishell;
 	struct sigaction	exec_sa;
-	minishell.m_exec_sa = &exec_sa;
+	struct sigaction	prompt_sa;
 
 	(void) argv;
-	//set_termios();
+	sigaction(SIGINT, NULL, &prompt_sa);
+	prompt_sa.sa_handler = signal_handler;
+	minishell.m_exec_sa = &exec_sa;
+	sigaction(SIGINT, &prompt_sa, minishell.m_exec_sa);
 	if (argc != 1)
 	{
 		write(2, "Usage: ./minishell {don't use any arguments}\n", 45);
-		exit (1);
+		exit(1);
 	}
 	if (!isatty(0) || !isatty(1) || !isatty(2))
 	{
-		// TODO: ca va ici ? return (ERROR) ?
-		errno = EINVAL;
-		perror("./minishell error with stream");
-		exit (1);
+		ft_putstr_fd("./minishell error with stream\n", 2);
+		exit(1);
 	}
 	if (init_minishell(&minishell, envp) == ERROR)
 	{
-		exit (1);
+		exit(1);
 	}
-	return (main_loop(&minishell));
-	// tcsetattr(0, TCSANOW, &old_termios); // TODO -> dans le exit !
+	return (main_loop(&minishell, &prompt_sa));
 }
 #endif

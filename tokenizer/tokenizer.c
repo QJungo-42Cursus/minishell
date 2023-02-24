@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:17:58 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:40:56 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/24 20:25:10 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ static void	set_cursor_after_space(const char *cmd, int *cursor_index)
 /// Renvoie une liste chainee de token (char *) ou NULL en cas d'erreur
 /// Prend un string (cmd) non NULL et non modifiable en arg
 /// => cmd to tokens
-int	tokenizer(const char *cmd, t_list **tokens, t_bool is_expand_mode)
+int	tokenizer(const char *cmd, t_list **tokens, t_bool is_expand_mode,
+		t_minishell *minishell)
 {
 	char					*token;
 	int						cursor_index;
@@ -45,7 +46,7 @@ int	tokenizer(const char *cmd, t_list **tokens, t_bool is_expand_mode)
 		if (token == NULL)
 		{
 			ft_lstclear(tokens, free);
-			perror("tokenizer: ft_substr");
+			malloc_error(minishell);
 			return (ERROR);
 		}
 		ft_lstadd_back(tokens, ft_lstnew(token));
