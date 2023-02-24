@@ -6,6 +6,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <termios.h>
+#include <sys/wait.h>
 // nous
 #include "libft/libft.h"
 #include "tokenizer/tokenizer.h"
@@ -14,6 +15,8 @@
 #include "token_checker/token_checker.h"
 #include "builtins/builtins.h"
 
+int g_pid;
+
 void	signal_handler(int sig)
 {
 	ft_putstr_fd("\n", 1);
@@ -21,7 +24,18 @@ void	signal_handler(int sig)
 	rl_replace_line("", 0);
 	rl_redisplay();
 }
+void	signal_handler_child(int sig)
+{
 
+	kill(SIGKILL, g_pid);
+}
+
+void super_fork(void)
+{
+	char *arg_list[] = {"sleep", "10", NULL};
+	printf("start\n");
+	execvp("/bin/sleep", arg_list);
+}
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmd_input;
@@ -30,7 +44,8 @@ int main(int argc, char **argv, char **envp)
 	struct sigaction	exec_sa;
 
 	prompt_sa.sa_handler = signal_handler;
-	sigaction(SIGINT, &prompt_sa, &exec_sa);
+	exec_sa.sa_handler = signal_handler_child;
+	sigaction(SIGINT, &prompt_sa, NULL);
 	while (TRUE)
 	{
 		cmd_input = readline("minishell$ ");
@@ -44,10 +59,12 @@ int main(int argc, char **argv, char **envp)
 			continue ;
 		add_history(cmd_input);
 		free(cmd_input);
-		sigaction(SIGINT, &exec_sa, &prompt_sa);
-		printf("start\n");
-		sleep(1); // EXEC
+		sigaction(SIGINT, &exec_sa, NULL);
+		g_pid = fork();
+		if (g_pid == 0)
+			super_fork();
+		wait(0);
 		printf("end\n");
-		sigaction(SIGINT, &prompt_sa, &exec_sa);
+		sigaction(SIGINT, &prompt_sa, NULL);
 	}
 }
