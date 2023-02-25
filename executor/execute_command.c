@@ -13,20 +13,16 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
 #include "executor.h"
-#include "../libft/libft.h"
-#include "../builtins/builtins.h"
-#include "../env/env.h"
 
-extern int	g_minishell_status;
+extern volatile sig_atomic_t	g_minishell_status;
 
 // LATER refactoriser pour que pipeline ai la meme chose !
 void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
 {
-	sigaction(SIGINT, minishell->m_exec_sa, NULL);
+	//sigaction(SIGINT, minishell->m_exec_sa, NULL);
 	replace_argv0_with_full_path(cmd, minishell);
 	if (cmd->s_command.heredoc != NULL)
 	{

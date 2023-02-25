@@ -15,7 +15,7 @@
 #include "../minishell.h"
 #include <unistd.h>
 
-extern int	g_minishell_status;
+extern volatile sig_atomic_t	g_minishell_status;
 
 int	is_heredoc_valid(t_list *cursor, t_cmd *cmd)
 {

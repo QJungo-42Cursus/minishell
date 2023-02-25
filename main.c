@@ -29,18 +29,53 @@
 
 /********************** TERMIOS && SIGNALS ************************************/
 
-t_minishell_status	g_minishell_status = S_PROMPT;
+volatile sig_atomic_t	g_minishell_status = S_PROMPT;
+
+void print_status(void) {
+	if (g_minishell_status == S_PROMPT)
+		printf("actual status: S_PROMPT\n");
+	else if (g_minishell_status == S_EXEC)
+		printf("actual status: S_EXEC\n");
+	else if (g_minishell_status == S_HEREDOC)
+		printf("actual status: S_HEREDOC\n");
+	else if (g_minishell_status == S_HEREDOC_ABORT)
+		printf("actual status: S_HEREDOC_ABORT	\n");
+	else
+		printf("actual status UNKNOWN\n");
+}
 
 void	signal_handler(int sig)
 {
-	(void) sig;
+	//print_status();
 
-	if (g_minishell_status == S_PROMPT || g_minishell_status == S_EXEC)
-		ft_putstr_fd("\n", 1);
-	if (g_minishell_status == S_PROMPT)
+
+	if (sig == SIGINT)
 	{
-		rl_on_new_line();
-		rl_replace_line("", 0);
+		ft_putstr_fd("\n", 1);
+		if (g_minishell_status == S_PROMPT)
+		{
+			rl_replace_line("", 0);
+			rl_on_new_line();
+			rl_redisplay();
+		}
+	}
+
+	if (sig == SIGQUIT)
+	{
+		if (g_minishell_status == S_PROMPT)
+		{
+			rl_on_new_line();
+			rl_redisplay();
+		}
+	}
+
+	return ;
+
+
+	if (g_minishell_status == S_EXEC)
+	{
+		//rl_on_new_line();
+		//rl_replace_line("", 0);
 		rl_redisplay();
 	}
 	if (g_minishell_status == S_HEREDOC)
@@ -125,8 +160,14 @@ static int	main_loop(t_minishell *minishell, struct sigaction *prompt_sa)
 	(void) prompt_sa;
 	while (!minishell->should_exit)
 	{
-		sigaction(SIGINT, prompt_sa, minishell->m_exec_sa);
+		//sigaction(SIGINT, prompt_sa, minishell->m_exec_sa);
+		//printf("avant readline\n");
 		cmd_input = readline(minishell->prompt_msg);
+		//ft_putstr_fd("\n", 1);
+//		rl_on_new_line();
+//		rl_replace_line("", 0);
+//		rl_redisplay();
+		//printf("apres readline\n");
 		if (cmd_input == NULL)
 		{
 			printf("exit\n");
@@ -140,8 +181,10 @@ static int	main_loop(t_minishell *minishell, struct sigaction *prompt_sa)
 		free(cmd_input);
 		if (tokens == NULL)
 			continue ;
+		//printf("pre run minishell\n\n");
 		if (check_valid_tokens(tokens) == SUCCESS)
 			run_minishell(minishell, tokens);
+		//printf("post run minishell\n\n");
 	}
 	return (SUCCESS);
 }
@@ -155,11 +198,13 @@ int	main(int argc, char **argv, char **envp)
 	struct sigaction	exec_sa;
 	struct sigaction	prompt_sa;
 
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, signal_handler);
 	(void) argv;
-	sigaction(SIGINT, NULL, &prompt_sa);
+	//sigaction(SIGINT, NULL, &prompt_sa);
 	prompt_sa.sa_handler = signal_handler;
 	minishell.m_exec_sa = &exec_sa;
-	sigaction(SIGINT, &prompt_sa, minishell.m_exec_sa);
+	//sigaction(SIGINT, &prompt_sa, minishell.m_exec_sa);
 	if (argc != 1)
 	{
 		write(2, "Usage: ./minishell {don't use any arguments}\n", 45);
