@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:33 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 14:29:16 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 13:30:18 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ static void	m(t_cmd *pipeline_cmd,
 	}
 }
 
+extern volatile sig_atomic_t	g_minishell_status;
+
 int	execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 {
 	int		exit_status;
@@ -80,9 +82,11 @@ int	execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 	if (init_pipes(pipeline_cmd, shitty_pipe, minishell) == ERROR)
 		malloc_error(minishell);
 	exit_status = 0;
+	g_minishell_status = S_EXEC;
 	m(pipeline_cmd, minishell, shitty_pipe, &exit_status);
 	close_all_pipes(pipeline_cmd->s_pipeline.pipes,
 		pipeline_cmd->s_pipeline.pipe_count);
 	wait_all(pipeline_cmd, &exit_status);
+	g_minishell_status = S_PROMPT;
 	return (WEXITSTATUS(exit_status));
 }

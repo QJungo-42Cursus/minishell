@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:42:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 22:25:36 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 13:36:21 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ typedef struct s_minishell {
 	int					last_exit_status;
 	int					should_exit;
 	t_cmd				*current_ast;
-	struct sigaction	*m_exec_sa;
 }	t_minishell;
 
 typedef struct s_position
@@ -44,5 +43,7 @@ typedef struct s_position
 int		init_minishell(t_minishell *minishell, char **envp);
 void	refresh_prompt(t_minishell *minishell);
 void	malloc_error(t_minishell *minishell);
+void	signal_handler(int sig);
+int		main_loop(t_minishell *minishell);
 
 #endif /* MINISHELL_H */

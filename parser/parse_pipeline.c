@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:05:55 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 12:42:52 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,14 @@ t_list	*set_pipeline_to_null_and_return_next(t_list *cursor)
 	return (NULL);
 }
 
+static void	end(t_cmd **cmd_cursor, t_minishell *minishell, t_list *start)
+{
+	(*cmd_cursor)->s_command.next = (t_cmd *)malloc(sizeof(t_cmd));
+	if ((*cmd_cursor)->s_command.next == NULL)
+		malloc_error(minishell);
+	set_command(start, (*cmd_cursor)->s_command.next, minishell);
+}
+
 // malloc OK !
 static void	set_pipeline_and_args(t_list *cursor,
 	t_cmd *cmd, t_minishell *minishell)
@@ -77,10 +85,7 @@ static void	set_pipeline_and_args(t_list *cursor,
 		cmd_cursor = new_cmd;
 		start = cursor;
 	}
-	cmd_cursor->s_command.next = (t_cmd *)malloc(sizeof(t_cmd));
-	if (cmd_cursor->s_command.next == NULL)
-		malloc_error(minishell);
-	set_command(start, cmd_cursor->s_command.next, minishell);
+	end(&cmd_cursor, minishell, start);
 }
 
 int	pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell)

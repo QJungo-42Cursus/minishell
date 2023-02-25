@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:57 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 22:30:18 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 14:08:56 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,14 @@ static t_bool	stop(char *line, char *delimiter)
 {
 	char	*msg;
 
+	if (g_minishell_status == S_HEREDOC_ABORT)
+	{
+		printf("heredoc abort, line '%s'\n", line);
+		return (TRUE);
+	}
 	if (line == NULL)
 	{
-		if (g_minishell_status != S_HEREDOC_ABORT)
-			msg = ft_sprintf("\nminishell: warning: here-document delimited by "
+		msg = ft_sprintf("\nminishell: warning: here-document delimited by "
 				"end-of-file (wanted `%s')\n", delimiter);
 		ft_putstr_fd(msg, STDERR_FILENO);
 		free(msg);

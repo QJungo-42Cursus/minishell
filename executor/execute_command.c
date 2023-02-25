@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:30 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 22:22:04 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 12:44:44 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ extern volatile sig_atomic_t	g_minishell_status;
 // LATER refactoriser pour que pipeline ai la meme chose !
 void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
 {
-	//sigaction(SIGINT, minishell->m_exec_sa, NULL);
 	replace_argv0_with_full_path(cmd, minishell);
 	if (cmd->s_command.heredoc != NULL)
 	{

@@ -6,13 +6,14 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:11 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 20:56:59 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 12:44:04 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "parser.h"
 #include "../libft/libft.h"
+#include "../minishell.h"
 
 int	get_token_type(char *token)
 {
@@ -98,7 +99,6 @@ t_list	*lst_cut_first_and_last(t_list *tokens)
 	return (cursor);
 }
 
-# include "../minishell.h"
 int	first_token_redir(t_list **tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	t_list		*cursor;
@@ -119,4 +119,3 @@ int	first_token_redir(t_list **tokens, t_cmd *cmd, t_minishell *minishell)
 	}
 	return (FALSE);
 }
-
