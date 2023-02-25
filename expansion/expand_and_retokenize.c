@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 12:08:22 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 16:13:44 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 16:34:27 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,21 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 	t_list		*new_tokens;
 	char		*new_token_c;
 
+
 	tokens_ptr = tokens;
 	while (tokens_ptr != NULL)
 	{
+		//new_token_c = expand_o(minishell, tokens_ptr);
+		//if (new_token_c != NULL)
+		//{
+		//	tokens_ptr->content = new_token_c;
+		//}
+		//tokens_ptr = tokens_ptr->next;
+		//continue ;
+
+
+
+
 		new_token_c = expand_o(minishell, tokens_ptr);
 		if (new_token_c && tokenizer(new_token_c, &new_tokens, TRUE, minishell))
 			malloc_error(minishell);
