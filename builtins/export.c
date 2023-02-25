@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 14:12:10 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 17:05:27 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	add_env_var(t_minishell *mini, char *var)
 	int		i;
 
 	new_env_copy
-		= (char **)malloc(sizeof(char *) * list_len(mini->env_copy) + 1);
+		= (char **)malloc(sizeof(char *) * (list_len(mini->env_copy) + 2));
 	if (new_env_copy == NULL)
 		return (ERROR);
 	i = 0;
