@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 12:08:22 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 20:27:45 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/02/25 16:13:44 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,22 +49,26 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 {
 	t_list		*tokens_ptr;
 	t_list		*new_tokens;
-	char		*new_token;
+	char		*new_token_c;
 
 	tokens_ptr = tokens;
 	while (tokens_ptr != NULL)
 	{
-		new_token = expand_o(minishell, tokens_ptr);
-		if (new_token && tokenizer(new_token, &new_tokens, TRUE, minishell))
+		new_token_c = expand_o(minishell, tokens_ptr);
+		if (new_token_c && tokenizer(new_token_c, &new_tokens, TRUE, minishell))
 			malloc_error(minishell);
-		else if (new_token && new_tokens && new_tokens->next == NULL)
+		else if (new_token_c && new_tokens && new_tokens->next == NULL)
 		{
 			tokens_ptr->content = new_tokens->content;
 			free(new_tokens);
+			free(new_token_c);
 		}
-		else if (new_token != NULL && new_tokens != NULL)
+		else if (new_token_c && new_tokens)
+		{
 			replace_expanded_token(&tokens_ptr, new_tokens);
-		free(new_token);
+			free(new_tokens);
+			free(new_token_c);
+		}
 		tokens_ptr = tokens_ptr->next;
 	}
 	return (tokens);

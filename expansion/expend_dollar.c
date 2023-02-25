@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:02:51 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 16:05:17 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static char	*get_var_value(const char *token,
 	{
 		if (get_env_var_index((const char **)minishell->env_copy,
 				var_name) == -1)
-			var_value = ft_strdup((char *)"");
+			var_value = NULL;
 		else
 			var_value = get_env_var_value(var_name,
 					(const char **)minishell->env_copy);
@@ -66,16 +66,21 @@ char	*expand_dollar(const char *token,
 	char	*b;
 
 	var_value = get_var_value(token, minishell, position);
-	if (var_value == NULL)
-		return (NULL);
+	if (position.start == 0 && position.end == ft_strlen(token) - 1)
+		return (var_value);
 	if (set_sides(token, position, &a, &b) == ERROR)
 	{
-		free(var_value);
+		if (var_value != NULL)
+			free(var_value);
 		return (NULL);
 	}
-	new_token = ft_sprintf("%s%s%s", a, var_value, b);
+	if (var_value == NULL)
+		new_token = ft_sprintf("%s%s", a, b);
+	else
+		new_token = ft_sprintf("%s%s%s", a, var_value, b);
 	free(a);
 	free(b);
-	free(var_value);
+	if (var_value != NULL)
+		free(var_value);
 	return (new_token);
 }

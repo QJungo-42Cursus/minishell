@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:42 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 17:37:39 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 16:05:57 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,7 @@ static char	*get_all(t_position index,
 		new_token = expand_dollar(new_token_tmp, minishell, index);
 		free(new_token_tmp);
 		if (new_token == NULL)
-		{
-			free(new_token);
-			return (NULL);
-		}
+			return (ft_strdup((char *)""));
 		new_token_tmp = new_token;
 	}
 	return (new_token);
