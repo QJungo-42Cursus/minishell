@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_checker_main.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*   By: agonelle <agonelle@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/23 20:52:31 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 16:30:51 by qjungo           ###   ########.fr       */
+/*   Created: 2023/02/25 12:11:42 by agonelle          #+#    #+#             */
+/*   Updated: 2023/02/25 12:20:51 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,27 +54,6 @@ static int	check_parenthesis(t_list *token)
 	return (SUCCESS);
 }
 
-static t_bool	are_two_pipe_consecutive(t_list *current)
-{
-	char	*current_token;
-	char	*next_token;
-
-	current_token = (char *)current->content;
-	if  (ft_strncmp(current_token, (char *)"|", 2) != 0)
-		current_token = NULL;
-	if (current->next == NULL)
-		next_token = NULL;
-	else
-		next_token = (char *)current->next->content;
-	if (next_token && ft_strncmp(next_token, (char *)"|", 2) != 0)
-		next_token = NULL;
-	return (current_token && next_token);
-}
-
-// Cette fonction a deux roles:
-	// les pipes ne se trouvent pas aux debuts ou a la fin.
-	// les pipes ne sont pas acotes. VERIFIER s'il n'y a pas d'erreurs.
-// Deuxieme option: est peut etre deja gere par ta struct
 static int	check_pipe_position(t_list *lst_token)
 {
 	int		close_index;
@@ -102,13 +81,11 @@ static int	check_pipe_position(t_list *lst_token)
 	return (SUCCESS);
 }
 
-static int	check_heredoc_alone(t_list *input_token)
+static int	check_heredoc_alone(t_list *tmp)
 {
-	t_list	*tmp;
 	int		is_first;
 
 	is_first = TRUE;
-	tmp = input_token;
 	while (tmp)
 	{
 		if (ft_strncmp((char *)tmp->content, (char *)"<<", 3) == 0)
@@ -141,5 +118,4 @@ int	check_valid_tokens(t_list *input_tooken)
 	if (check_heredoc_alone(input_tooken) == ERROR)
 		return (ERROR);
 	return (SUCCESS);
-	// TODO -> c'est token, pas tooken
 }

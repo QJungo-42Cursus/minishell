@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_checker_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
+/*   By: agonelle <agonelle@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/23 20:52:38 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:52:40 by qjungo           ###   ########.fr       */
+/*   Created: 2023/02/25 12:21:08 by agonelle          #+#    #+#             */
+/*   Updated: 2023/02/25 12:21:56 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,4 +56,21 @@ int	count_separateur_in_tooken(t_list *lst, char *sep)
 		lst = lst->next;
 	}
 	return (count);
+}
+
+t_bool	are_two_pipe_consecutive(t_list *current)
+{
+	char	*current_token;
+	char	*next_token;
+
+	current_token = (char *)current->content;
+	if (ft_strncmp(current_token, (char *)"|", 2) != 0)
+		current_token = NULL;
+	if (current->next == NULL)
+		next_token = NULL;
+	else
+		next_token = (char *)current->next->content;
+	if (next_token && ft_strncmp(next_token, (char *)"|", 2) != 0)
+		next_token = NULL;
+	return (current_token && next_token);
 }
