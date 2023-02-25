@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 13:35:14 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 13:45:53 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 15:14:02 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,13 +85,19 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 		execute(cmd, minishell);
 		g_minishell_status = S_PROMPT;
 	}
-	else
-	{
-		g_minishell_status = S_PROMPT;
-	}
 	free_ast(cmd);
 	free_token_list(tokens_to_free);
 	return (SUCCESS);
+}
+
+static void	restore_stdin(int stdin_fd)
+{
+	if (g_minishell_status == S_HEREDOC_ABORT)
+	{
+		g_minishell_status = S_PROMPT;
+		dup2(stdin_fd, STDIN_FILENO);
+		ft_putstr_fd("\n", 1);
+	}
 }
 
 // free OK !
@@ -100,15 +106,17 @@ int	main_loop(t_minishell *minishell)
 {
 	t_list				*tokens;
 	char				*cmd_input;
+	int					stdin_fd;
 
 	while (!minishell->should_exit)
 	{
+		restore_stdin(stdin_fd);
 		cmd_input = readline(minishell->prompt_msg);
+		stdin_fd = dup(STDIN_FILENO);
 		if (cmd_input == NULL)
 		{
 			printf("exit\n");
 			exit_(minishell, NULL, 0);
-			exit(0);
 		}
 		if (ft_strlen(cmd_input) == 0)
 			continue ;
