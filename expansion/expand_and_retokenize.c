@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 12:08:22 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 17:50:40 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 18:00:56 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ void	replace_expanded_token(t_list **tokens_ptr, t_list *new_tokens)
 	(*tokens_ptr)->next = next;
 }
 
-
-#include <stdio.h>
 t_list	*weak_tokenizer(char *string)
 {
 	char	**tokens;
@@ -54,14 +52,15 @@ t_list	*weak_tokenizer(char *string)
 	int		i;
 
 	tokens = ft_split(string, ' ');
-	if (tokens == NULL)
-		return (NULL);
+	if (tokens == NULL || tokens[0] == NULL)
+		return (ft_lstnew(string));
 	i = 0;
 	token_list = NULL;
+	ft_lstadd_back(&token_list, ft_lstnew(tokens[i]));
+	i++;
 	while (tokens[i] != NULL)
 	{
 		ft_lstadd_back(&token_list, ft_lstnew(tokens[i]));
-		// TODO protect
 		i++;
 	}
 	return (token_list);
@@ -86,8 +85,7 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 		new_tokens = weak_tokenizer(new_token_c);
 		if (new_tokens == NULL)
 			malloc_error(minishell);
-
-		else if (new_tokens && new_tokens->next == NULL)
+		if (new_tokens && new_tokens->next == NULL)
 		{
 			tokens_ptr->content = new_tokens->content;
 			free(new_tokens);

@@ -6,7 +6,6 @@ extern "C" {
 #define TEST
 #endif
 
-
 #include "../main.c"
 #include "../minishell_utils.c"
 #include "../token_checker/token_checker_main.c"

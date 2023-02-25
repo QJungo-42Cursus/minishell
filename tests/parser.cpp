@@ -5,6 +5,7 @@
 #include <vector>
 
 extern "C" {
+#include "../minishell.h"
 int logic2(t_list *cursor, t_cmd *cmd, t_minishell *minishell) {
   int tok_type;
   t_list *start_left = cursor;
@@ -87,10 +88,10 @@ void compare_ast(t_cmd *ast, t_cmd *expected, int depth = 0) {
     compare_ast(ast->s_pipeline.first_cmd, expected->s_pipeline.first_cmd,
                 depth + 1);
   } else if (ast->type == LOGIC_AND || ast->type == LOGIC_OR) {
-    ASSERT_NE(ast->s_pipe.left, (t_cmd *)NULL);
-    ASSERT_NE(ast->s_pipe.right, (t_cmd *)NULL);
-    compare_ast(ast->s_pipe.left, expected->s_pipe.left, depth + 1);
-    compare_ast(ast->s_pipe.right, expected->s_pipe.right, depth + 1);
+    ASSERT_NE(ast->s_logic.left, (t_cmd *)NULL);
+    ASSERT_NE(ast->s_logic.right, (t_cmd *)NULL);
+    compare_ast(ast->s_logic.left, expected->s_logic.left, depth + 1);
+    compare_ast(ast->s_logic.right, expected->s_logic.right, depth + 1);
   } else if (ast->type == REDIR_IN || REDIR_OUT || REDIR_APPEND) {
     ASSERT_STREQ(ast->s_redir.filename, expected->s_redir.filename);
     ASSERT_NE(ast->s_redir.cmd, (t_cmd *)NULL);

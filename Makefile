@@ -78,6 +78,7 @@ SRCS_TEST = tests/main.cpp \
 			tests/tokenizerWithQuote.cpp \
 			tests/expansion.cpp \
 			tests/executor.cpp \
+			tests/builtins.cpp \
 			tests/parser.cpp
 
 #OBJS_TEST =		$(SRCS_TEST:.cpp=.o)
@@ -108,6 +109,11 @@ texp:
 texec:
 	@make -C libft
 	c++ $(GTEST_INC) tests/main.cpp tests/executor.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST) 
+	./$(NAME_TEST)
+	
+tbuil:
+	@make -C libft
+	c++ $(GTEST_INC)  tests/main.cpp tests/builtins.cpp $(GTEST) $(LIBFT_A) -o $(NAME_TEST)
 	./$(NAME_TEST)
 
 tpars:

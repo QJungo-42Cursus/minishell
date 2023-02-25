@@ -6,7 +6,7 @@
 /*   By: agonelle <agonelle@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 12:21:08 by agonelle          #+#    #+#             */
-/*   Updated: 2023/02/25 12:21:56 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/02/25 18:02:45 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,5 @@ t_bool	are_two_pipe_consecutive(t_list *current)
 		next_token = (char *)current->next->content;
 	if (next_token && ft_strncmp(next_token, (char *)"|", 2) != 0)
 		next_token = NULL;
-	return (current_token && next_token);
+	return ((t_bool)(current_token && next_token));
 }
