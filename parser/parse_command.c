@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:01 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 16:40:59 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 17:50:14 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,16 @@ static int	is_token_valid(char *token, t_list *cursor, t_cmd *cmd)
 static int	unquote_and_expand(t_list **tokens,
 		t_cmd *cmd, t_minishell *minishell)
 {
-	t_list	*cursor;
+	//t_list	*cursor;
+
 
 	*tokens = expand_and_retokenize(*tokens, minishell);
-	cursor = *tokens;
-	while (cursor != NULL)
-	{
-		unquote((char *)cursor->content);
-		cursor = cursor->next;
-	}
+	//cursor = *tokens;
+	//while (cursor != NULL)
+	//{
+	//	unquote((char *)cursor->content);
+	//	cursor = cursor->next;
+	//}
 	cmd->type = COMMAND;
 	cmd->s_command.argv
 		= (char **)malloc(sizeof(char *) * (ft_lstsize(*tokens) + 1));

@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:33 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 17:22:17 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/02/25 17:29:49 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@ static void	set_pipes(int i,
 		t_cmd *pipeline_cmd, t_cmd *cmd_cursor, int *shitty_pipe, int *heredoc_pipe)
 {
 	if (i == 0 && cmd_cursor->s_command.heredoc)
-	{}
+	{
+		dup2(heredoc_pipe[STDIN_FILENO], STDIN_FILENO);
+		close(heredoc_pipe[STDIN_FILENO]);
+		close(heredoc_pipe[STDOUT_FILENO]);
+	}
 	if (i != 0)
 		dup2(pipeline_cmd->s_pipeline.pipes[pipe_index(i - 1, STDIN_FILENO)],
 			STDIN_FILENO);
@@ -54,7 +58,9 @@ static void	m(t_cmd *pipeline_cmd,
 {
 	int		i;
 	t_cmd	*cmd_cursor;
-	int		to_reopen;
+	int		heredoc_pipe[2];
+
+	pipe(heredoc_pipe);
 
 	cmd_cursor = pipeline_cmd->s_pipeline.first_cmd;
 	i = 0;
@@ -63,20 +69,17 @@ static void	m(t_cmd *pipeline_cmd,
 		pipeline_cmd->s_pipeline.pids[i] = fork();
 		if (pipeline_cmd->s_pipeline.pids[i] == 0)
 		{
-			set_pipes(i, pipeline_cmd, cmd_cursor, shitty_pipe);
+			set_pipes(i, pipeline_cmd, cmd_cursor, shitty_pipe, heredoc_pipe);
 			run_exec(minishell, cmd_cursor, exit_status);
 		}
 		if (cmd_cursor->s_command.heredoc != NULL && i != 0)
-			write(pipeline_cmd->s_pipeline.pipes[pipe_index(i - 1,
-					STDOUT_FILENO)], cmd_cursor->s_command.heredoc,
-				ft_strlen(cmd_cursor->s_command.heredoc));
+			ft_putstr_fd(cmd_cursor->s_command.heredoc, pipeline_cmd->s_pipeline.pipes[pipe_index(i - 1, STDOUT_FILENO)]);
 		if (cmd_cursor->s_command.heredoc != NULL && i == 0)
 		{
 			// comme la redir
-			write(pipeline_cmd->s_pipeline.pipes[pipe_index(i,
-					STDOUT_FILENO)], cmd_cursor->s_command.heredoc,
-				ft_strlen(cmd_cursor->s_command.heredoc));
-
+			ft_putstr_fd(cmd_cursor->s_command.heredoc, heredoc_pipe[STDOUT_FILENO]);
+			close(heredoc_pipe[STDIN_FILENO]);
+			close(heredoc_pipe[STDOUT_FILENO]);
 		}
 		cmd_cursor = cmd_cursor->s_command.next;
 		i++;
