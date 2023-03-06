@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:17:52 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:41:00 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/06 20:45:22 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ static void	set_normal_token_position(const char *str,
 		cursor_index++;
 	}
 	token_pos->end = cursor_index;
+// |" - "word"|
+// echo " - "word" - "'''' => TODO ca separe !!!
 }
 
 void	set_next_token_position(const char *cmd,

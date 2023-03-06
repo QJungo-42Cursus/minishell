@@ -62,7 +62,8 @@ SRCS_PRT = 		ft_putchar_fd.c \
 				ft_printf/utils/free_join.c \
 				ft_printf/utils/index_words.c
 
-SRCS_MEM =		split_free.c
+SRCS_MEM =		split_free.c \
+				ft_memmove.c
 
 
 SRCS = 			$(addprefix char/,	$(SRCS_CHAR)) \
