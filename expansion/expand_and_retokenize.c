@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 12:08:22 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/06 10:40:23 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/06 14:09:10 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "../tokenizer/tokenizer.h"
 #include "../expansion/expansion.h"
 
-char	*expand_o(t_minishell *minishell, t_list *tokens_ptr)
+static char	*expand_o(t_minishell *minishell, t_list *tokens_ptr)
 {
 	char	*initial_token;
 	char	*new_token;
@@ -32,12 +32,13 @@ char	*expand_o(t_minishell *minishell, t_list *tokens_ptr)
 	return (new_token);
 }
 
-void	replace_expanded_token(t_list **tokens_ptr, t_list *new_tokens)
+static void	replace_expanded_token(t_list **tokens_ptr, t_list *new_tokens)
 {
 	t_list		*next;
 
 	next = (*tokens_ptr)->next;
 	(*tokens_ptr)->content = new_tokens->content;
+	unquote((char *)new_tokens->content);
 	(*tokens_ptr)->next = new_tokens->next;
 	(*tokens_ptr) = (*tokens_ptr)->next;
 	while ((*tokens_ptr)->next != NULL)
@@ -45,7 +46,7 @@ void	replace_expanded_token(t_list **tokens_ptr, t_list *new_tokens)
 	(*tokens_ptr)->next = next;
 }
 
-t_list	*weak_tokenizer(char *string)
+static t_list	*weak_tokenizer(char *string)
 {
 	char	**tokens;
 	t_list	*token_list;
@@ -99,15 +100,13 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 		if (new_tokens && new_tokens->next == NULL)
 		{
 			tokens_ptr->content = new_tokens->content;
-			free(new_tokens);
-			free(new_token_c);
+			unquote((char *)tokens_ptr->content);
 		}
 		else if (new_token_c && new_tokens)
-		{
 			replace_expanded_token(&tokens_ptr, new_tokens);
-			free(new_tokens);
+		free(new_tokens);
+		if (ft_strlen(new_token_c) > 0)
 			free(new_token_c);
-		}
 		tokens_ptr = tokens_ptr->next;
 	}
 	return (tokens);

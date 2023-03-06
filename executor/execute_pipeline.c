@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:33 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/06 10:56:02 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/06 14:09:48 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ typedef struct s_norm {
 	int		heredoc_pipe[2];
 }	t_norm;
 
-//static void	set_pipes(int i, t_cmd *pipeline_cmd,
-//		t_cmd *cmd_cursor, int *shitty_pipe, int *heredoc_pipe)
 static void	set_pipes(t_norm n)
 {
 	if (n.i == 0 && n.cmd_cursor->s_command.heredoc)
@@ -81,7 +79,6 @@ static void	m(t_norm n,
 				->s_pipeline.pipes[pipe_index(n.i - 1, STDOUT_FILENO)]);
 		if (n.cmd_cursor->s_command.heredoc != NULL && n.i == 0)
 		{
-			// comme la redir
 			ft_putstr_fd(n.cmd_cursor->s_command.heredoc,
 				n.heredoc_pipe[STDOUT_FILENO]);
 			close(n.heredoc_pipe[STDIN_FILENO]);

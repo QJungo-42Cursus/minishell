@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 14:20:11 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/06 13:30:56 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	main(int argc, char **argv, char **envp)
 	signal(SIGQUIT, signal_handler);
 	if (argc != 1)
 	{
-		write(2, "Usage: ./minishell {don't use any arguments}\n", 45);
+		ft_putstr_fd("Usage: ./minishell {don't use any arguments}\n", 2);
 		exit(1);
 	}
 	if (!isatty(0) || !isatty(1) || !isatty(2))
