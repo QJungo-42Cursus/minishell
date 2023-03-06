@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 13:33:22 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 15:08:12 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/06 18:06:23 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	handle_sigint(void)
 	}
 }
 
-static void	handle_sigquit(void)
+void	handle_sigquit(void)
 {
 	if (g_minishell_status == S_PROMPT)
 	{
