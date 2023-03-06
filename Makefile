@@ -73,8 +73,13 @@ re: fclean all
 lldb: all
 	lldb ./$(NAME)
 
+SAN =	-fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all \
+		-fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow \
+		-fno-sanitize=null -fno-sanitize=alignment
+
 san: all
-	$(CC) $(CFLAGS) -fsanitize=address $(SRCS) $(OUT_LIBS) $(LIBFT) -o $(NAME)
+	$(CC) $(CFLAGS) $(SAN) $(OUT_LIBS) $(INCLUDES) $(SRCS) $(LIBFT) -o $(NAME)
+
 
 SRCS_TEST = tests/main.cpp \
 			tests/tokenizer.cpp \
