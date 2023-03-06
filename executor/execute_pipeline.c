@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:33 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 17:29:49 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/06 10:56:02 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,29 +16,38 @@
 #include <sys/wait.h>
 #include "executor.h"
 
-static void	set_pipes(int i,
-		t_cmd *pipeline_cmd, t_cmd *cmd_cursor, int *shitty_pipe, int *heredoc_pipe)
+typedef struct s_norm {
+	int		i;
+	t_cmd	*pipeline_cmd;
+	t_cmd	*cmd_cursor;
+	int		shitty_pipe[2];
+	int		heredoc_pipe[2];
+}	t_norm;
+
+//static void	set_pipes(int i, t_cmd *pipeline_cmd,
+//		t_cmd *cmd_cursor, int *shitty_pipe, int *heredoc_pipe)
+static void	set_pipes(t_norm n)
 {
-	if (i == 0 && cmd_cursor->s_command.heredoc)
+	if (n.i == 0 && n.cmd_cursor->s_command.heredoc)
 	{
-		dup2(heredoc_pipe[STDIN_FILENO], STDIN_FILENO);
-		close(heredoc_pipe[STDIN_FILENO]);
-		close(heredoc_pipe[STDOUT_FILENO]);
+		dup2(n.heredoc_pipe[STDIN_FILENO], STDIN_FILENO);
+		close(n.heredoc_pipe[STDIN_FILENO]);
+		close(n.heredoc_pipe[STDOUT_FILENO]);
 	}
-	if (i != 0)
-		dup2(pipeline_cmd->s_pipeline.pipes[pipe_index(i - 1, STDIN_FILENO)],
-			STDIN_FILENO);
-	if (has_next_cmd_heredoc(cmd_cursor))
+	if (n.i != 0)
+		dup2(n.pipeline_cmd->s_pipeline.pipes[pipe_index(n.i - 1,
+				STDIN_FILENO)], STDIN_FILENO);
+	if (has_next_cmd_heredoc(n.cmd_cursor))
 	{
-		dup2(shitty_pipe[STDOUT_FILENO], STDOUT_FILENO);
-		close(shitty_pipe[STDIN_FILENO]);
-		close(shitty_pipe[STDOUT_FILENO]);
+		dup2(n.shitty_pipe[STDOUT_FILENO], STDOUT_FILENO);
+		close(n.shitty_pipe[STDIN_FILENO]);
+		close(n.shitty_pipe[STDOUT_FILENO]);
 	}
-	else if (!is_last_cmd(pipeline_cmd, i))
-		dup2(pipeline_cmd->s_pipeline.pipes[pipe_index(i, STDOUT_FILENO)],
+	else if (!is_last_cmd(n.pipeline_cmd, n.i))
+		dup2(n.pipeline_cmd->s_pipeline.pipes[pipe_index(n.i, STDOUT_FILENO)],
 			STDOUT_FILENO);
-	close_all_pipes(pipeline_cmd->s_pipeline.pipes,
-		pipeline_cmd->s_pipeline.pipe_count);
+	close_all_pipes(n.pipeline_cmd->s_pipeline.pipes,
+		n.pipeline_cmd->s_pipeline.pipe_count);
 }
 
 static void	run_exec(t_minishell *minishell,
@@ -53,36 +62,33 @@ static void	run_exec(t_minishell *minishell,
 	exit(EXIT_FAILURE);
 }
 
-static void	m(t_cmd *pipeline_cmd,
-		t_minishell *minishell, int *shitty_pipe, int *exit_status)
+static void	m(t_norm n,
+		t_minishell *minishell, int *exit_status)
 {
-	int		i;
-	t_cmd	*cmd_cursor;
-	int		heredoc_pipe[2];
-
-	pipe(heredoc_pipe);
-
-	cmd_cursor = pipeline_cmd->s_pipeline.first_cmd;
-	i = 0;
-	while (i < pipeline_cmd->s_pipeline.pipe_count)
+	pipe(n.heredoc_pipe);
+	n.cmd_cursor = n.pipeline_cmd->s_pipeline.first_cmd;
+	n.i = 0;
+	while (n.i < n.pipeline_cmd->s_pipeline.pipe_count)
 	{
-		pipeline_cmd->s_pipeline.pids[i] = fork();
-		if (pipeline_cmd->s_pipeline.pids[i] == 0)
+		n.pipeline_cmd->s_pipeline.pids[n.i] = fork();
+		if (n.pipeline_cmd->s_pipeline.pids[n.i] == 0)
 		{
-			set_pipes(i, pipeline_cmd, cmd_cursor, shitty_pipe, heredoc_pipe);
-			run_exec(minishell, cmd_cursor, exit_status);
+			set_pipes(n);
+			run_exec(minishell, n.cmd_cursor, exit_status);
 		}
-		if (cmd_cursor->s_command.heredoc != NULL && i != 0)
-			ft_putstr_fd(cmd_cursor->s_command.heredoc, pipeline_cmd->s_pipeline.pipes[pipe_index(i - 1, STDOUT_FILENO)]);
-		if (cmd_cursor->s_command.heredoc != NULL && i == 0)
+		if (n.cmd_cursor->s_command.heredoc != NULL && n.i != 0)
+			ft_putstr_fd(n.cmd_cursor->s_command.heredoc, n.pipeline_cmd
+				->s_pipeline.pipes[pipe_index(n.i - 1, STDOUT_FILENO)]);
+		if (n.cmd_cursor->s_command.heredoc != NULL && n.i == 0)
 		{
 			// comme la redir
-			ft_putstr_fd(cmd_cursor->s_command.heredoc, heredoc_pipe[STDOUT_FILENO]);
-			close(heredoc_pipe[STDIN_FILENO]);
-			close(heredoc_pipe[STDOUT_FILENO]);
+			ft_putstr_fd(n.cmd_cursor->s_command.heredoc,
+				n.heredoc_pipe[STDOUT_FILENO]);
+			close(n.heredoc_pipe[STDIN_FILENO]);
+			close(n.heredoc_pipe[STDOUT_FILENO]);
 		}
-		cmd_cursor = cmd_cursor->s_command.next;
-		i++;
+		n.cmd_cursor = n.cmd_cursor->s_command.next;
+		n.i++;
 	}
 }
 
@@ -91,13 +97,14 @@ extern volatile sig_atomic_t	g_minishell_status;
 int	execute_pipeline(t_cmd *pipeline_cmd, t_minishell *minishell)
 {
 	int		exit_status;
-	int		shitty_pipe[2];
+	t_norm	n;
 
-	if (init_pipes(pipeline_cmd, shitty_pipe, minishell) == ERROR)
+	n.pipeline_cmd = pipeline_cmd;
+	if (init_pipes(pipeline_cmd, n.shitty_pipe, minishell) == ERROR)
 		malloc_error(minishell);
 	exit_status = 0;
 	g_minishell_status = S_EXEC;
-	m(pipeline_cmd, minishell, shitty_pipe, &exit_status);
+	m(n, minishell, &exit_status);
 	close_all_pipes(pipeline_cmd->s_pipeline.pipes,
 		pipeline_cmd->s_pipeline.pipe_count);
 	wait_all(pipeline_cmd, &exit_status);
