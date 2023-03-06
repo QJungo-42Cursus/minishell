@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:00 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 20:10:50 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/06 12:38:36 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,46 @@ void	free_minishell(t_minishell *minishell)
 	rl_clear_history();
 }
 
+static int	ft_ascii_is_valid_number(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	if (str[i] == '\0')
+		return (0);
+	while (str[i] != '\0')
+	{
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	exit_(t_minishell *minishell, char **argv, int exit_status)
 {
-	if (argv != NULL && argv[1] != NULL)
+	int			len;
+	long int	num;
+
+	len = 0;
+	while (argv != NULL && argv[len] != NULL)
+		len++;
+	if (len >= 2)
 	{
-		ft_putendl_fd("minishell: exit: too many arguments", 2);
-		return (ERROR);
+		if (ft_ascii_is_valid_number(argv[1]) == 0)
+		{
+			ft_putendl_fd("minishell: exit: numeric argument required", 2);
+			exit_status = 255;
+		}
+		if (len > 2)
+		{
+			ft_putendl_fd("minishell: exit: too many arguments", 2);
+			return (ERROR);
+		}
+		num = long_atoi(argv[1]);
+		exit_status = num;
 	}
 	free_minishell(minishell);
 	exit(exit_status);
