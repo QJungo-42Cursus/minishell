@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 12:08:22 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 18:00:56 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/06 10:40:23 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,24 @@ t_list	*weak_tokenizer(char *string)
 	return (token_list);
 }
 
+static char	*p1(t_minishell *minishell,
+		t_list **new_tokens, t_list **tokens_ptr)
+{
+	char	*new_token_c;
+
+	new_token_c = expand_o(minishell, *tokens_ptr);
+	if (new_token_c == NULL)
+	{
+		unquote((char *)(*tokens_ptr)->content);
+		*tokens_ptr = (*tokens_ptr)->next;
+		return (NULL);
+	}
+	*new_tokens = weak_tokenizer(new_token_c);
+	if (*new_tokens == NULL)
+		malloc_error(minishell);
+	return (new_token_c);
+}
+
 t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 {
 	t_list		*tokens_ptr;
@@ -75,16 +93,9 @@ t_list	*expand_and_retokenize(t_list *tokens, t_minishell *minishell)
 	tokens_ptr = tokens;
 	while (tokens_ptr != NULL)
 	{
-		new_token_c = expand_o(minishell, tokens_ptr);
+		new_token_c = p1(minishell, &new_tokens, &tokens_ptr);
 		if (new_token_c == NULL)
-		{
-			unquote((char *)tokens_ptr->content);
-			tokens_ptr = tokens_ptr->next;
 			continue ;
-		}
-		new_tokens = weak_tokenizer(new_token_c);
-		if (new_tokens == NULL)
-			malloc_error(minishell);
 		if (new_tokens && new_tokens->next == NULL)
 		{
 			tokens_ptr->content = new_tokens->content;

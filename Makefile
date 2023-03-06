@@ -73,6 +73,9 @@ re: fclean all
 lldb: all
 	lldb ./$(NAME)
 
+san: all
+	$(CC) $(CFLAGS) -fsanitize=address $(SRCS) $(OUT_LIBS) $(LIBFT) -o $(NAME)
+
 SRCS_TEST = tests/main.cpp \
 			tests/tokenizer.cpp \
 			tests/tokenizerWithQuote.cpp \
