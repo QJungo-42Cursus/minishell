@@ -8,12 +8,14 @@ extern "C" {
 }
 
 void tokenizerTest(const char *sentence, std::vector<std::string> expected) {
-//int	tokenizer(const char *cmd, t_list **tokens, t_bool is_expand_mode,		t_minishell *minishell)
+  // int	tokenizer(const char *cmd, t_list **tokens, t_bool is_expand_mode,
+  // t_minishell *minishell)
 
   t_list *tokens;
-  tokenizer(sentence, &tokens, FALSE, (t_minishell*)malloc(sizeof(t_minishell)));
+  tokenizer(sentence, &tokens, FALSE,
+            (t_minishell *)malloc(sizeof(t_minishell)));
   t_list *current = tokens;
-  for (size_t i = 0; i < expected.size(); i++) {
+  for (size_t i = 0; current != nullptr && i < expected.size(); i++) {
     EXPECT_EQ(std::string((char *)current->content), expected[i]);
     // std::cout << "expected: " << expected[i] << std::endl;
     // std::cout << "actual: " << (char *)current->content << std::endl;
