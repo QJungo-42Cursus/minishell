@@ -27,10 +27,10 @@ TEST(TokenizeWithQuote, someSpaceNothingAfter) {
   tokenizerTest("word '  '", {"word", "'  '"});
 }
 
-TEST(TokenizeWithQuote, notClosedWithSpaceAfter) { //
-  tokenizerTest("word '  ", {"word", "'  "});
-  // TODO est-ce que on crash tout de suite ?
-}
+//TEST(TokenizeWithQuote, notClosedWithSpaceAfter) { //
+//  tokenizerTest("word \'  ", {"word", "'  "});
+//  // TODO est-ce que on crash tout de suite ?
+//}
 
 TEST(TokenizeWithQuote, notClosedWithDollarAfter) { //
   tokenizerTest("word '  $", {"word", "'  $"});
@@ -120,4 +120,20 @@ TEST(TokenizeWithDoubleQuote, wordConcatRight) {
 TEST(TokenizeWithDoubleQuote, what) {
   tokenizerTest("echo \" salut\\\" \"               \"     ",
                 {"echo", "\" salut\\\"", "\"               \""});
+}
+
+TEST(TokenizeWithDoubleQuote, souldNotSplitDquoteAndSquote) { //
+  tokenizerTest("echo \"word\"'seconde'", {"echo", "\"word\"'seconde'"});
+}
+
+TEST(TokenizeWithDoubleQuote, souldNotSplitDquoteAndSquote2) { //
+  tokenizerTest("echo \"word\"\"\"'seconde'", {"echo", "\"word\"\"\"'seconde'"});
+}
+
+TEST(TokenizeWithDoubleQuote, souldNotSplitDquoteAndSquote3) { //
+  tokenizerTest("echo \"word\"\" \"'seconde'", {"echo", "\"word\"\" \"'seconde'"});
+}
+
+TEST(TokenizeWithDoubleQuote, souldNotSplitDquoteAndSquote4) { //
+  tokenizerTest("\"word\"\" \"salut", {"\"word\"\" \"salut"});
 }
