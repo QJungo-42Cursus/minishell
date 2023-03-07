@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:47 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 13:36:43 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/07 11:25:23 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,6 @@ int	cd(t_minishell *minishell, char **argv)
 	argc = 0;
 	while (argv[argc] != NULL)
 		argc++;
-	if (argc > 2)
-	{
-		write(2, "minishell: cd: too many arguments\n", 34);
-		return (ERROR);
-	}
 	if (argc == 1)
 		return (go_home(minishell));
 	return (change_dir(minishell, argv[1]));
