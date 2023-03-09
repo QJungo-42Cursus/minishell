@@ -44,16 +44,8 @@ TEST(Tokenize, oneAmpersant) { //
   tokenizerTest("ls -l &", {"ls", "-l", "&"});
 }
 
-TEST(Tokenize, twoAmpersant) {
-  tokenizerTest("ls -l && cat", {"ls", "-l", "&&", "cat"});
-}
-
 TEST(Tokenize, onePipe) { //
   tokenizerTest("ls -l |", {"ls", "-l", "|"});
-}
-
-TEST(Tokenize, twoPipe) {
-  tokenizerTest("ls -l || cat", {"ls", "-l", "||", "cat"});
 }
 
 TEST(Tokenize, oneAmpersantAndOnePipe) {

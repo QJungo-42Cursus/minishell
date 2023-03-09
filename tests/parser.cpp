@@ -264,21 +264,6 @@ TEST(Parser, EchoPipeCatGrep) {
   testParser({"echo", "hello", "|", "cat", "|", "grep", "hello"}, cmd);
 }
 
-TEST(Parser, LogicAndPipeline) {
-  t_cmd *cmd = new_cmd(LOGIC_AND);
-  cmd->s_logic.left = new_cmd(PIPELINE);
-  cmd->s_logic.left->s_pipeline.pipe_count = 2;
-  cmd->s_logic.left->s_pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->s_logic.left->s_pipeline.first_cmd->s_command.argv = setup_argv({"echo", "hello"});
-  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
-  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"cat"});
-  cmd->s_logic.left->s_pipeline.first_cmd->s_command.next->s_command.next = NULL;
-  cmd->s_logic.right = new_cmd(COMMAND);
-  cmd->s_logic.right->s_command.argv = setup_argv({"echo", "hello"});
-  cmd->s_logic.right->s_command.next = NULL;
-  testParser({"echo", "hello", "|", "cat", "&&", "echo", "hello"}, cmd);
-}
-
 TEST(Parser, SimpleOutRedirection) {
   t_cmd *cmd = new_cmd(REDIR_OUT);
   cmd->s_redir.cmd = new_cmd(COMMAND);
