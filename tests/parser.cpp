@@ -6,29 +6,6 @@
 
 extern "C" {
 #include "../minishell.h"
-int logic2(t_list *cursor, t_cmd *cmd, t_minishell *minishell) {
-  int tok_type;
-  t_list *start_left = cursor;
-  t_list *start_right = cursor;
-
-  while (cursor->next != NULL) {
-    tok_type = get_token_type((char *)cursor->next->content);
-    if (tok_type == LOGIC_OR || tok_type == LOGIC_AND) {
-      start_right = cursor->next->next;
-      free(cursor->next->content);
-      cursor->next = NULL;
-
-      cmd->type = (t_cmd_type)tok_type;
-      cmd->s_logic.left = (t_cmd *)malloc(sizeof(t_cmd));
-      cmd->s_logic.right = (t_cmd *)malloc(sizeof(t_cmd));
-      set_command(start_left, cmd->s_logic.left, minishell);
-      set_command(start_right, cmd->s_logic.right, minishell);
-      return (USED);
-    }
-    cursor = cursor->next;
-  }
-  return (FALSE);
-}
 }
 void print_token_type(int token_type) {
   if (token_type == OPEN_PARENTHESES)
@@ -37,10 +14,6 @@ void print_token_type(int token_type) {
     std::cout << "CLOSE_PARENTHESES" << std::endl;
   else if (token_type == PIPELINE)
     std::cout << "PIPE" << std::endl;
-  else if (token_type == LOGIC_AND)
-    std::cout << "AND" << std::endl;
-  else if (token_type == LOGIC_OR)
-    std::cout << "OR" << std::endl;
   else if (token_type == REDIR_IN)
     std::cout << "REDIRECT_IN" << std::endl;
   else if (token_type == REDIR_OUT)
@@ -87,11 +60,6 @@ void compare_ast(t_cmd *ast, t_cmd *expected, int depth = 0) {
     ASSERT_NE(ast->s_pipeline.first_cmd, (t_cmd *)nullptr);
     compare_ast(ast->s_pipeline.first_cmd, expected->s_pipeline.first_cmd,
                 depth + 1);
-  } else if (ast->type == LOGIC_AND || ast->type == LOGIC_OR) {
-    ASSERT_NE(ast->s_logic.left, (t_cmd *)NULL);
-    ASSERT_NE(ast->s_logic.right, (t_cmd *)NULL);
-    compare_ast(ast->s_logic.left, expected->s_logic.left, depth + 1);
-    compare_ast(ast->s_logic.right, expected->s_logic.right, depth + 1);
   } else if (ast->type == REDIR_IN || REDIR_OUT || REDIR_APPEND) {
     ASSERT_STREQ(ast->s_redir.filename, expected->s_redir.filename);
     ASSERT_NE(ast->s_redir.cmd, (t_cmd *)NULL);
@@ -122,8 +90,6 @@ void testParser(std::vector<std::string> tokens, t_cmd *expected,
 /************************* ParserUtils, get_token_type ************************/
 
 TEST(ParserUtils, get_token_type) {
-  EXPECT_EQ(get_token_type((char *)"&&"), LOGIC_AND);
-  EXPECT_EQ(get_token_type((char *)"||"), LOGIC_OR);
   EXPECT_EQ(get_token_type((char *)"|"), PIPELINE);
   EXPECT_EQ(get_token_type((char *)">"), REDIR_OUT);
   EXPECT_EQ(get_token_type((char *)">>"), REDIR_APPEND);
@@ -216,13 +182,7 @@ TEST(ParserPipeline, ManyPipes) {
 }
 
 /*********** redir ***********/
-/*********** logic ***********/
-TEST(ParserLogic, NoLogic) {
-  std::vector<std::string> tokens = {"ls", "echo", "hello"};
-  t_cmd *cmd = new t_cmd;
-  bool result = logic2(generate_tokens(tokens), cmd, g_minishell);
-  EXPECT_EQ(result, false);
-}
+// TODO
 
 /*********** parser **********/
 TEST(Parser, EchoHello) {

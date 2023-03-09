@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 20:57:24 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/09 15:05:17 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,42 +14,6 @@
 #include "parser.h"
 #include <unistd.h>
 #include "../minishell.h"
-
-static void	first_logic(t_list **start_right, t_list **cursor)
-{
-	*start_right = (*cursor)->next->next;
-	free((*cursor)->next->content);
-	(*cursor)->next = NULL;
-}
-
-int	logic(t_list *cursor, t_cmd *cmd, t_minishell *minishell)
-{
-	int			tok_type;
-	t_list		*start_left;
-	t_list		*start_right;
-
-	start_left = cursor;
-	while (cursor->next != NULL)
-	{
-		tok_type = get_token_type((char *)cursor->next->content);
-		if (tok_type == LOGIC_OR || tok_type == LOGIC_AND)
-		{
-			first_logic(&start_right, &cursor);
-			cmd->type = (t_cmd_type)tok_type;
-			cmd->s_logic.left = (t_cmd *)malloc(sizeof(t_cmd));
-			if (cmd->s_logic.left == NULL)
-				malloc_error(minishell);
-			cmd->s_logic.right = (t_cmd *)malloc(sizeof(t_cmd));
-			if (cmd->s_logic.right == NULL)
-				malloc_error(minishell);
-			set_command(start_left, cmd->s_logic.left, minishell);
-			set_command(start_right, cmd->s_logic.right, minishell);
-			return (USED);
-		}
-		cursor = cursor->next;
-	}
-	return (FALSE);
-}
 
 int	redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
@@ -93,9 +57,6 @@ int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 		}
 		tokens = lst_cut_first_and_last(tokens);
 	}
-	exit_status = logic(tokens, cmd, minishell);
-	if (exit_status == USED)
-		return (exit_status);
 	exit_status = redir(tokens, cmd, minishell);
 	if (exit_status == USED)
 		return (exit_status);
