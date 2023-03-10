@@ -44,16 +44,8 @@ TEST(Tokenize, oneAmpersant) { //
   tokenizerTest("ls -l &", {"ls", "-l", "&"});
 }
 
-TEST(Tokenize, twoAmpersant) {
-  tokenizerTest("ls -l && cat", {"ls", "-l", "&&", "cat"});
-}
-
 TEST(Tokenize, onePipe) { //
   tokenizerTest("ls -l |", {"ls", "-l", "|"});
-}
-
-TEST(Tokenize, twoPipe) {
-  tokenizerTest("ls -l || cat", {"ls", "-l", "||", "cat"});
 }
 
 TEST(Tokenize, oneAmpersantAndOnePipe) {
@@ -193,19 +185,4 @@ TEST(TokenizeMean, emptyQuoted) {
 TEST(TokenizeMean, doubleBitch) {
   tokenizerTest("\"", {"\""});
   tokenizerTest("\"\"", {"\"\""});
-}
-
-/***************************** TokenizeParenthese *****************************/
-TEST(TokenizeParenthese, simple) {
-  tokenizerTest("(ls -l)", {"(", "ls", "-l", ")"});
-}
-
-TEST(TokenizeParenthese, simpleWithPipe) {
-  tokenizerTest("(ls -l) | (ls -l)",
-                {"(", "ls", "-l", ")", "|", "(", "ls", "-l", ")"});
-}
-
-TEST(TokenizeParenthese, simpleWithPipeAndWord) {
-  tokenizerTest("(ls -l) | (ls -l) word",
-                {"(", "ls", "-l", ")", "|", "(", "ls", "-l", ")", "word"});
 }

@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:11 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 12:44:04 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/09 15:07:27 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,6 @@ int	get_token_type(char *token)
 		return (OPEN_PARENTHESES);
 	else if (ft_strncmp(token, ")", 2) == 0)
 		return (CLOSE_PARENTHESES);
-	else if (ft_strncmp(token, "&&", 3) == 0)
-		return (LOGIC_AND);
-	else if (ft_strncmp(token, "||", 3) == 0)
-		return (LOGIC_OR);
 	else if (ft_strncmp(token, "|", 2) == 0)
 		return (PIPELINE);
 	else if (ft_strncmp(token, ">>", 3) == 0)

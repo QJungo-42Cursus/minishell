@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:43 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:20:47 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/09 15:04:54 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,26 +21,6 @@
 #include "../builtins/builtins.h"
 #include "../env/env.h"
 
-int	execute_logic(t_cmd *cmd, t_minishell *minishell)
-{
-	int		exit_status;
-	int		left_exit_status;
-
-	exit_status = 0;
-	left_exit_status = execute(cmd->s_logic.left, minishell);
-	if (cmd->type == LOGIC_AND && left_exit_status == 0)
-		exit_status = execute(cmd->s_logic.right, minishell);
-	else if (cmd->type == LOGIC_AND && left_exit_status != 0)
-		exit_status = left_exit_status;
-	else if (cmd->type == LOGIC_OR && left_exit_status != 0)
-		exit_status = execute(cmd->s_logic.right, minishell);
-	else if (cmd->type == LOGIC_OR && left_exit_status == 0)
-		exit_status = left_exit_status;
-	else
-		return (exit_status);
-	return (exit_status);
-}
-
 int	execute(t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
@@ -53,8 +33,6 @@ int	execute(t_cmd *cmd, t_minishell *minishell)
 		exit_status = execute_redir(cmd, minishell);
 	else if (cmd->type == PIPELINE)
 		exit_status = execute_pipeline(cmd, minishell);
-	else if (cmd->type == LOGIC_AND || cmd->type == LOGIC_OR)
-		exit_status = execute_logic(cmd, minishell);
 	minishell->last_exit_status = exit_status;
 	return (exit_status);
 }

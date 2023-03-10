@@ -73,7 +73,6 @@ void bash(const char *cmd_input, int &exit_code) {
 TEST(End2End, echo) {
   COMPARE("echo hello");
   COMPARE("echo -n hello");
-  COMPARE("echo -n hello && echo -n world");
 }
 
 TEST(End2End, echoPipe) { COMPARE("echo hello | cat -e"); }
@@ -88,42 +87,5 @@ TEST(End2End_Eval, builtins_echo) { COMPARE("echo \"it works\""); }
 
 TEST(End2End_Eval, builtins_exit) { COMPARE("exit"); }
 
-TEST(End2End_Eval, builtins_cd_relative) { COMPARE("cd env && pwd && cd .."); }
-
-// TODO minishell remplace /bin par /usr/bin
-// TEST(End2End_Eval, builtins_cd_absolute) { COMPARE("cd /bin && pwd"); }
-
-TEST(End2End_Eval, builtins_cd_home) { COMPARE("cd && pwd"); }
-
-// TODO : pas sur qu'on doivent gerer ca
-// TEST(End2End_Eval, builtins_cd_last) { COMPARE("cd - && pwd"); }
-
-// On ne gere pas ca
-// TEST(End2End_Eval, builtins_cd_tilda) { COMPARE("cd ~/Cursus && pwd"); }
-
-TEST(End2End_Eval, builtins_env_path) {
-  COMPARE("unset PATH && export PATH=\"/bin:/usr/bin\" && ls");
-  COMPARE("unset PATH && export PATH=\"/bin:/usr/bin\" && emacs");
-  COMPARE("unset PATH && ls");
-  COMPARE("unset PATH && emacs");
-}
-
 // ne met pas dans le meme ordre...
 // TEST(End2End_Eval, builtins_env) { COMPARE("env"); }
-
-// crashent, alors qu'il marche en normal
-/*
-TEST(End2End_Eval, builtins_env_export) { COMPARE("export TEST=1 && env"); }
-
-TEST(End2End_Eval, builtins_env_unset) {
-  COMPARE("export TEST=1 && env && unset TEST && env");
-}
-
-TEST(End2End_Eval, builtins_env_expansion) {
-  COMPARE("export TEST=\"salut\" && echo $TEST");
-}
-
-TEST(End2End_Eval, builtins_env_binpath) {
-  COMPARE("export TEST= && /usr/bin/env");
-}
-*/

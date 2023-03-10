@@ -126,42 +126,6 @@ TEST(Executor, ThreeCommandsPipeline) {
   test_exec(cmd, "never_touch_this_file$\n", "", 0);
 }
 
-TEST(Executor, SimpleLogicalAnd) {
-  t_cmd *cmd = new_cmd(LOGIC_AND);
-  cmd->s_logic.left = new_cmd(COMMAND);
-  cmd->s_logic.left->s_command.argv = setup_argv({"/bin/echo", "hi friends !"});
-  cmd->s_logic.right = new_cmd(COMMAND);
-  cmd->s_logic.right->s_command.argv = setup_argv({"/bin/echo", "how are you ?"});
-  test_exec(cmd, "hi friends !\nhow are you ?\n", "", 0);
-}
-
-TEST(Executor, SimpleLogicalAndFail) {
-  t_cmd *cmd = new_cmd(LOGIC_AND);
-  cmd->s_logic.left = new_cmd(COMMAND);
-  cmd->s_logic.left->s_command.argv = setup_argv({"/bin/bc", "not_here_file"});
-  cmd->s_logic.right = new_cmd(COMMAND);
-  cmd->s_logic.right->s_command.argv = setup_argv({"/bin/echo", "how are you ?"});
-  test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
-}
-
-TEST(Executor, SimpleLogicalOr) {
-  t_cmd *cmd = new_cmd(LOGIC_OR);
-  cmd->s_logic.left = new_cmd(COMMAND);
-  cmd->s_logic.left->s_command.argv = setup_argv({"/bin/echo", "hi friends !"});
-  cmd->s_logic.right = new_cmd(COMMAND);
-  cmd->s_logic.right->s_command.argv = setup_argv({"/bin/echo", "how are you ?"});
-  test_exec(cmd, "hi friends !\n", "", 0);
-}
-
-TEST(Executor, SimpleLogicalOrFail) {
-  t_cmd *cmd = new_cmd(LOGIC_OR);
-  cmd->s_logic.left = new_cmd(COMMAND);
-  cmd->s_logic.left->s_command.argv = setup_argv({"/bin/bc", "not_here_file"});
-  cmd->s_logic.right = new_cmd(COMMAND);
-  cmd->s_logic.right->s_command.argv = setup_argv({"/bin/echo", "how are you ?"});
-  test_exec(cmd, "how are you ?\n", "File not_here_file is unavailable.\n", 0);
-}
-
 TEST(Executor, SimpleRedirIn) {
   t_cmd *cmd = new_cmd(REDIR_IN);
   cmd->s_redir.filename = (char *)strdup("tests/test_files/file_input");

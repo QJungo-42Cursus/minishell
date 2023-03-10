@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:53 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:01:54 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/09 15:05:28 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,6 @@ void	free_ast(t_cmd *cmd)
 		free(cmd->s_redir.filename);
 		cmd->s_redir.filename = NULL;
 		free_ast(cmd->s_redir.cmd);
-	}
-	else if (cmd->type == LOGIC_AND || cmd->type == LOGIC_OR)
-	{
-		free_ast(cmd->s_logic.left);
-		free_ast(cmd->s_logic.right);
 	}
 	free(cmd);
 }
