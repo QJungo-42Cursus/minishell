@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:11 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/09 15:07:27 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/10 09:36:53 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	get_token_type(char *token)
 		return (COMMAND);
 }
 
+/*
 t_bool	are_we_in_parentheses(t_list *tokens)
 {
 	t_list		*cursor;
@@ -58,11 +59,11 @@ t_bool	are_we_in_parentheses(t_list *tokens)
 	}
 	return (FALSE);
 }
+*/
 
 /* renvoie un pointeur sur le token ")" fermant le 1er groupe de parentheses 
  * si pas de parentheses des le debut, renvoie le meme pointeur
  * si pas de parentheses fermantes, renvoie le dernier token
- */
 t_list	*skip_parentheses(t_list *cursor)
 {
 	int			parentheses;
@@ -80,6 +81,7 @@ t_list	*skip_parentheses(t_list *cursor)
 	}
 	return (cursor);
 }
+ */
 
 /// une sorte de "trim", ca enleve le debut et la fin de la t_list
 /// return le pointeur sur le 1er token (apres cut) de la t_list

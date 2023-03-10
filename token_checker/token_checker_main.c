@@ -6,53 +6,11 @@
 /*   By: agonelle <agonelle@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 12:11:42 by agonelle          #+#    #+#             */
-/*   Updated: 2023/02/25 12:20:51 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/10 09:31:34 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "token_checker.h"
-
-static int	check_parenthesis_order(t_list *token)
-{
-	int		open;
-	t_list	*tmp;
-
-	open = 0;
-	tmp = token;
-	while (tmp)
-	{
-		if (ft_strncmp((char *)tmp->content, (char *)"(", 2) == 0)
-			open++;
-		if (ft_strncmp((char *)tmp->content, (char *)")", 2) == 0)
-			open--;
-		if (open < 0)
-		{
-			errno = EINVAL;
-			perror("syntax error near unexpected tooken ')'");
-			return (ERROR);
-		}
-		tmp = tmp->next;
-	}
-	return (SUCCESS);
-}
-
-static int	check_parenthesis(t_list *token)
-{
-	int		open;
-	int		close;
-
-	open = count_separateur_in_tooken(token, (char *)"(");
-	close = count_separateur_in_tooken(token, (char *)")");
-	if (open != close)
-	{
-		errno = EINVAL;
-		perror("syntax error near unexpected tooken '()'");
-		return (ERROR);
-	}
-	if (check_parenthesis_order(token) == ERROR)
-		return (ERROR);
-	return (SUCCESS);
-}
 
 static int	check_pipe_position(t_list *lst_token)
 {
@@ -111,8 +69,6 @@ static int	check_heredoc_alone(t_list *tmp)
 
 int	check_valid_tokens(t_list *input_tooken)
 {
-	if (check_parenthesis(input_tooken) == ERROR)
-		return (ERROR);
 	if (check_pipe_position(input_tooken) == ERROR)
 		return (ERROR);
 	if (check_heredoc_alone(input_tooken) == ERROR)

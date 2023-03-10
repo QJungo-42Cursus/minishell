@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:50 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/09 15:05:58 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/10 09:48:01 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,6 @@ typedef enum e_cmd_type {
 	REDIR_APPEND,
 	HEREDOC,
 }	t_cmd_type;
-
-// la suite, juste pour le parser
-enum e_token_type {
-	OPEN_PARENTHESES = 10,
-	CLOSE_PARENTHESES,
-};
 
 enum e_result_more {
 	USED = 2,

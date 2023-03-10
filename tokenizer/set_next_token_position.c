@@ -6,13 +6,13 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:17:52 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/07 10:57:58 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/10 09:27:35 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 
-#define SPECIAL_CHARACTERS "|&<>()"
+#define SPECIAL_CHARACTERS "|&<>"
 
 static void	set_normal_token_position(const char *str,
 				int cursor_index, t_position *token_pos, t_bool is_first_call);
