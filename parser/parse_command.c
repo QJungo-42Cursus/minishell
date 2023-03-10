@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:01 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/06 10:31:21 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/10 10:00:53 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,24 +17,6 @@
 
 static int	is_token_valid(char *token, t_list *cursor, t_cmd *cmd)
 {
-	if (get_token_type(token) == OPEN_PARENTHESES)
-	{
-		write(STDERR_FILENO, UNEXPECTED_TOKEN, 47);
-		if (cursor->next == NULL)
-			write(STDERR_FILENO, "newline", 7);
-		else
-			write(STDERR_FILENO, (char *)cursor->next->content,
-				ft_strlen((char *)cursor->next->content));
-		write(STDERR_FILENO, "'\n", 2);
-		return (FALSE);
-	}
-	if (get_token_type(token) == CLOSE_PARENTHESES)
-	{
-		write(STDERR_FILENO, UNEXPECTED_TOKEN, 47);
-		write(STDERR_FILENO, token, ft_strlen(token));
-		write(STDERR_FILENO, "'\n", 2);
-		return (FALSE);
-	}
 	if (get_token_type(token) == HEREDOC)
 		return (is_heredoc_valid(cursor->next, cmd));
 	return (TRUE);

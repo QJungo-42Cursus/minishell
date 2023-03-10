@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:50 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/10 09:48:01 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/10 09:59:32 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,7 @@ void		free_ast(t_cmd *cmd);
 
 int			is_heredoc_valid(t_list *cursor, t_cmd *cmd);
 int			get_heredoc(t_list **token_cursor, t_cmd *cmd);
+
+int			redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
 
 #endif /* PARSER_H */
