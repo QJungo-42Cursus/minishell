@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/09 15:05:17 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/10 09:45:09 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,6 @@ int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	int		exit_status;
 
-	if (are_we_in_parentheses(tokens))
-	{
-		if (ft_strncmp((char *)tokens->next->content, ")", 2) == 0)
-		{
-			write(2, "minishell: syntax error near unexpected token `)'\n", 50);
-			return (ERROR);
-		}
-		tokens = lst_cut_first_and_last(tokens);
-	}
 	exit_status = redir(tokens, cmd, minishell);
 	if (exit_status == USED)
 		return (exit_status);
