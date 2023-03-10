@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:50 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/09 14:26:05 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/10 09:33:02 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 typedef enum e_cmd_type {
 	PIPELINE,
 	COMMAND,
-	LOGIC_AND,
-	LOGIC_OR,
+	LOGIC_AND_deprecated,
+	LOGIC_OR_deprecated,
 	REDIR_IN,
 	REDIR_OUT,
 	REDIR_APPEND,
@@ -39,10 +39,6 @@ enum e_result_more {
 typedef struct s_cmd {
 	t_cmd_type	type;
 	union {
-		struct {
-			struct s_cmd	*left;
-			struct s_cmd	*right;
-		} s_logic;
 		struct {
 			char			**argv;
 			char			*heredoc;
