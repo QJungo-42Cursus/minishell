@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 12:42:52 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/10 09:45:21 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ int	number_of_pipe_operator(t_list *cursor)
 	size = 0;
 	while (cursor != NULL)
 	{
-		if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
-			cursor = skip_parentheses(cursor);
 		if (get_token_type((char *)cursor->content) == PIPELINE)
 			size++;
 		cursor = cursor->next;
@@ -69,8 +67,6 @@ static void	set_pipeline_and_args(t_list *cursor,
 	cmd_cursor = cmd;
 	while (TRUE)
 	{
-		if (get_token_type((char *)cursor->content) == OPEN_PARENTHESES)
-			cursor = skip_parentheses(cursor);
 		cursor = set_pipeline_to_null_and_return_next(cursor);
 		if (cursor == NULL)
 			break ;

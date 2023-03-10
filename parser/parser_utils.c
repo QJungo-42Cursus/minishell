@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:11 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/10 09:33:15 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/10 09:36:53 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,17 +35,12 @@ int	get_token_type(char *token)
 		return (COMMAND);
 }
 
+/*
 t_bool	are_we_in_parentheses(t_list *tokens)
 {
 	t_list		*cursor;
 	int			parentheses;
 
-	if (tokens == NULL)
-	{
-		printf("exit at function : %s()\n", __func__);
-		exit(222); ///
-		return (FALSE);
-	}
 	if (get_token_type((char *)tokens->content) != OPEN_PARENTHESES)
 		return (FALSE);
 	cursor = tokens;
@@ -64,11 +59,11 @@ t_bool	are_we_in_parentheses(t_list *tokens)
 	}
 	return (FALSE);
 }
+*/
 
 /* renvoie un pointeur sur le token ")" fermant le 1er groupe de parentheses 
  * si pas de parentheses des le debut, renvoie le meme pointeur
  * si pas de parentheses fermantes, renvoie le dernier token
- */
 t_list	*skip_parentheses(t_list *cursor)
 {
 	int			parentheses;
@@ -86,6 +81,7 @@ t_list	*skip_parentheses(t_list *cursor)
 	}
 	return (cursor);
 }
+ */
 
 /// une sorte de "trim", ca enleve le debut et la fin de la t_list
 /// return le pointeur sur le 1er token (apres cut) de la t_list
@@ -101,3 +97,23 @@ t_list	*lst_cut_first_and_last(t_list *tokens)
 	return (cursor);
 }
 
+int	first_token_redir(t_list **tokens, t_cmd *cmd, t_minishell *minishell)
+{
+	t_list		*cursor;
+	int			tok_type;
+
+	cursor = *tokens;
+	tok_type = get_token_type((char *)cursor->content);
+	if (tok_type == REDIR_IN || tok_type == REDIR_OUT
+		|| tok_type == REDIR_APPEND)
+	{
+		cmd->type = (t_cmd_type)tok_type;
+		cmd->s_redir.filename = (char *)cursor->next->content;
+		cmd->s_redir.cmd = (t_cmd *)malloc(sizeof(t_cmd));
+		if (cmd->s_redir.cmd == NULL)
+			malloc_error(minishell);
+		set_command((*tokens)->next->next, cmd->s_redir.cmd, minishell);
+		return (USED);
+	}
+	return (FALSE);
+}
