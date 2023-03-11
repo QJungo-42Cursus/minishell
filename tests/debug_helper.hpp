@@ -35,30 +35,25 @@
 
 #define LOG_SEP(o_sep)                                                         \
   {                                                                            \
-    t_sep to_log_sep = o_sep;                                                  \
-    if (to_log_sep == AMPERSAND)                                               \
-      printf("AMPERSAND");                                                     \
-    else if (to_log_sep == PIPE)                                               \
+    int to_log_sep = o_sep;                                                    \
+    if (to_log_sep == PIPELINE)                                                \
       printf("PIPE");                                                          \
-    else if (to_log_sep == SEMICOLUMN)                                         \
-      printf("SEMICOLON");                                                     \
-    else if (to_log_sep == LESS)                                               \
-      printf("LESS");                                                          \
-    else if (to_log_sep == GREATER)                                            \
-      printf("GREAT");                                                         \
-    else if (to_log_sep == QUOTE)                                              \
-      printf("QUOTE");                                                         \
-    else if (to_log_sep == DQUOTE)                                             \
-      printf("DQUOTE");                                                        \
-    else if (to_log_sep == BACKSLASH)                                          \
-      printf("BACKSLASH");                                                     \
-    else if (to_log_sep == NONE)                                               \
-      printf("NONE");                                                          \
-    else if (to_log_sep == SEP_ERROR)                                          \
-      printf("ERROR");                                                         \
+    else if (to_log_sep == COMMAND)                                            \
+      printf("COMMAND");                                                       \
+    else if (to_log_sep == LOGIC_AND_deprecated)                               \
+      printf("LOGIC_AND");                                                     \
+    else if (to_log_sep == LOGIC_OR_deprecated)                                \
+      printf("LOGIC_OR");                                                      \
+    else if (to_log_sep == REDIR_IN)                                           \
+      printf("REDIR_IN");                                                      \
+    else if (to_log_sep == REDIR_OUT)                                          \
+      printf("REDIR_OUT");                                                     \
+    else if (to_log_sep == REDIR_APPEND)                                       \
+      printf("REDIR_APPEND");                                                  \
+    else if (to_log_sep == HEREDOC)                                            \
+      printf("HEREDOC");                                                       \
     else                                                                       \
-      printf("UNKNOWN???");                                                    \
-                                                                               \
+      printf("UNKNOWN");                                                       \
     printf(" (%d)\n", to_log_sep);                                             \
     fflush(stdout);                                                            \
   }

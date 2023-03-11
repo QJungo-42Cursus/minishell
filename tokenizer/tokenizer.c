@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:17:58 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/07 11:18:57 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/11 14:30:08 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,7 @@ int	tokenizer(const char *cmd, t_list **tokens, t_bool is_expand_mode,
 	}
 	return (SUCCESS);
 }
-//printf("|%s|> ", cmd);
-//LOG_TOKENS(*tokens);
+/*
+	printf("|%s|> ", cmd);
+	LOG_TOKENS(*tokens);
+	*/

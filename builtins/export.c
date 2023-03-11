@@ -53,7 +53,7 @@ static int	check_var_name(char *var)
 {
 	if (ft_strchr(var, '=') == NULL)
 	{
-		ft_putendl_fd("minishell: export: not a valid identifier\n", 2);
+		ft_putendl_fd(STR"minishell: export: not a valid identifier\n", 2);
 		return (ERROR);
 	}
 	return (SUCCESS);
@@ -66,7 +66,7 @@ static int	print_all(t_minishell *minishell)
 	i = 0;
 	while (minishell->env_copy[i] != NULL)
 	{
-		printf("declare -x %s\n", minishell->env_copy[i]);
+		printf(STR"declare -x %s\n", minishell->env_copy[i]);
 		i++;
 	}
 	return (SUCCESS);

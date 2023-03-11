@@ -8,11 +8,7 @@ extern "C" {
 #include "../minishell.h"
 }
 void print_token_type(int token_type) {
-  if (token_type == OPEN_PARENTHESES)
-    std::cout << "OPEN_PARENTHESES" << std::endl;
-  else if (token_type == CLOSE_PARENTHESES)
-    std::cout << "CLOSE_PARENTHESES" << std::endl;
-  else if (token_type == PIPELINE)
+  if (token_type == PIPELINE)
     std::cout << "PIPE" << std::endl;
   else if (token_type == REDIR_IN)
     std::cout << "REDIRECT_IN" << std::endl;
@@ -61,7 +57,6 @@ void compare_ast(t_cmd *ast, t_cmd *expected, int depth = 0) {
     compare_ast(ast->s_pipeline.first_cmd, expected->s_pipeline.first_cmd,
                 depth + 1);
   } else if (ast->type == REDIR_IN || REDIR_OUT || REDIR_APPEND) {
-    ASSERT_STREQ(ast->s_redir.filename, expected->s_redir.filename);
     ASSERT_NE(ast->s_redir.cmd, (t_cmd *)NULL);
     // compare_ast(ast->s_redir.cmd, expected->s_redir.cmd, depth + 1);
   } else {
@@ -94,9 +89,6 @@ TEST(ParserUtils, get_token_type) {
   EXPECT_EQ(get_token_type((char *)">"), REDIR_OUT);
   EXPECT_EQ(get_token_type((char *)">>"), REDIR_APPEND);
   EXPECT_EQ(get_token_type((char *)"<"), REDIR_IN);
-  EXPECT_EQ(get_token_type((char *)"("), OPEN_PARENTHESES);
-  EXPECT_EQ(get_token_type((char *)")"), CLOSE_PARENTHESES);
-
   EXPECT_EQ(get_token_type((char *)") "), COMMAND);
   EXPECT_EQ(get_token_type((char *)"ls"), COMMAND);
 }
@@ -227,7 +219,6 @@ TEST(Parser, EchoPipeCatGrep) {
 TEST(Parser, SimpleOutRedirection) {
   t_cmd *cmd = new_cmd(REDIR_OUT);
   cmd->s_redir.cmd = new_cmd(COMMAND);
-  cmd->s_redir.filename = (char *)"test.txt";
   cmd->s_redir.cmd->s_command.argv = setup_argv({"echo", "hello"});
   cmd->s_redir.cmd->s_command.next = NULL;
   testParser({"echo", "hello", ">", "test.txt"}, cmd);
@@ -236,7 +227,6 @@ TEST(Parser, SimpleOutRedirection) {
 TEST(Parser, SimpleInRedirection) {
   t_cmd *cmd = new_cmd(REDIR_IN);
   cmd->s_redir.cmd = new_cmd(COMMAND);
-  cmd->s_redir.filename = (char *)"test.txt";
   cmd->s_redir.cmd->s_command.argv = setup_argv({"cat"});
   cmd->s_redir.cmd->s_command.next = NULL;
   testParser({"cat", "<", "test.txt"}, cmd);
@@ -245,9 +235,7 @@ TEST(Parser, SimpleInRedirection) {
 TEST(Parser, SimpleByRedirection) {
   t_cmd *cmd = new_cmd(REDIR_IN);
   cmd->s_redir.cmd = new_cmd(REDIR_OUT);
-  cmd->s_redir.filename = (char *)"test.txt";
   cmd->s_redir.cmd->s_redir.cmd = new_cmd(COMMAND);
-  cmd->s_redir.cmd->s_redir.filename = (char *)"test2.txt";
   cmd->s_redir.cmd->s_redir.cmd->s_command.argv = setup_argv({"cat"});
   cmd->s_redir.cmd->s_redir.cmd->s_command.next = NULL;
   testParser({"cat", "<", "test.txt", ">", "test2.txt"}, cmd);

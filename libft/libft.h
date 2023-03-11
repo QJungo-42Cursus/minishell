@@ -40,4 +40,6 @@ typedef enum e_bool {
 
 char	*get_next_line(int fd);
 
+#define STR (char *)
+
 #endif

@@ -8,6 +8,7 @@ extern "C" {
 int w_exit_status(int es) { return WEXITSTATUS(es); }
 int execute(t_cmd *cmd, t_minishell *minishell);
 #include "../env/env.h"
+#include <fcntl.h>
 }
 extern char **g_envp;
 
@@ -48,7 +49,8 @@ TEST(Executor, aSimpleFailingPipeline) {
   cmd->s_pipeline.pids = new int[2];
   cmd->s_pipeline.pipes = new int[4];
   cmd->s_pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->s_pipeline.first_cmd->s_command.argv = setup_argv({"/bin/echo", "hi friends !"});
+  cmd->s_pipeline.first_cmd->s_command.argv =
+      setup_argv({"/bin/echo", "hi friends !"});
   cmd->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
   cmd->s_pipeline.first_cmd->s_command.next->s_command.argv =
       setup_argv({"/bin/bc", "not_here_file"});
@@ -66,12 +68,13 @@ TEST(Executor, aThreeCommandsPipelineAndFail) {
   cmd->s_pipeline.first_cmd->s_command.argv =
       setup_argv({"/bin/ls", "tests/test_files"});
   cmd->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
-  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"/bin/cat", "-e"});
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv =
+setup_argv({"/bin/cat", "-e"});
   cmd->s_pipeline.first_cmd->s_command.next->s_command.next = new_cmd(COMMAND);
   cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.argv =
       setup_argv({"/bin/bc", "not_here_file"});
-  cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.next = NULL;
-  test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.next =
+NULL; test_exec(cmd, "", "File not_here_file is unavailable.\n", 1);
 }
 */
 
@@ -87,9 +90,11 @@ TEST(Executor, SimplePipeline) {
   cmd->s_pipeline.pids = new int[2];
   cmd->s_pipeline.pipes = new int[4];
   cmd->s_pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->s_pipeline.first_cmd->s_command.argv = setup_argv({"/bin/echo", "hi friends !"});
+  cmd->s_pipeline.first_cmd->s_command.argv =
+      setup_argv({"/bin/echo", "hi friends !"});
   cmd->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
-  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"/bin/cat", "-e"});
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv =
+      setup_argv({"/bin/cat", "-e"});
   cmd->s_pipeline.first_cmd->s_command.next->s_command.next = NULL;
   test_exec(cmd, "hi friends !$\n", "", 0);
 }
@@ -103,7 +108,8 @@ TEST(Executor, TrickyPipeline) {
   cmd->s_pipeline.first_cmd = new_cmd(COMMAND);
   cmd->s_pipeline.first_cmd->s_command.argv = setup_argv({"/bin/cat"});
   cmd->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
-  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"/bin/ls"});
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv =
+setup_argv({"/bin/ls"});
   cmd->s_pipeline.first_cmd->s_command.next->s_command.next = NULL;
   test_exec(cmd, "hi friends !$\n", "", 0);
 }
@@ -118,17 +124,19 @@ TEST(Executor, ThreeCommandsPipeline) {
   cmd->s_pipeline.first_cmd->s_command.argv =
       setup_argv({"/bin/ls", "tests/test_files"});
   cmd->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
-  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv = setup_argv({"/bin/cat", "-e"});
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.argv =
+      setup_argv({"/bin/cat", "-e"});
   cmd->s_pipeline.first_cmd->s_command.next->s_command.next = new_cmd(COMMAND);
   cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.argv =
       setup_argv({"/bin/grep", "never"});
-  cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.next = NULL;
+  cmd->s_pipeline.first_cmd->s_command.next->s_command.next->s_command.next =
+      NULL;
   test_exec(cmd, "never_touch_this_file$\n", "", 0);
 }
 
 TEST(Executor, SimpleRedirIn) {
   t_cmd *cmd = new_cmd(REDIR_IN);
-  cmd->s_redir.filename = (char *)strdup("tests/test_files/file_input");
+  cmd->s_redir.fd = open("tests/test_files/file_input", O_RDONLY);
   cmd->s_redir.cmd = new_cmd(COMMAND);
   cmd->s_redir.cmd->s_command.argv = setup_argv({"/bin/cat", "-e"});
   test_exec(cmd,
@@ -139,13 +147,14 @@ TEST(Executor, SimpleRedirIn) {
 
 TEST(Executor, RedirInAndPipe) {
   t_cmd *cmd = new_cmd(REDIR_IN);
-  cmd->s_redir.filename = (char *)strdup("tests/test_files/file_input");
+  cmd->s_redir.fd = open("tests/test_files/file_input", O_RDONLY);
   cmd->s_redir.cmd = new_cmd(PIPELINE);
   cmd->s_redir.cmd->s_pipeline.pipe_count = 2;
   cmd->s_redir.cmd->s_pipeline.pids = new int[2];
   cmd->s_redir.cmd->s_pipeline.pipes = new int[4];
   cmd->s_redir.cmd->s_pipeline.first_cmd = new_cmd(COMMAND);
-  cmd->s_redir.cmd->s_pipeline.first_cmd->s_command.argv = setup_argv({"/bin/cat", "-e"});
+  cmd->s_redir.cmd->s_pipeline.first_cmd->s_command.argv =
+      setup_argv({"/bin/cat", "-e"});
   cmd->s_redir.cmd->s_pipeline.first_cmd->s_command.next = new_cmd(COMMAND);
   cmd->s_redir.cmd->s_pipeline.first_cmd->s_command.next->s_command.argv =
       setup_argv({"/bin/grep", "4"});
@@ -156,7 +165,8 @@ TEST(Executor, RedirInAndPipe) {
 TEST(Executor, SimpleRedirOut) {
   std::string filename = "tests/test_files/file_output";
   t_cmd *cmd = new_cmd(REDIR_OUT);
-  cmd->s_redir.filename = (char *)strdup(filename.c_str());
+  cmd->s_redir.fd =
+      open("tests/test_files/file_output", O_RDWR | O_CREAT | O_TRUNC, 0644);
   cmd->s_redir.cmd = new_cmd(COMMAND);
   cmd->s_redir.cmd->s_command.argv = setup_argv({"/bin/echo", "hi friends !"});
   test_exec(cmd, "", "", 0);
@@ -166,7 +176,8 @@ TEST(Executor, SimpleRedirOut) {
 TEST(Executor, RedirOutWithPipe) {
   std::string filename = "tests/test_files/file_output";
   t_cmd *cmd = new_cmd(REDIR_OUT);
-  cmd->s_redir.filename = (char *)strdup(filename.c_str());
+  cmd->s_redir.fd =
+      open("tests/test_files/file_output", O_RDWR | O_CREAT | O_TRUNC, 0644);
   cmd->s_redir.cmd = new_cmd(PIPELINE);
   cmd->s_redir.cmd->s_pipeline.pipe_count = 2;
   cmd->s_redir.cmd->s_pipeline.pids = new int[2];
@@ -188,7 +199,8 @@ TEST(Executor, SimpleRedirAppend) {
   file << "hello world" << std::endl;
   file.close();
   t_cmd *cmd = new_cmd(REDIR_APPEND);
-  cmd->s_redir.filename = (char *)strdup(filename.c_str());
+  cmd->s_redir.fd = open("tests/test_files/file_output_append",
+                         O_RDWR | O_CREAT | O_APPEND, 0644);
   cmd->s_redir.cmd = new_cmd(COMMAND);
   cmd->s_redir.cmd->s_command.argv = setup_argv({"/bin/echo", "hi friends !"});
   test_exec(cmd, "", "", 0);
