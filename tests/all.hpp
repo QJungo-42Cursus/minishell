@@ -35,6 +35,8 @@ extern "C" {
 
 #include "../parser/parse_command.c"
 #include "../parser/parse_pipeline.c"
+#include "../parser/parse_redir.c"
+#include "../parser/parse_redir_open.c"
 #include "../parser/parser.c"
 #include "../parser/free_ast.c"
 #include "../parser/parser_utils.c"

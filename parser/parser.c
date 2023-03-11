@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/10 09:59:13 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/11 14:17:47 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	int		exit_status;
 
 	exit_status = redir(tokens, cmd, minishell);
-	if (exit_status == USED)
+	if (exit_status == USED || exit_status == ERROR)
 		return (exit_status);
 	exit_status = pipeline(tokens, cmd, minishell);
 	if (exit_status == USED)

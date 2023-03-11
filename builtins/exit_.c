@@ -47,6 +47,7 @@ static int	ft_ascii_is_valid_number(char *str)
 	return (1);
 }
 
+
 int	exit_(t_minishell *minishell, char **argv, int exit_status)
 {
 	int			len;
@@ -59,12 +60,12 @@ int	exit_(t_minishell *minishell, char **argv, int exit_status)
 	{
 		if (ft_ascii_is_valid_number(argv[1]) == 0)
 		{
-			ft_putendl_fd("minishell: exit: numeric argument required", 2);
+			ft_putendl_fd(STR"minishell: exit: numeric argument required", 2);
 			exit_status = 255;
 		}
 		if (len > 2)
 		{
-			ft_putendl_fd("minishell: exit: too many arguments", 2);
+			ft_putendl_fd(STR"minishell: exit: too many arguments", 2);
 			return (ERROR);
 		}
 		num = long_atoi(argv[1]);

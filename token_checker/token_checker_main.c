@@ -6,7 +6,7 @@
 /*   By: agonelle <agonelle@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 12:11:42 by agonelle          #+#    #+#             */
-/*   Updated: 2023/03/10 09:31:34 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/11 14:53:38 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,14 @@ static int	check_heredoc_alone(t_list *tmp)
 		{
 			if (is_first && (tmp->next == NULL || tmp->next->next == NULL))
 			{
-				ft_putstr_fd("syntax error near unexpected tooken '", 2);
+				ft_putstr_fd((char *)"syntax error near unexpected token '", 2);
 				ft_putstr_fd((char *)tmp->next->content, 2);
-				ft_putstr_fd("'\n", 2);
+				ft_putstr_fd((char *)"'\n", 2);
 				return (ERROR);
 			}
 			if (ft_strncmp((char *)tmp->next->content, (char *)"<<", 3) == 0)
 			{
-				ft_putendl_fd("syntax error near unexpected tooken '<<'", 2);
+				ft_putendl_fd((char *)"syntax error near unexpected token '<<'", 2);
 				return (ERROR);
 			}
 		}

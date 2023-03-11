@@ -29,7 +29,8 @@ SRCS =			main.c \
 				executor/execute_command.c \
 				executor/execute_builtin.c \
 				parser/parser_utils.c \
-				parser/parser_redir.c \
+				parser/parse_redir.c \
+				parser/parse_redir_open.c \
 				parser/parse_command.c \
 				parser/get_heredoc.c \
 				parser/parse_pipeline.c \
