@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 13:35:14 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 15:14:02 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/11 11:40:30 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,11 +120,11 @@ int	main_loop(t_minishell *minishell)
 		}
 		if (ft_strlen(cmd_input) == 0)
 			continue ;
-		add_history(cmd_input);
 		tokenizer(cmd_input, &tokens, FALSE, minishell);
-		free(cmd_input);
 		if (tokens == NULL)
 			continue ;
+		add_history(cmd_input);
+		free(cmd_input);
 		if (check_valid_tokens(tokens) == SUCCESS)
 			run_minishell(minishell, tokens);
 	}
