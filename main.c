@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:26 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/06 13:30:56 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/11 10:53:08 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,7 @@ int	main(int argc, char **argv, char **envp)
 		exit(1);
 	}
 	if (init_minishell(&minishell, envp) == ERROR)
-	{
 		exit(1);
-	}
 	return (main_loop(&minishell));
 }
 #endif
