@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/11 14:46:42 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/11 14:56:44 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/11 19:41:44 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ int	redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	{
 		ft_putstr_fd(STR"minishell:"
 			" syntax error near unexpected token `newline'\n", 2);
-		return (FALSE);
+		minishell->last_exit_status = 2;
+		return (ERROR); // TODO le fait de le stop la, fait des leaks...
 	}
 	if (position == NOT_FOUND)
 		return (FALSE);
@@ -112,7 +113,7 @@ int	redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	open_res = check_error(cmd, (char *)cursor->next->content);
 	if (open_res != ERROR)
 		open_res = open_file(cmd, (char *)cursor->next->content);
-	if (open_res == ERROR)
-		return (ERROR);
+	//if (open_res == ERROR)
+		//return (ERROR);
 	return (skip_redir(position, tokens, minishell, cmd));
 }

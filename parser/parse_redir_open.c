@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/11 14:34:27 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/11 14:57:08 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/11 19:36:14 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,13 @@ int	open_file(t_cmd *cmd, char *filename)
 
 int	check_error(t_cmd *cmd, char *filename)
 {
+	if (cmd->type == REDIR_IN && access(filename, F_OK) != 0)
+	{
+		ft_putstr_fd(STR"minishell: ", 2);
+		ft_putstr_fd(filename, 2);
+		ft_putstr_fd(STR": No such file or directory\n", 2);
+		return (ERROR);
+	}
 	if ((cmd->type == REDIR_APPEND || cmd->type == REDIR_OUT)
 		&& access(filename, F_OK) != 0)
 		return (SUCCESS);
@@ -45,13 +52,6 @@ int	check_error(t_cmd *cmd, char *filename)
 		ft_putstr_fd(STR"minishell: ", 2);
 		ft_putstr_fd(filename, 2);
 		ft_putstr_fd(STR": Permission denied\n", 2);
-		return (ERROR);
-	}
-	if (cmd->type == REDIR_IN && access(filename, F_OK) != 0)
-	{
-		ft_putstr_fd(STR"minishell: ", 2);
-		ft_putstr_fd(filename, 2);
-		ft_putstr_fd(STR": No such file or directory\n", 2);
 		return (ERROR);
 	}
 	return (SUCCESS);
