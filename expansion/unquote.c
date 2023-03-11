@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 11:18:38 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/07 11:19:43 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/11 17:42:31 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,5 +40,5 @@ void	unquote(char *str)
 	pos.end = i - 1;
 	ft_memmove(&str[pos.end], &str[pos.end + 1],
 		ft_strlen(&str[pos.end + 1]) + 1);
-	unquote(str);
+	unquote(&str[pos.end + 1]);
 }
