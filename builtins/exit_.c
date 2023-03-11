@@ -47,7 +47,6 @@ static int	ft_ascii_is_valid_number(char *str)
 	return (1);
 }
 
-
 int	exit_(t_minishell *minishell, char **argv, int exit_status)
 {
 	int			len;
