@@ -98,6 +98,12 @@ void	expand(char **token, t_minishell *minishell)
 	new_token = expand_dollar(*token, minishell, index);
 	free(*token);
 	*token = new_token;
-	// TODO atttention, il va retokenizer aussi la ...
+	if (new_token != NULL)
+		expand(token, minishell);
+	if (*token == NULL)
+	{
+		*token = ft_strdup("");
+		return ;
+	}
 	expand(token, minishell);
 }
