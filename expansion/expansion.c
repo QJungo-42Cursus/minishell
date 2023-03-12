@@ -102,7 +102,7 @@ void	expand(char **token, t_minishell *minishell)
 		expand(token, minishell);
 	if (*token == NULL)
 	{
-		*token = ft_strdup("");
+		*token = ft_strdup((char *)"");
 		return ;
 	}
 	expand(token, minishell);
