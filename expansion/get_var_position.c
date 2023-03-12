@@ -28,17 +28,21 @@ int	get_var_position(int begin_from, const char *token,
 		int *start_index, int *end_index)
 {
 	int		quoted;
+	int		dquoted;
 	int		i;
 
 	quoted = FALSE;
+	dquoted = FALSE;
 	i = begin_from;
 	if (ft_strlen(token) == 0)
 		return (FALSE);
 	while (token[i] != '\0')
 	{
-		if (token[i] == '\'')
+		if (token[i] == '"' && quoted == FALSE)
+			dquoted = !dquoted;
+		else if (token[i] == '\'' && dquoted == FALSE)
 			quoted = !quoted;
-		if (token[i] == '$' && !quoted)
+		else if (token[i] == '$' && quoted == FALSE)
 			return (var_founded(i, start_index, end_index, token));
 		i++;
 	}
