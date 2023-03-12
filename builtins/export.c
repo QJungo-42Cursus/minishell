@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/12 17:39:13 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/12 18:06:36 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,31 +94,22 @@ int	export_(t_minishell *minishell, char **argv)
 	if (argv[1] == NULL)
 		return (print_all(minishell));
 	status = check_var_name(argv[1]);
+	if (status == 3)
+		return (SUCCESS);
 	if (status != 0)
-	{
-		if (status == 3)
-			status = 0;
 		return (status);
-	}
-	if (ft_strchr(argv[1], '='))
-		var = ft_strdup(argv[1]);
-	else
-		var = ft_strdup("");
+	if (ft_strchr(argv[1], '=') == 0)
+		return (SUCCESS);
+	var = ft_strjoin(argv[1], "=");
 	if (var == NULL)
 		return (ERROR);
 	var_index = get_env_var_index((const char **)minishell->env_copy, var);
-	if (var_index == -1)
+	if (var_index == -1 && add_env_var(minishell, var) == ERROR)
 	{
-		if (add_env_var(minishell, var) == ERROR)
-		{
-			free(var);
-			return (ERROR);
-		}
+		free(var);
+		return (ERROR);
 	}
-	else
-	{
-		free(minishell->env_copy[var_index]);
-		minishell->env_copy[var_index] = var;
-	}
+	free(minishell->env_copy[var_index]);
+	minishell->env_copy[var_index] = var;
 	return (SUCCESS);
 }
