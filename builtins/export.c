@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 17:05:27 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/12 17:39:13 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,23 @@ static int	add_env_var(t_minishell *mini, char *var)
 
 static int	check_var_name(char *var)
 {
-	if (ft_strchr(var, '=') == NULL)
+	int	len;
+
+	len = ft_strlen(var);
+	if (len == 1)
 	{
-		ft_putendl_fd(STR"minishell: export: not a valid identifier\n", 2);
-		return (ERROR);
+		if (ft_isdigit(var[0]) != 0)
+		{
+			ft_putendl_fd(STR"minishell: export: not a valid identifier\n", 2);
+			return (ERROR);
+		}
+		if (var[0] == '_')
+			return (3);
+	}
+	else
+	{
+		if (var[0] == '_' && var[1] == '=')
+			return (3);
 	}
 	return (SUCCESS);
 }
@@ -76,12 +89,21 @@ int	export_(t_minishell *minishell, char **argv)
 {
 	char	*var;
 	int		var_index;
+	int		status;
 
 	if (argv[1] == NULL)
 		return (print_all(minishell));
-	if (check_var_name(argv[1]) == ERROR)
-		return (ERROR);
-	var = ft_strdup(argv[1]);
+	status = check_var_name(argv[1]);
+	if (status != 0)
+	{
+		if (status == 3)
+			status = 0;
+		return (status);
+	}
+	if (ft_strchr(argv[1], '='))
+		var = ft_strdup(argv[1]);
+	else
+		var = ft_strdup("");
 	if (var == NULL)
 		return (ERROR);
 	var_index = get_env_var_index((const char **)minishell->env_copy, var);
