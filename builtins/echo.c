@@ -6,13 +6,28 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:00:51 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/23 20:00:51 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/12 18:44:20 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "../libft/libft.h"
 #include <string.h>
+
+int	valid_flag(char *argument)
+{
+	int	i;
+
+	if (argument[0] != '-')
+		return (ERROR);
+	i = 1;
+	while (argument[i] && argument[i] == 'n')
+		i++;
+	if (argument[i] == '\0')
+		return (SUCCESS);
+	else
+		return (ERROR);
+}
 
 int	echo(char **argv)
 {
@@ -25,9 +40,9 @@ int	echo(char **argv)
 		return (SUCCESS);
 	}
 	i = 1;
-	n_mode = (t_bool)(ft_strncmp(argv[i], "-n", 3) == 0);
-	if (n_mode)
+	while (argv[i] && valid_flag(argv[i]) == SUCCESS)
 		i++;
+	n_mode = (i != 1);
 	while (argv[i] != NULL)
 	{
 		printf("%s", argv[i]);
