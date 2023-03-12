@@ -37,7 +37,7 @@ static int	add_env_var(t_minishell *mini, char *var)
 	if (new_env_copy == NULL)
 		return (ERROR);
 	i = 0;
-	while (mini->env_copy[i] != NULL)
+	while (mini->env_copy[i])
 	{
 		new_env_copy[i] = mini->env_copy[i];
 		i++;
@@ -94,13 +94,11 @@ int	export_(t_minishell *minishell, char **argv)
 	if (argv[1] == NULL)
 		return (print_all(minishell));
 	status = check_var_name(argv[1]);
-	if (status == 3)
+	if (status == ERROR)
+		return (ERROR);
+	if (status == 3 || ft_strchr(argv[1], '=') == 0)
 		return (SUCCESS);
-	if (status != 0)
-		return (status);
-	if (ft_strchr(argv[1], '=') == 0)
-		return (SUCCESS);
-	var = ft_strjoin(argv[1], "=");
+	var = ft_strdup(argv[1]);
 	if (var == NULL)
 		return (ERROR);
 	var_index = get_env_var_index((const char **)minishell->env_copy, var);
@@ -109,7 +107,10 @@ int	export_(t_minishell *minishell, char **argv)
 		free(var);
 		return (ERROR);
 	}
-	free(minishell->env_copy[var_index]);
-	minishell->env_copy[var_index] = var;
+	else if (var_index != -1)
+	{
+		free(minishell->env_copy[var_index]);
+		minishell->env_copy[var_index] = var;
+	}
 	return (SUCCESS);
 }
