@@ -15,12 +15,11 @@
 # include "../minishell.h"
 # include "../libft/libft.h"
 
-char		*expand(char *token, t_minishell *minishell);
+void		expand(char **token, t_minishell *minishell);
 void		unquote(char *str);
 int			get_var_position(int begin_from,
 				const char *token, int *start_index, int *end_index);
-char		*expand_dollar(char *token,
-				t_minishell *minishell, t_position position);
-t_list		*expand_and_retokenize(t_list *tokens, t_minishell *minishell);
+//char		*expand_dollar(char *token,
+				//t_minishell *minishell, t_position position);
 
 #endif /* EXPANSION_H */

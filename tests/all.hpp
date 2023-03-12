@@ -46,10 +46,8 @@ extern "C" {
 #include "../tokenizer/tokenizer.c"
 
 #include "../expansion/expansion.c"
-#include "../expansion/expend_dollar.c"
 #include "../expansion/get_var_position.c"
 #include "../expansion/unquote.c"
-#include "../expansion/expand_and_retokenize.c"
 
 #include <stdio.h>
 #include <stdlib.h>

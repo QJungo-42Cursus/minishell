@@ -20,7 +20,7 @@ void test_expand_dollar(const char *token, int start, int end,
                         std::string expected, std::vector<std::string> env) {
   t_minishell *minishell = set_minishell(env);
   t_position token_pos = {start, end};
-  char *actual = expand_dollar(token, minishell, token_pos);
+  char *actual = expand_dollar((char *)token, minishell, token_pos);
   EXPECT_STREQ(expected.c_str(), actual);
   free(actual);
 }
@@ -28,7 +28,7 @@ void test_expand_dollar(const char *token, int start, int end,
 void test_expand(const char *token, std::vector<std::string> env,
                  std::string expected) {
   t_minishell *minishell = set_minishell(env);
-  const char *result = expand(token, minishell);
+  const char *result = expand((char *)token, minishell);
   EXPECT_STREQ(expected.c_str(), result);
 }
 
@@ -41,7 +41,7 @@ void test_unquote(const char *token, std::string expected) {
 void test_expand_and_unquote(const char *token, std::vector<std::string> env,
                              std::string expected) {
   t_minishell *minishell = set_minishell(env);
-  char *result = expand(token, minishell);
+  char *result = expand((char *)token, minishell);
   unquote(result);
   EXPECT_STREQ(expected.c_str(), result);
 }
