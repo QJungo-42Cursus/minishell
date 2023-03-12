@@ -40,5 +40,5 @@ void	unquote(char *str)
 	pos.end = i - 1;
 	ft_memmove(&str[pos.end], &str[pos.end + 1],
 		ft_strlen(&str[pos.end + 1]) + 1);
-	unquote(&str[pos.end + 1]);
+	unquote(&str[pos.end]);
 }
