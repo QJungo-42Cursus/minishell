@@ -56,6 +56,7 @@ static void	expand_all_tokens(t_list *tokens, t_minishell *minishell)
 	while (cursor != NULL)
 	{
 		expand((char **)&cursor->content, minishell);
+		unquote((char *)cursor->content);
 		cursor = cursor->next;
 	}
 }
