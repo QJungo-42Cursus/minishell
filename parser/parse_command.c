@@ -65,7 +65,6 @@ static void	expand_all_tokens(t_list **tokens, t_minishell *minishell)
 			else
 				last->next = cursor->next;
 			free(cursor->content);
-			last = last;
 			cursor = cursor->next;
 			continue ;
 		}
