@@ -21,6 +21,8 @@ static int	var_founded(int i, int *start_index,
 	while (token[i] != '\0' && is_in_charset(token[i], "$:\'\" ") == FALSE)
 		i++;
 	*end_index = i - 1;
+	if (*start_index == *end_index)
+		return (FALSE);
 	return (TRUE);
 }
 
