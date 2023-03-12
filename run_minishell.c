@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 13:35:14 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/11 11:40:30 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/11 19:47:02 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,15 @@ static void	**get_token_to_free_list(t_list *tokens)
 	return (result);
 }
 
-static void	free_token_list(void **tokens_to_free)
+static void	free_token_list(void **tokens_to_free, t_bool free_content)
 {
 	int		i;
 
 	i = 0;
 	while (tokens_to_free[i] != NULL)
 	{
+		if (free_content && ((t_list *)tokens_to_free[i])->content != NULL)
+			free(((t_list *)tokens_to_free[i])->content);
 		free(tokens_to_free[i]);
 		i++;
 	}
@@ -76,7 +78,7 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 	cmd = parser(tokens, minishell);
 	if (cmd == NULL)
 	{
-		free_token_list(tokens_to_free);
+		free_token_list(tokens_to_free, TRUE);
 		return (ERROR);
 	}
 	minishell->current_ast = cmd;
@@ -86,7 +88,7 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 		g_minishell_status = S_PROMPT;
 	}
 	free_ast(cmd);
-	free_token_list(tokens_to_free);
+	free_token_list(tokens_to_free, FALSE);
 	return (SUCCESS);
 }
 

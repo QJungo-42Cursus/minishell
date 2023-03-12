@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/11 21:22:48 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/20 19:03:34 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/11 19:50:34 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 #  define BUFFER_SIZE 2048
 # endif
 
+# define STR (char *)
+
 typedef enum e_bool {
 	FALSE,
 	TRUE,
@@ -39,7 +41,5 @@ typedef enum e_bool {
 }	t_bool;
 
 char	*get_next_line(int fd);
-
-#define STR (char *)
 
 #endif
