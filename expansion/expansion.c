@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:42 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 16:05:57 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/12 15:10:10 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,27 +45,20 @@ static char	*get_expanded_dollars(const char *token, t_minishell *minishell)
 	new_token = NULL;
 	new_token_tmp = ft_strdup((char *)token);
 	if (new_token_tmp == NULL)
-		return (NULL);
+		malloc_error(minishell);
 	if (get_var_position(0, new_token_tmp, &index.start, &index.end) == FALSE)
-	{
-		free(new_token_tmp);
-		return (ft_strdup((char *)token));
-	}
+		return (new_token_tmp);
 	index.start = 0;
 	index.end = 0;
 	return (get_all(index, new_token_tmp, new_token, minishell));
 }
 
-char	*expand(const char *token, t_minishell *minishell)
+char	*expand(char *token, t_minishell *minishell)
 {
 	char	*expanded;
 
 	expanded = get_expanded_dollars(token, minishell);
 	if (expanded == NULL)
-	{
-		expanded = ft_strdup((char *)token);
-		if (expanded == NULL)
-			return (NULL);
-	}
+		return (token);
 	return (expanded);
 }

@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:01 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/10 10:00:53 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/12 14:55:41 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,19 +20,6 @@ static int	is_token_valid(char *token, t_list *cursor, t_cmd *cmd)
 	if (get_token_type(token) == HEREDOC)
 		return (is_heredoc_valid(cursor->next, cmd));
 	return (TRUE);
-}
-
-// malloc OK !
-static int	unquote_and_expand(t_list **tokens,
-		t_cmd *cmd, t_minishell *minishell)
-{
-	*tokens = expand_and_retokenize(*tokens, minishell);
-	cmd->type = COMMAND;
-	cmd->s_command.argv
-		= (char **)malloc(sizeof(char *) * (ft_lstsize(*tokens) + 1));
-	if (cmd->s_command.argv == NULL)
-		malloc_error(minishell);
-	return (SUCCESS);
 }
 
 static int	parse(t_list **tokens_cursor,
@@ -66,7 +53,12 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	t_list	*cursor;
 	int		i;
 
-	unquote_and_expand(&tokens, cmd, minishell);
+	tokens = expand_and_retokenize(tokens, minishell);
+	cmd->type = COMMAND;
+	cmd->s_command.argv
+		= (char **)malloc(sizeof(char *) * (ft_lstsize(tokens) + 1));
+	if (cmd->s_command.argv == NULL)
+		malloc_error(minishell);
 	cursor = tokens;
 	i = 0;
 	cmd->s_command.heredoc = NULL;

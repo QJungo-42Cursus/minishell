@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 16:05:17 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/12 14:43:33 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static int	set_sides(const char *token,
 	return (SUCCESS);
 }
 
-char	*expand_dollar(const char *token,
+char	*expand_dollar(char *token,
 			t_minishell *minishell, t_position position)
 {
 	char	*var_value;
