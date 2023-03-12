@@ -85,11 +85,27 @@ static int	go_home(t_minishell *minishell)
 int	cd(t_minishell *minishell, char **argv)
 {
 	int		argc;
+	char	*old_pwd;
 
 	argc = 0;
 	while (argv[argc] != NULL)
 		argc++;
 	if (argc == 1)
 		return (go_home(minishell));
+	if (ft_strncmp(argv[1], "-", 2) == 0)
+	{
+		if (argc > 2)
+			return (ERROR);
+		old_pwd = get_env_var_value((char *)"OLDPWD",
+				(const char **)minishell->env_copy);
+		if (old_pwd == NULL)
+		{
+			ft_putstr_fd("minishell: cd: OLDPWD not set\n", STDERR_FILENO);
+			return (ERROR);
+		}
+		change_dir(minishell, old_pwd);
+		free(old_pwd);
+		return (SUCCESS);
+	}
 	return (change_dir(minishell, argv[1]));
 }

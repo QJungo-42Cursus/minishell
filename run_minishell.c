@@ -116,10 +116,7 @@ int	main_loop(t_minishell *minishell)
 		cmd_input = readline(minishell->prompt_msg);
 		stdin_fd = dup(STDIN_FILENO);
 		if (cmd_input == NULL)
-		{
-			printf("exit\n");
 			exit_(minishell, NULL, 0);
-		}
 		if (ft_strlen(cmd_input) == 0)
 			continue ;
 		tokenizer(cmd_input, &tokens, FALSE, minishell);
@@ -129,6 +126,8 @@ int	main_loop(t_minishell *minishell)
 		free(cmd_input);
 		if (check_valid_tokens(tokens) == SUCCESS)
 			run_minishell(minishell, tokens);
+		else
+			free_token_list(get_token_to_free_list(tokens), TRUE);
 	}
 	return (SUCCESS);
 }

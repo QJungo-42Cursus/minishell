@@ -71,6 +71,7 @@ int	exit_(t_minishell *minishell, char **argv, int exit_status)
 		exit_status = num;
 	}
 	free_minishell(minishell);
+	printf("exit\n");
 	exit(exit_status);
 	return (SUCCESS);
 }

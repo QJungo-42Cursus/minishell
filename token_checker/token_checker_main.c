@@ -18,7 +18,7 @@ static int	check_pipe_position(t_list *lst_token)
 	int		len;
 	t_list	*tmp;
 
-	if (count_separateur_in_tooken(lst_token, (char *)"|") == 0)
+	if (count_separateur_in_token(lst_token, (char *)"|") == 0)
 		return (SUCCESS);
 	len = ft_lstsize(lst_token);
 	close_index = get_last_index_in_list(lst_token, len, (char *)"|");
@@ -26,7 +26,7 @@ static int	check_pipe_position(t_list *lst_token)
 		|| close_index == len)
 	{
 		errno = EINVAL;
-		perror("syntax error near unexpected tooken '|'");
+		perror("syntax error near unexpected token '|'");
 		return (ERROR);
 	}
 	tmp = lst_token;
@@ -67,11 +67,11 @@ static int	check_heredoc_alone(t_list *tmp)
 	return (SUCCESS);
 }
 
-int	check_valid_tokens(t_list *input_tooken)
+int	check_valid_tokens(t_list *input_token)
 {
-	if (check_pipe_position(input_tooken) == ERROR)
+	if (check_pipe_position(input_token) == ERROR)
 		return (ERROR);
-	if (check_heredoc_alone(input_tooken) == ERROR)
+	if (check_heredoc_alone(input_token) == ERROR)
 		return (ERROR);
 	return (SUCCESS);
 }

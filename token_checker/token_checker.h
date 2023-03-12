@@ -16,11 +16,11 @@
 # include <errno.h>
 # include "../libft/libft.h"
 
-int		check_valid_tokens(t_list *input_tooken);
+int		check_valid_tokens(t_list *input_token);
 int		get_first_occurence_in_list(t_list *lst, char *sep);
 int		get_last_index_in_list(t_list *lst, int len, char *sep);
-int		count_separateur_in_tooken(t_list *lst, char *sep);
-int		count_separateur_in_tooken(t_list *lst, char *sep);
+int		count_separateur_in_token(t_list *lst, char *sep);
+int		count_separateur_in_token(t_list *lst, char *sep);
 t_bool	are_two_pipe_consecutive(t_list *current);
 
 #endif /* TOKEN_CHECKER_H */

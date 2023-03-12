@@ -44,7 +44,7 @@ int	get_last_index_in_list(t_list *lst, int len, char *sep)
 	return (index);
 }
 
-int	count_separateur_in_tooken(t_list *lst, char *sep)
+int	count_separateur_in_token(t_list *lst, char *sep)
 {
 	int	count;
 
