@@ -100,6 +100,8 @@ int	get_heredoc(t_list **token_cursor, t_cmd *cmd)
 	g_minishell_status = S_HEREDOC;
 	cmd->s_command.heredoc
 		= get_heredoc_input((char *)(*token_cursor)->next->content);
+	free((*token_cursor)->content);
+	free((*token_cursor)->next->content);
 	if (cmd->s_command.heredoc == NULL)
 		return (ERROR);
 	if (g_minishell_status == S_HEREDOC_ABORT)
