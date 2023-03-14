@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/12 18:06:36 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/14 15:23:06 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ static int	list_len(char **list)
 	return (i);
 }
 
-// malloc OK !
 static int	add_env_var(t_minishell *mini, char *var)
 {
 	char	**new_env_copy;
@@ -49,6 +48,21 @@ static int	add_env_var(t_minishell *mini, char *var)
 	return (SUCCESS);
 }
 
+int	check_invalid_identifier(char *argu)
+{
+	int	i;
+
+	i = 0;
+	while (argu[i] && argu[i] != '=' && ft_isalnum(argu[i]))
+		i++;
+	if (ft_isalnum(argu[i]) == 0)
+	{
+		ft_putendl_fd(STR"minishell: export: not a valid identifier\n", 2);
+		return (ERROR);
+	}
+	return (SUCCESS);
+}
+
 static int	check_var_name(char *var)
 {
 	int	len;
@@ -66,21 +80,10 @@ static int	check_var_name(char *var)
 	}
 	else
 	{
+		if (check_invalid_identifier(var) == ERROR)
+			return (ERROR);
 		if (var[0] == '_' && var[1] == '=')
 			return (3);
-	}
-	return (SUCCESS);
-}
-
-static int	print_all(t_minishell *minishell)
-{
-	int		i;
-
-	i = 0;
-	while (minishell->env_copy[i] != NULL)
-	{
-		printf(STR"declare -x %s\n", minishell->env_copy[i]);
-		i++;
 	}
 	return (SUCCESS);
 }
@@ -88,29 +91,28 @@ static int	print_all(t_minishell *minishell)
 int	export_(t_minishell *minishell, char **argv)
 {
 	char	*var;
-	int		var_index;
-	int		status;
+	int		tmp_int;
 
 	if (argv[1] == NULL)
-		return (print_all(minishell));
-	status = check_var_name(argv[1]);
-	if (status == ERROR)
+		return (print_all_env(minishell));
+	tmp_int = check_var_name(argv[1]);
+	if (tmp_int == ERROR)
 		return (ERROR);
-	if (status == 3 || ft_strchr(argv[1], '=') == 0)
+	if (tmp_int == 3 || ft_strchr(argv[1], '=') == 0)
 		return (SUCCESS);
 	var = ft_strdup(argv[1]);
 	if (var == NULL)
 		return (ERROR);
-	var_index = get_env_var_index((const char **)minishell->env_copy, var);
-	if (var_index == -1 && add_env_var(minishell, var) == ERROR)
+	tmp_int = get_env_var_index((const char **)minishell->env_copy, var);
+	if (tmp_int == -1 && add_env_var(minishell, var) == ERROR)
 	{
 		free(var);
 		return (ERROR);
 	}
-	else if (var_index != -1)
+	else
 	{
-		free(minishell->env_copy[var_index]);
-		minishell->env_copy[var_index] = var;
+		free(minishell->env_copy[tmp_int]);
+		minishell->env_copy[tmp_int] = var;
 	}
 	return (SUCCESS);
 }
