@@ -46,7 +46,9 @@ static void	set_quoted_token_position(const char *cmd,
 	if (cmd[cursor_index] != '\0')
 		cursor_index++;
 	token_pos->end = cursor_index;
-	if (cmd[cursor_index] == '\0' || is_in_charset(cmd[cursor_index], SPECIAL_CHARACTERS) || ft_isspace(cmd[cursor_index]))
+	if (cmd[cursor_index] == '\0'
+		|| is_in_charset(cmd[cursor_index], SPECIAL_CHARACTERS)
+		|| ft_isspace(cmd[cursor_index]))
 		return ;
 	else if (is_in_charset(cmd[cursor_index], "\"\'"))
 		set_quoted_token_position(cmd, cursor_index, token_pos, FALSE);
