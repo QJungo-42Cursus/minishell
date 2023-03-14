@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/14 17:12:02 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/14 22:02:09 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@ int	check_invalid_identifier(char *argu)
 	i = 0;
 	if (ft_strchr(argu, '=') == 0)
 		return (3);
+	if (ft_strchr(argu, '=') != ft_strrchr(argu, '='))
+	{
+		ft_putendl_fd(STR"minishell: export: not a valid identifier\n", 2);
+		return (ERROR);
+	}
 	while (argu[i] && argu[i] != '='
 		&& (ft_isdigit(argu[i]) || ft_isalpha(argu[i]) || argu[i] == '_'))
 		i++;
