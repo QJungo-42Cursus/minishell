@@ -12,14 +12,28 @@
 
 #include "../libft/libft.h"
 
+static int	_isalpha(char c)
+{
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_');
+}
+
+static int	_isalnum(char c)
+{
+	return (_isalpha(c) || (c >= '0' && c <= '9'));
+}
+
 static int	var_founded(int i, int *start_index,
 		int *end_index, const char *token)
 {
-	*start_index = i;
-	if (token[i] != '\0')
+	if (token[i] == '\0' || _isalpha(token[i]) == FALSE)
+		return (FALSE);
+	*start_index = i - 1;
+	while (token[i] != '\0'
+		&& _isalnum(token[i])
+		&& !is_in_charset(token[i], "$:\'\" "))
+	{
 		i++;
-	while (token[i] != '\0' && is_in_charset(token[i], "$:\'\" ") == FALSE)
-		i++;
+	}
 	*end_index = i - 1;
 	if (*start_index == *end_index)
 		return (FALSE);
@@ -45,7 +59,7 @@ int	get_var_position(int begin_from, const char *token,
 		else if (token[i] == '\'' && dquoted == FALSE)
 			quoted = !quoted;
 		else if (token[i] == '$' && quoted == FALSE)
-			return (var_founded(i, start_index, end_index, token));
+			return (var_founded(i + 1, start_index, end_index, token));
 		i++;
 	}
 	return (FALSE);
