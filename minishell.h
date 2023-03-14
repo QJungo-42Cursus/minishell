@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:42:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/14 10:57:09 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/14 17:16:21 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@
 
 typedef struct s_cmd	t_cmd;
 
+// TODO set exito -1 ?
 typedef enum e_minishell_status {
 	S_EXEC,
-	S_EXEC_ABORT, // TODO: implement
+	S_EXEC_ABORT,
 	S_PROMPT,
 	S_HEREDOC,
-	S_HEREDOC_ABORT, // TODO set exit to -1 ?
+	S_HEREDOC_ABORT,
 }	t_minishell_status;
 
 typedef struct s_minishell {
