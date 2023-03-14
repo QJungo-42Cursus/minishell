@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 13:35:14 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/11 19:47:02 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/14 10:59:37 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,12 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 	if (g_minishell_status != S_HEREDOC_ABORT)
 	{
 		execute(cmd, minishell);
+		g_minishell_status = S_PROMPT;
+	}
+	if (g_minishell_status == S_EXEC_ABORT)
+	{
+		minishell->exit_status = -1;
+		// TODO
 		g_minishell_status = S_PROMPT;
 	}
 	free_ast(cmd);
