@@ -6,20 +6,32 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:48 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/06 14:00:17 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/14 17:48:19 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../libft/libft.h"
 
+static int	_isalpha(char c)
+{
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_');
+}
+
+static int	_isalnum(char c)
+{
+	return (_isalpha(c) || (c >= '0' && c <= '9'));
+}
+
 static int	var_founded(int i, int *start_index,
 		int *end_index, const char *token)
 {
-	*start_index = i;
-	if (token[i] != '\0')
-		i++;
+	if (token[i] == '\0' || _isalpha(token[i]) == FALSE)
+		return (FALSE);
 	// TODO echo $"'$PWD'" -> ne pas quite si la 1ere lettre n'est pas bonne, juste continuer apres !
-	while (token[i] != '\0' && is_in_charset(token[i], "$:\'\" ") == FALSE)
+	*start_index = i - 1;
+	while (token[i] != '\0'
+		&& _isalnum(token[i])
+		&& !is_in_charset(token[i], "$:\'\" "))
 		i++;
 	*end_index = i - 1;
 	if (*start_index == *end_index)
@@ -46,7 +58,7 @@ int	get_var_position(int begin_from, const char *token,
 		else if (token[i] == '\'' && dquoted == FALSE)
 			quoted = !quoted;
 		else if (token[i] == '$' && quoted == FALSE)
-			return (var_founded(i, start_index, end_index, token));
+			return (var_founded(i + 1, start_index, end_index, token));
 		i++;
 	}
 	return (FALSE);
