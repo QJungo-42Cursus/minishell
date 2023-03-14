@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 17:22:11 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/14 17:43:56 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/14 18:15:56 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,24 @@ void	split_and_retokenize(t_list *cursor, t_minishell *msh)
 	retokenize(cursor, split, msh);
 }
 
+static int	shortest_string(char *a, char *b)
+{
+	if (ft_strlen(a) < ft_strlen(b))
+		return (ft_strlen(a));
+	return (ft_strlen(b));
+}
+
 void	expand_and_retokenize(t_list **tokens, t_minishell *minishell)
 {
 	t_list	*cursor;
 	t_list	*last;
+	char	*copy;
 
 	last = NULL;
 	cursor = *tokens;
 	while (cursor != NULL)
 	{
+		copy = ft_strdup((char *)cursor->content);
 		expand((char **)&cursor->content, minishell);
 		if (ft_strlen(cursor->content) == 0)
 		{
@@ -73,7 +82,10 @@ void	expand_and_retokenize(t_list **tokens, t_minishell *minishell)
 			cursor = cursor->next;
 			continue ;
 		}
-		split_and_retokenize(cursor, minishell);
+		if (ft_strncmp((char *)cursor->content, copy, shortest_string((char *)cursor->content, copy) + 1) != 0) //TODO sur du +1 ?
+		{
+			split_and_retokenize(cursor, minishell);
+		}
 		unquote((char *)cursor->content);
 		last = cursor;
 		cursor = cursor->next;

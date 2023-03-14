@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:01 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/12 14:55:41 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/14 17:56:41 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,16 @@ static int	parse(t_list **tokens_cursor,
 	return (SUCCESS);
 }
 
+#include "../tests/debug_helper.hpp"
+
 int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	t_list	*cursor;
 	int		i;
 
+	LOG_TOKENS(tokens);
 	expand_and_retokenize(&tokens, minishell);
+	LOG_TOKENS(tokens);
 	cmd->type = COMMAND;
 	cmd->s_command.argv
 		= (char **)malloc(sizeof(char *) * (ft_lstsize(tokens) + 1));
