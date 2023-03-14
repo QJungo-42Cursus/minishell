@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 17:22:11 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/14 17:22:11 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/14 17:43:56 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ void	retokenize(t_list *cursor, char **split, t_minishell *minishell)
 	while (split[i] != NULL)
 	{
 		new = ft_lstnew(split[i]);
-		append_to_free_list(minishell, new);
 		if (new == NULL)
 			malloc_error(minishell);
+		append_to_free_list(minishell, new);
 		cursor->next = new;
 		cursor = new;
 		i++;
