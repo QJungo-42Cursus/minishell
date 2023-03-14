@@ -34,6 +34,7 @@ typedef struct s_minishell {
 	int					last_exit_status;
 	int					should_exit;
 	t_cmd				*current_ast;
+	void				**tokens_to_free;
 }	t_minishell;
 
 typedef struct s_position
@@ -42,6 +43,7 @@ typedef struct s_position
 	int		end;
 }	t_position;
 
+void	append_to_free_list(t_minishell *minishell, t_list *to_append);
 int		init_minishell(t_minishell *minishell, char **envp);
 void	refresh_prompt(t_minishell *minishell);
 void	malloc_error(t_minishell *minishell);

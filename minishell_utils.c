@@ -59,3 +59,26 @@ void	malloc_error(t_minishell *minishell)
 	free_ast(minishell->current_ast);
 	exit_(minishell, NULL, 1);
 }
+
+void	append_to_free_list(t_minishell *minishell, t_list *to_append)
+{
+	int		lst_size;
+	void	**new_free_list;
+
+	lst_size = 0;
+	while (minishell->tokens_to_free[lst_size] != NULL)
+		lst_size++;
+	new_free_list = malloc(sizeof(void *) * (lst_size + 2));
+	if (new_free_list == NULL)
+		malloc_error(minishell);
+	lst_size = 0;
+	while (minishell->tokens_to_free[lst_size] != NULL)
+	{
+		new_free_list[lst_size] = minishell->tokens_to_free[lst_size];
+		lst_size++;
+	}
+	new_free_list[lst_size] = to_append;
+	new_free_list[lst_size + 1] = NULL;
+	free(minishell->tokens_to_free);
+	minishell->tokens_to_free = new_free_list;
+}

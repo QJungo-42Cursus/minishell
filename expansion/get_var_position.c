@@ -18,6 +18,7 @@ static int	var_founded(int i, int *start_index,
 	*start_index = i;
 	if (token[i] != '\0')
 		i++;
+	// TODO echo $"'$PWD'" -> ne pas quite si la 1ere lettre n'est pas bonne, juste continuer apres !
 	while (token[i] != '\0' && is_in_charset(token[i], "$:\'\" ") == FALSE)
 		i++;
 	*end_index = i - 1;

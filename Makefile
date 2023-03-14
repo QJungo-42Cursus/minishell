@@ -39,6 +39,7 @@ SRCS =			main.c \
 				parser/parser.c \
 				parser/free_ast.c \
 				expansion/expansion.c \
+				expansion/expand_and_retokenize.c \
 				expansion/unquote.c \
 				expansion/get_var_position.c \
 				token_checker/token_checker_main.c \
