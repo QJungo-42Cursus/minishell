@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 13:33:22 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/06 18:06:23 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/14 10:58:19 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ static void	handle_sigint(void)
 		close(STDIN_FILENO);
 		g_minishell_status = S_HEREDOC_ABORT;
 	}
+	else if (g_minishell_status == S_EXEC)
+		g_minishell_status = S_EXEC_ABORT;
 }
 
 void	handle_sigquit(void)
