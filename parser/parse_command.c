@@ -48,38 +48,12 @@ static int	parse(t_list **tokens_cursor,
 	return (SUCCESS);
 }
 
-static void	expand_all_tokens(t_list **tokens, t_minishell *minishell)
-{
-	t_list	*cursor;
-	t_list	*last;
-
-	last = NULL;
-	cursor = *tokens;
-	while (cursor != NULL)
-	{
-		expand((char **)&cursor->content, minishell);
-		if (ft_strlen(cursor->content) == 0)
-		{
-			if (last == NULL)
-				*tokens = cursor->next;
-			else
-				last->next = cursor->next;
-			free(cursor->content);
-			cursor = cursor->next;
-			continue ;
-		}
-		unquote((char *)cursor->content);
-		last = cursor;
-		cursor = cursor->next;
-	}
-}
-
 int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	t_list	*cursor;
 	int		i;
 
-	expand_all_tokens(&tokens, minishell);
+	expand_and_retokenize(&tokens, minishell);
 	cmd->type = COMMAND;
 	cmd->s_command.argv
 		= (char **)malloc(sizeof(char *) * (ft_lstsize(tokens) + 1));

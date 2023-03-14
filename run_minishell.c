@@ -70,15 +70,14 @@ extern volatile sig_atomic_t	g_minishell_status;
 static int	run_minishell(t_minishell *minishell, t_list *tokens)
 {
 	t_cmd	*cmd;
-	void	**tokens_to_free;
 
-	tokens_to_free = get_token_to_free_list(tokens);
-	if (tokens_to_free == NULL)
+	minishell->tokens_to_free = get_token_to_free_list(tokens);
+	if (minishell->tokens_to_free == NULL)
 		return (ERROR);
 	cmd = parser(tokens, minishell);
 	if (cmd == NULL)
 	{
-		free_token_list(tokens_to_free, TRUE);
+		free_token_list(minishell->tokens_to_free, TRUE);
 		return (ERROR);
 	}
 	minishell->current_ast = cmd;
@@ -91,7 +90,7 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 		g_minishell_status = S_PROMPT;
 	}
 	free_ast(cmd);
-	free_token_list(tokens_to_free, FALSE);
+	free_token_list(minishell->tokens_to_free, FALSE);
 	return (SUCCESS);
 }
 
