@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:00 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/06 12:38:36 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/14 22:18:27 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	exit_(t_minishell *minishell, char **argv, int exit_status)
 		if (ft_ascii_is_valid_number(argv[1]) == 0)
 		{
 			ft_putendl_fd(STR"minishell: exit: numeric argument required", 2);
-			exit_status = 255;
+			exit_status = 2;
 		}
 		if (len > 2)
 		{
