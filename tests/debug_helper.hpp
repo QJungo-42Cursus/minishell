@@ -21,13 +21,24 @@
   LOG(msg);                                                                    \
   exit(1);
 
+#define LOG_TOKEN(to_log_tokens)                                               \
+  {                                                                            \
+    if (ft_strlen((char *)to_log_tokens->content) == 0) {                      \
+      printf("`(empty)` ");                                                    \
+    } else {                                                                   \
+      printf("`%s` ", (char *)to_log_tokens->content);                         \
+    }                                                                          \
+    fflush(stdout);                                                            \
+  }
+
 #define LOG_TOKENS(o_tokens)                                                   \
   {                                                                            \
-    /* printf("%d el in list\n", ft_lstsize(tokens));*/                        \
     t_list *to_log_tokens = o_tokens;                                          \
+    if (to_log_tokens == NULL) {                                               \
+      printf("NULL\n");                                                        \
+    }                                                                          \
     while (to_log_tokens) {                                                    \
-      printf("|%s| ", (char *)to_log_tokens->content);                         \
-      fflush(stdout);                                                          \
+      LOG_TOKEN(to_log_tokens);                                                \
       to_log_tokens = to_log_tokens->next;                                     \
     }                                                                          \
     printf("\n");                                                              \

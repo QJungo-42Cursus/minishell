@@ -51,6 +51,8 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 		if (pipe(pipes) == -1)
 			return (ERROR);
 	}
+	if (cmd->s_command.argv == NULL || cmd->s_command.argv[0] == NULL)
+		return (SUCCESS); // TODO bien ?
 	if (execute_builtin(cmd, minishell, &exit_status))
 		return (exit_status);
 	exit_status = 0;

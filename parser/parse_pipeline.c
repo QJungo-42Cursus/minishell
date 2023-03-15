@@ -1,3 +1,4 @@
+#include "../tests/debug_helper.hpp"
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -14,7 +15,7 @@
 #include "parser.h"
 #include "../builtins/builtins.h"
 
-int	number_of_pipe_operator(t_list *cursor)
+static int	number_of_pipe_operator(t_list *cursor)
 {
 	int		size;
 
@@ -28,7 +29,7 @@ int	number_of_pipe_operator(t_list *cursor)
 	return (size);
 }
 
-t_list	*set_pipeline_to_null_and_return_next(t_list *cursor)
+static t_list	*set_pipeline_to_null_and_return_next(t_list *cursor)
 {
 	t_list		*next_node_is_null;
 
@@ -84,12 +85,44 @@ static void	set_pipeline_and_args(t_list *cursor,
 	end(&cmd_cursor, minishell, start);
 }
 
+static t_bool	is_pipe_alone(t_list *tokens)
+{
+	t_list		*cursor;
+	
+	cursor = tokens;
+	while (cursor != NULL)
+	{
+		if (get_token_type((char *)cursor->content) != PIPELINE)
+			return (FALSE);
+		cursor = cursor->next;
+	}
+	cursor = tokens;
+	while (cursor != NULL)
+	{
+		free(cursor->content);
+		cursor = cursor->next;
+	}
+	return (TRUE);
+}
+
 int	pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	cmd->s_pipeline.pipe_count = number_of_pipe_operator(tokens);
 	if (cmd->s_pipeline.pipe_count == 0)
 		return (FALSE);
+	if (is_pipe_alone(tokens))
+	{
+		cmd->type = COMMAND;
+		cmd->s_command.argv = NULL;
+		cmd->s_command.heredoc = NULL;
+		cmd->s_command.next = NULL;
+		// TODO error
+		return (USED);
+	}
 	cmd->s_pipeline.pipe_count++;
+	cmd->s_pipeline.pids = NULL;
+	cmd->s_pipeline.first_cmd = NULL;
+	cmd->s_pipeline.pipes = NULL;
 	cmd->type = PIPELINE;
 	set_pipeline_and_args(tokens, cmd, minishell);
 	return (USED);

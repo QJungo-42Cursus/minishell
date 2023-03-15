@@ -48,9 +48,14 @@ static int	check_heredoc_alone(t_list *tmp)
 	{
 		if (ft_strncmp((char *)tmp->content, (char *)"<<", 3) == 0)
 		{
+			if (tmp->next == NULL)
+			{
+				ft_putstr_fd(STR"syntax error near unexpected token `newline'\n", 2);
+				return (ERROR);// new
+			}
 			if (is_first && (tmp->next == NULL || tmp->next->next == NULL))
 			{
-				ft_putstr_fd(STR"syntax error near unexpected token '", 2);
+				ft_putstr_fd(STR"syntax error near unexpected token `", 2);
 				ft_putstr_fd(STR tmp->next->content, 2);
 				ft_putstr_fd(STR"'\n", 2);
 				return (ERROR);

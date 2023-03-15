@@ -83,6 +83,8 @@ int	parse_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 	int		i;
 
 	expand_all_tokens(&tokens, minishell);
+	if (tokens == NULL)
+		return (SUCCESS);
 	cmd->type = COMMAND;
 	cmd->s_command.argv
 		= (char **)malloc(sizeof(char *) * (ft_lstsize(tokens) + 1));
