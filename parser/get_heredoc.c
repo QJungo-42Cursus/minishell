@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:57 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/25 15:01:37 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/15 11:32:21 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,6 @@ static char	*get_heredoc_input(char *delimiter)
 	char	*input;
 	char	*to_free;
 
-	int		stdin_fd; //
-	stdin_fd = dup(STDIN_FILENO); //
-
 	input = ft_strdup((char *)"");
 	if (input == NULL)
 		return (NULL);
@@ -86,7 +83,7 @@ static char	*get_heredoc_input(char *delimiter)
 	{
 		write(1, "> ", 2);
 		line = get_next_line(STDIN_FILENO);
-		if (stop(line, delimiter))//, stdin_fd))
+		if (stop(line, delimiter))
 			break ;
 		to_free = input;
 		input = ft_strjoin(input, line);
