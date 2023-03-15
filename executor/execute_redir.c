@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:41 by qjungo            #+#    #+#             */
-/*   Updated: 2023/02/24 14:21:48 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/15 11:43:41 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	execute_redir(t_cmd *cmd, t_minishell *minishell)
 	int		std_x_fileno;
 
 	if (cmd->s_redir.fd == -1)
-		return (1);// sure ?
+		return (ERROR);
 	if (cmd->type == REDIR_IN)
 		std_x_fileno = STDIN_FILENO;
 	else

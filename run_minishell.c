@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 13:35:14 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/14 11:07:46 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/15 11:57:41 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,24 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 	return (SUCCESS);
 }
 
-static void	restore_stdin(int stdin_fd)
+static void	restore_stdin_readline(char **cmd_input, t_minishell *minishell,
+			int *stdin_fd)
 {
-	if (g_minishell_status != S_HEREDOC_ABORT)
-		return ;
-	g_minishell_status = S_PROMPT;
-	dup2(stdin_fd, STDIN_FILENO);
-	ft_putstr_fd("\n", 1);
+	if (g_minishell_status == S_HEREDOC_ABORT)
+	{
+		g_minishell_status = S_PROMPT;
+		dup2(*stdin_fd, STDIN_FILENO);
+		ft_putstr_fd("\n", 1);
+	}
+	*cmd_input = readline(minishell->prompt_msg);
+	*stdin_fd = dup(STDIN_FILENO);
+	if (*cmd_input == NULL)
+		exit_(minishell, NULL, 0);
+	if (ft_strlen(*cmd_input) == 0)
+	{
+		free(*cmd_input);
+		*cmd_input = NULL;
+	}
 }
 
 // free OK !
@@ -115,16 +126,15 @@ int	main_loop(t_minishell *minishell)
 
 	while (!minishell->should_exit)
 	{
-		restore_stdin(stdin_fd);
-		cmd_input = readline(minishell->prompt_msg);
-		stdin_fd = dup(STDIN_FILENO);
+		restore_stdin_readline(&cmd_input, minishell, &stdin_fd);
 		if (cmd_input == NULL)
-			exit_(minishell, NULL, 0);
-		if (ft_strlen(cmd_input) == 0)
 			continue ;
 		tokenizer(cmd_input, &tokens, FALSE, minishell);
 		if (tokens == NULL)
+		{
+			free(cmd_input);
 			continue ;
+		}
 		add_history(cmd_input);
 		free(cmd_input);
 		if (check_valid_tokens(tokens) == SUCCESS)

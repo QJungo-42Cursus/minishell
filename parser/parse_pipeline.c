@@ -1,4 +1,3 @@
-#include "../tests/debug_helper.hpp"
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -6,12 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/02/23 20:02:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/10 09:45:21 by agonelle         ###   ########.fr       */
+/*   Created: 2023/03/15 11:42:20 by qjungo            #+#    #+#             */
+/*   Updated: 2023/03/15 11:53:41 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "parser.h"
 #include "../builtins/builtins.h"
 
@@ -85,26 +83,6 @@ static void	set_pipeline_and_args(t_list *cursor,
 	end(&cmd_cursor, minishell, start);
 }
 
-static t_bool	is_pipe_alone(t_list *tokens)
-{
-	t_list		*cursor;
-	
-	cursor = tokens;
-	while (cursor != NULL)
-	{
-		if (get_token_type((char *)cursor->content) != PIPELINE)
-			return (FALSE);
-		cursor = cursor->next;
-	}
-	cursor = tokens;
-	while (cursor != NULL)
-	{
-		free(cursor->content);
-		cursor = cursor->next;
-	}
-	return (TRUE);
-}
-
 int	pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 {
 	cmd->s_pipeline.pipe_count = number_of_pipe_operator(tokens);
@@ -116,7 +94,6 @@ int	pipeline(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 		cmd->s_command.argv = NULL;
 		cmd->s_command.heredoc = NULL;
 		cmd->s_command.next = NULL;
-		// TODO error
 		return (USED);
 	}
 	cmd->s_pipeline.pipe_count++;

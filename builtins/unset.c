@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:19 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/15 09:53:48 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/15 11:45:13 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static int	remove_env_var(t_minishell *minishell, int index_var)
 	return (SUCCESS);
 }
 
-int unset_one_variable(t_minishell *minishell, char *arg)
+static int	unset_one_variable(t_minishell *minishell, char *arg)
 {
 	int		var_index;
 	int		i;

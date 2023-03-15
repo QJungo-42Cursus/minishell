@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:50 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/11 14:52:21 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/15 11:53:10 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,8 @@ int			redir(t_list *tokens, t_cmd *cmd, t_minishell *minishell);
 // parse_redir_open.c
 int			open_file(t_cmd *cmd, char *filename);
 int			check_error(t_cmd *cmd, char *filename);
+
+// parse_pipeline_utils.c
+t_bool		is_pipe_alone(t_list *tokens);
 
 #endif /* PARSER_H */

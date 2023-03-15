@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:45 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/11 19:42:53 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/15 11:41:57 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	set_command(t_list *tokens, t_cmd *cmd, t_minishell *minishell)
 			free(cursor->content);
 			cursor = cursor->next;
 		}
-		return (ERROR); // added
+		return (ERROR);
 	}
 	exit_status = redir(tokens, cmd, minishell);
 	if (exit_status == USED || exit_status == ERROR)

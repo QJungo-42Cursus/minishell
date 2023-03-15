@@ -36,6 +36,7 @@ SRCS =			main.c \
 				parser/parse_command.c \
 				parser/get_heredoc.c \
 				parser/parse_pipeline.c \
+				parser/parse_pipeline_utils.c \
 				parser/parser.c \
 				parser/free_ast.c \
 				expansion/expansion.c \

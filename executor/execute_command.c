@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:20:30 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/06 14:39:13 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/15 11:44:53 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@
 
 extern volatile sig_atomic_t	g_minishell_status;
 
-// LATER refactoriser pour que pipeline ai la meme chose !
-void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
+static void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
 {
 	replace_argv0_with_full_path(cmd, minishell);
 	if (cmd->s_command.heredoc != NULL)
@@ -41,24 +40,8 @@ void	child(t_minishell *minishell, t_cmd *cmd, int pipes[2])
 	exit(errno);
 }
 
-int	execute_command(t_cmd *cmd, t_minishell *minishell)
+static void	heredeal(t_cmd *cmd, int *pipes)
 {
-	int		exit_status;
-	int		pipes[2];
-
-	if (cmd->s_command.heredoc != NULL)
-	{
-		if (pipe(pipes) == -1)
-			return (ERROR);
-	}
-	if (cmd->s_command.argv == NULL || cmd->s_command.argv[0] == NULL)
-		return (SUCCESS); // TODO bien ?
-	if (execute_builtin(cmd, minishell, &exit_status))
-		return (exit_status);
-	exit_status = 0;
-	g_minishell_status = S_EXEC;
-	if (fork1() == 0)
-		child(minishell, cmd, pipes);
 	if (cmd->s_command.heredoc != NULL)
 	{
 		write(pipes[1], cmd->s_command.heredoc,
@@ -66,6 +49,25 @@ int	execute_command(t_cmd *cmd, t_minishell *minishell)
 		close(pipes[0]);
 		close(pipes[1]);
 	}
+}
+
+int	execute_command(t_cmd *cmd, t_minishell *minishell)
+{
+	int		exit_status;
+	int		pipes[2];
+
+	if (cmd->s_command.heredoc != NULL)
+		if (pipe(pipes) == -1)
+			return (ERROR);
+	if (cmd->s_command.argv == NULL || cmd->s_command.argv[0] == NULL)
+		return (SUCCESS);
+	if (execute_builtin(cmd, minishell, &exit_status))
+		return (exit_status);
+	exit_status = 0;
+	g_minishell_status = S_EXEC;
+	if (fork1() == 0)
+		child(minishell, cmd, pipes);
+	heredeal(cmd, pipes);
 	wait(&exit_status);
 	g_minishell_status = S_PROMPT;
 	return (WEXITSTATUS(exit_status));

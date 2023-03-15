@@ -6,7 +6,7 @@
 /*   By: agonelle <agonelle@student.42lausanne.ch>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 12:11:42 by agonelle          #+#    #+#             */
-/*   Updated: 2023/03/11 19:49:31 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/15 11:41:28 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,16 @@ static int	check_pipe_position(t_list *lst_token)
 	return (SUCCESS);
 }
 
+#define E_SYN "syntax error near unexpected token"
+
+static int	err_(char *tok)
+{
+	ft_putstr_fd(STR E_SYN" `", 2);
+	ft_putstr_fd(STR tok, 2);
+	ft_putstr_fd(STR"'\n", 2);
+	return (ERROR);
+}
+
 static int	check_heredoc_alone(t_list *tmp)
 {
 	int		is_first;
@@ -50,16 +60,11 @@ static int	check_heredoc_alone(t_list *tmp)
 		{
 			if (tmp->next == NULL)
 			{
-				ft_putstr_fd(STR"syntax error near unexpected token `newline'\n", 2);
-				return (ERROR);// new
-			}
-			if (is_first && (tmp->next == NULL || tmp->next->next == NULL))
-			{
-				ft_putstr_fd(STR"syntax error near unexpected token `", 2);
-				ft_putstr_fd(STR tmp->next->content, 2);
-				ft_putstr_fd(STR"'\n", 2);
+				ft_putstr_fd(STR""E_SYN" `newline'\n", 2);
 				return (ERROR);
 			}
+			if (is_first && (tmp->next == NULL || tmp->next->next == NULL))
+				return (err_(tmp->next->content));
 			if (ft_strncmp((char *)tmp->next->content, (char *)"<<", 3) == 0)
 			{
 				ft_putendl_fd(STR"syntax error near unexpected token '<<'", 2);

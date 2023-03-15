@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:02:48 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/15 11:08:48 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/15 11:43:22 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	get_var_position(int begin_from, const char *token, t_position *index);
 typedef struct s_quootes {
 	t_bool	quoted;
 	t_bool	dquoted;
-} t_quootes;
+}	t_quootes;
 
 static int	_isalpha(char c)
 {
@@ -30,8 +30,7 @@ static int	_isalnum(char c)
 	return (_isalpha(c) || (c >= '0' && c <= '9'));
 }
 
-#include <stdio.h>
-int go_to_next_quote(int index, t_quootes q, const char *token)
+static int	go_to_next_quote(int index, t_quootes q, const char *token)
 {
 	char	sep;
 	int		i;
@@ -45,7 +44,6 @@ int go_to_next_quote(int index, t_quootes q, const char *token)
 	i = index - 1;
 	while (token[i] != '\0' && token[i] != sep)
 		i++;
-	//printf("send from : %s\n", &token[i]);
 	return (i + 1);
 }
 
@@ -60,18 +58,13 @@ static int	var_founded(int i, t_position *index,
 	}
 	if (token[i] == '\0')
 		return (FALSE);
-	// === 
 	if (_isalpha(token[i]) == FALSE)
 	{
-		(void)q;
 		if (q.dquoted || q.quoted)
-		{
-			//printf("YYYYYY (quoted) %s\n", &token[i]);
-			return (get_var_position(go_to_next_quote(i, q, token), token, index));
-		}
+			return (get_var_position(go_to_next_quote(i, q, token),
+					token, index));
 		return (get_var_position(i, token, index));
 	}
-	// === TODO attention recursion !
 	index->start = i - 1;
 	while (token[i] != '\0'
 		&& _isalnum(token[i])
