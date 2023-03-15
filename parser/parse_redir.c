@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/11 14:46:42 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/11 19:50:11 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/15 12:02:51 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include <unistd.h>
 #include "parser.h"
 #include "../minishell.h"
-#include "../tests/debug_helper.hpp"
 
 #define NOT_FOUND -1
 

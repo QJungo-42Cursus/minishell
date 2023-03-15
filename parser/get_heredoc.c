@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:57 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/15 11:32:21 by qjungo           ###   ########.fr       */
+/*   Updated: 2023/03/15 12:09:08 by qjungo           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,16 +50,14 @@ static t_bool	is_delimiter(char *line, char *delimiter)
 
 static t_bool	stop(char *line, char *delimiter)
 {
-	char	*msg;
-
 	if (g_minishell_status == S_HEREDOC_ABORT)
 		return (TRUE);
 	if (line == NULL)
 	{
-		msg = ft_sprintf("\nminishell: warning: here-document delimited by "
-				"end-of-file (wanted `%s')\n", delimiter);
-		ft_putstr_fd(msg, STDERR_FILENO);
-		free(msg);
+		ft_putstr_fd("\nminishell: warning: here-document delimited by "
+			"end-of-file (wanted `", 2);
+		ft_putstr_fd(delimiter, 2);
+		ft_putstr_fd("')\n", 2);
 		return (TRUE);
 	}
 	if (is_delimiter(line, delimiter))
