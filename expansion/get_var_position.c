@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "../libft/libft.h"
+int	get_var_position(int begin_from, const char *token,
+		int *start_index, int *end_index);
 
 static int	_isalpha(char c)
 {
@@ -25,9 +27,18 @@ static int	_isalnum(char c)
 static int	var_founded(int i, int *start_index,
 		int *end_index, const char *token)
 {
-	if (token[i] == '\0' || _isalpha(token[i]) == FALSE)
+	if (token[i] == '?')
+	{
+		*start_index = i - 1;
+		*end_index = i;
+		return (TRUE);
+	}
+	if (token[i] == '\0')
 		return (FALSE);
-	// TODO echo $"'$PWD'" -> ne pas quite si la 1ere lettre n'est pas bonne, juste continuer apres !
+	// === 
+	if (_isalpha(token[i]) == FALSE)
+		return get_var_position(i, token, start_index, end_index);
+	// === TODO attention recursion !
 	*start_index = i - 1;
 	while (token[i] != '\0'
 		&& _isalnum(token[i])

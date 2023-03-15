@@ -69,15 +69,6 @@ static t_bool	stop(char *line, char *delimiter)
 	}
 	return (FALSE);
 }
-static void	restore_stdin(int stdin_fd)
-{
-	if (g_minishell_status == S_HEREDOC_ABORT)
-	{
-		g_minishell_status = S_PROMPT;
-		dup2(stdin_fd, STDIN_FILENO);
-		ft_putstr_fd("\n", 1);
-	}
-}
 
 static char	*get_heredoc_input(char *delimiter)
 {
@@ -95,11 +86,8 @@ static char	*get_heredoc_input(char *delimiter)
 	{
 		write(1, "> ", 2);
 		line = get_next_line(STDIN_FILENO);
-		if (stop(line, delimiter))
-		{
-			restore_stdin(stdin_fd); //
+		if (stop(line, delimiter))//, stdin_fd))
 			break ;
-		}
 		to_free = input;
 		input = ft_strjoin(input, line);
 		free(to_free);
@@ -123,8 +111,6 @@ int	get_heredoc(t_list **token_cursor, t_cmd *cmd)
 	{
 		free(cmd->s_command.heredoc);
 		cmd->s_command.heredoc = NULL;
-		//if (cmd->s_command.next != NULL)
-		//	return (ERROR);// added
 	}
 	*token_cursor = (*token_cursor)->next->next;
 	return (USED);

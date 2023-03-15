@@ -26,6 +26,8 @@ int	execute_redir(t_cmd *cmd, t_minishell *minishell)
 	int		to_reopen;
 	int		std_x_fileno;
 
+	if (cmd->s_redir.fd == -1)
+		return (1);// sure ?
 	if (cmd->type == REDIR_IN)
 		std_x_fileno = STDIN_FILENO;
 	else
