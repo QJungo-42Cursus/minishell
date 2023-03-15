@@ -94,6 +94,7 @@ static int	run_minishell(t_minishell *minishell, t_list *tokens)
 	return (SUCCESS);
 }
 
+/*
 static void	restore_stdin(int stdin_fd)
 {
 	if (g_minishell_status == S_HEREDOC_ABORT)
@@ -103,6 +104,7 @@ static void	restore_stdin(int stdin_fd)
 		ft_putstr_fd("\n", 1);
 	}
 }
+*/
 
 // free OK !
 /// give ownership of tokens at each while iteration (it to free)
@@ -110,13 +112,13 @@ int	main_loop(t_minishell *minishell)
 {
 	t_list				*tokens;
 	char				*cmd_input;
-	int					stdin_fd;
+	//int					stdin_fd;
 
 	while (!minishell->should_exit)
 	{
-		restore_stdin(stdin_fd);
+		//restore_stdin(stdin_fd);
 		cmd_input = readline(minishell->prompt_msg);
-		stdin_fd = dup(STDIN_FILENO);
+		//stdin_fd = dup(STDIN_FILENO);
 		if (cmd_input == NULL)
 			exit_(minishell, NULL, 0);
 		if (ft_strlen(cmd_input) == 0)
