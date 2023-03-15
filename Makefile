@@ -80,7 +80,11 @@ SAN =	-fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all \
 		-fno-sanitize=null -fno-sanitize=alignment
 
 san: all
+ifeq ($(shell uname), Darwin) # MAC need the path to it (including the headers)
+	leaks --atExit -- ./$(NAME)
+else
 	$(CC) $(CFLAGS) $(SAN) $(OUT_LIBS) $(INCLUDES) $(SRCS) $(LIBFT) -o $(NAME)
+endif
 
 
 SRCS_TEST = tests/main.cpp \
