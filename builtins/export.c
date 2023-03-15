@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/14 22:02:09 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/15 10:24:16 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ int	check_invalid_identifier(char *argu)
 	i = 0;
 	if (ft_strchr(argu, '=') == 0)
 		return (3);
-	if (ft_strchr(argu, '=') != ft_strrchr(argu, '='))
+	if (ft_strchr(argu, '=') != ft_strrchr(argu, '=') || ft_isdigit(argu[0]))
 	{
-		ft_putendl_fd(STR"minishell: export: not a valid identifier\n", 2);
+		ft_putendl_fd(STR"minishell: export: not a valid identifier", 2);
 		return (ERROR);
 	}
 	while (argu[i] && argu[i] != '='
@@ -34,7 +34,7 @@ int	check_invalid_identifier(char *argu)
 	if ((ft_isdigit(argu[i]) == 0 || ft_isalpha(argu[i]) == 0)
 		&& argu[i] != '=')
 	{
-		ft_putendl_fd(STR"minishell: export: not a valid identifier\n", 2);
+		ft_putendl_fd(STR"minishell: export: not a valid identifier", 2);
 		return (ERROR);
 	}
 	return (SUCCESS);
@@ -50,7 +50,7 @@ static int	check_var_name(char *var)
 	{
 		if (ft_isdigit(var[0]) != 0)
 		{
-			ft_putendl_fd(STR"minishell: export: not a valid identifier\n", 2);
+			ft_putendl_fd(STR"minishell: export: not a valid identifier", 2);
 			return (ERROR);
 		}
 		if (var[0] == '_')
