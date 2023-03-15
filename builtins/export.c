@@ -6,7 +6,7 @@
 /*   By: qjungo <qjungo@student.42lausanne.ch>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 20:01:04 by qjungo            #+#    #+#             */
-/*   Updated: 2023/03/15 10:24:16 by agonelle         ###   ########.fr       */
+/*   Updated: 2023/03/15 11:16:41 by agonelle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,7 @@ static int	check_var_name(char *var)
 
 	len = ft_strlen(var);
 	if (len == 1)
-	{
-		if (ft_isdigit(var[0]) != 0)
-		{
-			ft_putendl_fd(STR"minishell: export: not a valid identifier", 2);
-			return (ERROR);
-		}
-		if (var[0] == '_')
-			return (3);
-	}
+		return (3);
 	else
 	{
 		status = check_invalid_identifier(var);
